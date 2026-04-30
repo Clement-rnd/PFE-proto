@@ -1,23 +1,53 @@
 import { Tabs } from 'expo-router';
-import { View } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { colors } from '../../src/theme/colors';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import {
+  Home01Icon,
+  FavouriteIcon,
+  MessageMultiple01Icon,
+  UserIcon,
+} from '@hugeicons/core-free-icons';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 
-type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
+const ACTIVE = '#ff5a7d';
+const INACTIVE = '#717171';
 
-type TabIconProps = {
-  name: IoniconsName;
-  focused: boolean;
-};
+const TABS = [
+  { name: 'home',         label: 'Accueil',   icon: Home01Icon },
+  { name: 'health',       label: 'Santé',      icon: FavouriteIcon },
+  { name: 'messages',     label: 'Messages',   icon: MessageMultiple01Icon },
+  { name: 'appointments', label: 'Mon compte', icon: UserIcon },
+];
 
-function TabIcon({ name, focused }: TabIconProps) {
+function CustomTabBar({ state, navigation }: BottomTabBarProps) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View className="items-center justify-center">
-      <Ionicons
-        name={name}
-        size={24}
-        color={focused ? colors.primary.DEFAULT : colors.neutral[400]}
-      />
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+      <View style={styles.row}>
+        {state.routes.map((route, index) => {
+          const focused = state.index === index;
+          const tab = TABS.find(t => t.name === route.name);
+          if (!tab) return null;
+          const color = focused ? ACTIVE : INACTIVE;
+
+          return (
+            <Pressable
+              key={route.key}
+              style={styles.tab}
+              onPress={() => {
+                const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+                if (!focused && !event.defaultPrevented) navigation.navigate(route.name);
+              }}
+            >
+              {focused && <View style={styles.indicator} />}
+              <HugeiconsIcon icon={tab.icon} size={24} color={color} strokeWidth={1.5} />
+              <Text style={[styles.label, { color }]} numberOfLines={1}>{tab.label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -25,62 +55,44 @@ function TabIcon({ name, focused }: TabIconProps) {
 export default function TabsLayout() {
   return (
     <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: true,
-        tabBarActiveTintColor: colors.primary.DEFAULT,
-        tabBarInactiveTintColor: colors.neutral[400],
-        tabBarStyle: {
-          backgroundColor: colors.white,
-          borderTopColor: colors.neutral[100],
-          borderTopWidth: 1,
-          height: 80,
-          paddingBottom: 16,
-          paddingTop: 8,
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '500',
-          marginTop: 2,
-        },
-      }}
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Accueil',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon name={focused ? 'home' : 'home-outline'} focused={focused} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="messages"
-        options={{
-          title: 'Messages',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon name={focused ? 'chatbubble' : 'chatbubble-outline'} focused={focused} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="appointments"
-        options={{
-          title: 'Rendez-vous',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon name={focused ? 'calendar' : 'calendar-outline'} focused={focused} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="health"
-        options={{
-          title: 'Carnet',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon name={focused ? 'heart' : 'heart-outline'} focused={focused} />
-          ),
-        }}
-      />
+      <Tabs.Screen name="home" />
+      <Tabs.Screen name="health" />
+      <Tabs.Screen name="messages" />
+      <Tabs.Screen name="appointments" />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#E8E8E8',
+    backgroundColor: '#FDF7F9',
+  },
+  row: {
+    flexDirection: 'row',
+    height: 56,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  indicator: {
+    position: 'absolute',
+    top: 0,
+    width: 24,
+    height: 2,
+    borderRadius: 99,
+    backgroundColor: ACTIVE,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: '400',
+    lineHeight: 14,
+  },
+});

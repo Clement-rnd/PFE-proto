@@ -139,17 +139,30 @@ export default function LoginScreen() {
 
         {/* Champ téléphone + lien : remonte avec le clavier */}
         <Animated.View style={[styles.bottom, { transform: [{ translateY: bottomAnim }] }]}>
-          <Pressable onPress={() => inputRef.current?.focus()} style={styles.field}>
-            <SquircleView
-              squircleParams={{
-                cornerRadius: 8, cornerSmoothing: 1,
-                fillColor: '#FFFFFF',
-                strokeColor: focused ? colors.primary.DEFAULT : '#E8E8E8',
-                strokeWidth: 1,
-              }}
-              style={StyleSheet.absoluteFillObject}
-              pointerEvents="none"
-            />
+          <Pressable
+            onPress={() => inputRef.current?.focus()}
+            style={[
+              styles.field,
+              Platform.OS === 'web' && {
+                backgroundColor: '#FFFFFF',
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: focused ? colors.primary.DEFAULT : '#E8E8E8',
+              },
+            ]}
+          >
+            {Platform.OS !== 'web' && (
+              <SquircleView
+                squircleParams={{
+                  cornerRadius: 8, cornerSmoothing: 1,
+                  fillColor: '#FFFFFF',
+                  strokeColor: focused ? colors.primary.DEFAULT : '#E8E8E8',
+                  strokeWidth: 1,
+                }}
+                style={StyleSheet.absoluteFillObject}
+                pointerEvents="none"
+              />
+            )}
             <Pressable onPress={() => setSheetOpen(true)} style={styles.leftSlot} hitSlop={8}>
               <View style={styles.flagContainer}>
                 <FlagIcon code={country.code} width={36} height={24} />

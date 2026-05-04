@@ -1,4 +1,4 @@
-import { View, Text, Pressable, TextInput, StyleSheet, ScrollView, Keyboard, useWindowDimensions } from 'react-native';
+import { View, Text, Pressable, TextInput, StyleSheet, ScrollView, Keyboard, Platform } from 'react-native';
 import { SquircleView } from 'react-native-figma-squircle';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -11,7 +11,6 @@ import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 const CODE_LENGTH = 6;
 
 export default function VerifyScreen() {
-  const { height } = useWindowDimensions();
   const { phone } = useLocalSearchParams<{ phone: string }>();
   const [code, setCode] = useState('');
   const inputRef = useRef<TextInput>(null);
@@ -47,12 +46,6 @@ export default function VerifyScreen() {
             <Text style={styles.title}>Vérifiez votre numéro</Text>
           </Pressable>
 
-          {/* Illustration */}
-          <SquircleView
-            squircleParams={{ cornerRadius: 12, cornerSmoothing: 1, fillColor: '#D9D9D9' }}
-            style={[styles.illustration, { height: height * 0.28 }]}
-          />
-
           {/* Zone bas */}
           <View style={styles.bottom}>
             <Text style={styles.instruction}>
@@ -63,13 +56,27 @@ export default function VerifyScreen() {
               {Array.from({ length: CODE_LENGTH }).map((_, i) => {
                 const isActive = code.length < CODE_LENGTH && i === activeIndex;
                 return (
-                  <SquircleView
+                  <View
                     key={i}
-                    squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: isActive ? colors.primary.DEFAULT : '#E8E8E8', strokeWidth: 1 }}
-                    style={styles.otpBox}
+                    style={[
+                      styles.otpBox,
+                      Platform.OS === 'web' && {
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        borderColor: isActive ? colors.primary.DEFAULT : '#E8E8E8',
+                      },
+                    ]}
                   >
+                    {Platform.OS !== 'web' && (
+                      <SquircleView
+                        squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: isActive ? colors.primary.DEFAULT : '#E8E8E8', strokeWidth: 1 }}
+                        style={StyleSheet.absoluteFillObject}
+                        pointerEvents="none"
+                      />
+                    )}
                     <Text style={styles.otpDigit}>{code[i] ?? ''}</Text>
-                  </SquircleView>
+                  </View>
                 );
               })}
             </Pressable>
@@ -122,7 +129,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.neutral[900],
   },
-  illustration: {},
   bottom: {
     gap: 16,
   },

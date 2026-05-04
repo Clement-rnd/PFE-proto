@@ -1,6 +1,6 @@
 import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { SquircleView } from 'react-native-figma-squircle';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
@@ -18,6 +18,7 @@ import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 type CountryWithFlag = Country & { flag: string };
 
 export default function CreateProfileScreen() {
+  const insets = useSafeAreaInsets();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthDate, setBirthDate] = useState('');
@@ -36,7 +37,7 @@ export default function CreateProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
       <ScreenBackground />
       {/* Header fixe */}
       <View style={styles.header}>
@@ -53,7 +54,7 @@ export default function CreateProfileScreen() {
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 16 }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         automaticallyAdjustKeyboardInsets
@@ -117,11 +118,8 @@ export default function CreateProfileScreen() {
           </View>
         </View>
 
-      </ScrollView>
-
-      <View style={styles.footer}>
         <Button label="Créer un compte" onPress={handleContinue} disabled={!isValid} />
-      </View>
+      </ScrollView>
 
       <CountryPicker
         visible={pickerOpen}
@@ -145,13 +143,8 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 16,
+    paddingBottom: 30,
     gap: 24,
-  },
-  footer: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 24,
   },
   header: {
     gap: 4,

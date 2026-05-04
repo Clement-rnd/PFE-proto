@@ -1,11 +1,11 @@
 import {
   View, Text, Pressable, TextInput, StyleSheet, Image,
-  Keyboard, KeyboardAvoidingView, Platform,
+  Keyboard, Platform, Animated, Easing,
 } from 'react-native';
 import { SquircleView } from 'react-native-figma-squircle';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
-import { useState, useRef } from 'react';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router, useFocusEffect } from 'expo-router';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
 import { CountryPicker } from '../../src/components/ui/CountryPicker';
@@ -18,21 +18,80 @@ import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 type CountryWithFlag = Country & { flag: string };
 
-// z-order: first = bottom, last = top
-const PHOTOS = [
-  { src: require('../../assets/images/pet-1.png'), top: 444, left: 0,    width: 200, height: 133 },
-  { src: require('../../assets/images/pet-2.png'), top: 192, left: 173,  width: 200, height: 133 },
-  { src: require('../../assets/images/pet-3.png'), top: 433, left: 161,  width: 200, height: 133 },
-  { src: require('../../assets/images/pet-4.png'), top: 325, left: 109,  width: 200, height: 133 },
-  { src: require('../../assets/images/pet-5.png'), top: 226, left: -6,   width: 200, height: 133 },
-];
-
 export default function LoginScreen() {
+  const insets = useSafeAreaInsets();
+  const mosaicTranslateY = useRef(new Animated.Value(0)).current;
+  const mosaicOpacity = useRef(new Animated.Value(1)).current;
+  const bottomAnim = useRef(new Animated.Value(0)).current;
+
   const [country, setCountry] = useState<CountryWithFlag>(DEFAULT_COUNTRY as CountryWithFlag);
   const [phone, setPhone] = useState('');
   const [focused, setFocused] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const inputRef = useRef<TextInput>(null);
+
+  useFocusEffect(useCallback(() => {
+    mosaicTranslateY.setValue(0);
+    mosaicOpacity.setValue(1);
+    bottomAnim.setValue(0);
+  }, []));
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSub = Keyboard.addListener(showEvent, (e) => {
+      const h = e.endCoordinates.height;
+      const dur = Platform.OS === 'ios' ? e.duration : 280;
+      Animated.parallel([
+        Animated.timing(mosaicTranslateY, {
+          toValue: -h * 0.35,
+          duration: dur,
+          useNativeDriver: true,
+        }),
+        Animated.timing(mosaicOpacity, {
+          toValue: 0.45,
+          duration: dur,
+          useNativeDriver: true,
+        }),
+        Animated.timing(bottomAnim, {
+          toValue: -(h - insets.bottom) + 30,
+          duration: dur,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    });
+
+    const hideSub = Keyboard.addListener(hideEvent, (e) => {
+      const dur = Platform.OS === 'ios' ? e.duration + 100 : 380;
+      const easing = Easing.out(Easing.cubic);
+      Animated.parallel([
+        Animated.timing(mosaicTranslateY, {
+          toValue: 0,
+          duration: dur,
+          easing,
+          useNativeDriver: true,
+        }),
+        Animated.timing(mosaicOpacity, {
+          toValue: 1,
+          duration: dur,
+          easing,
+          useNativeDriver: true,
+        }),
+        Animated.timing(bottomAnim, {
+          toValue: 0,
+          duration: dur,
+          easing,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [insets.bottom]);
 
   function formatPhone(raw: string): string {
     const d = raw.replace(/\D/g, '').slice(0, 9);
@@ -56,78 +115,71 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <ScreenBackground />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <Pressable style={styles.inner} onPress={Keyboard.dismiss}>
+      <Pressable style={styles.inner} onPress={Keyboard.dismiss}>
 
-          {/* Zone illustration : logo + mosaïque photos */}
-          <View style={styles.illustrationArea}>
-            {PHOTOS.map((photo, i) => (
-              <View
-                key={i}
-                style={[styles.photoShadow, {
-                  top: photo.top, left: photo.left,
-                  width: photo.width, height: photo.height,
-                }]}
-              >
-                <View style={styles.photoClip}>
-                  <Image source={photo.src} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
-                </View>
+        {/* Zone illustration */}
+        <View style={styles.illustrationArea}>
+          {/* Mosaïque : glisse vers le haut et fade out */}
+          <Animated.View style={[
+            styles.mosaicWrapper,
+            { transform: [{ translateY: mosaicTranslateY }], opacity: mosaicOpacity },
+          ]}>
+            <Image
+              source={require('../../assets/images/mosaic.png')}
+              style={styles.mosaicImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
+
+          {/* Logo : fixe, toujours au-dessus */}
+          <View style={styles.logoWrapper} pointerEvents="none">
+            <LogoNaya width={197} height={80} />
+          </View>
+        </View>
+
+        {/* Champ téléphone + lien : remonte avec le clavier */}
+        <Animated.View style={[styles.bottom, { transform: [{ translateY: bottomAnim }] }]}>
+          <Pressable onPress={() => inputRef.current?.focus()} style={styles.field}>
+            <SquircleView
+              squircleParams={{
+                cornerRadius: 8, cornerSmoothing: 1,
+                fillColor: '#FFFFFF',
+                strokeColor: focused ? colors.primary.DEFAULT : '#E8E8E8',
+                strokeWidth: 1,
+              }}
+              style={StyleSheet.absoluteFillObject}
+              pointerEvents="none"
+            />
+            <Pressable onPress={() => setSheetOpen(true)} style={styles.leftSlot} hitSlop={8}>
+              <View style={styles.flagContainer}>
+                <FlagIcon code={country.code} width={36} height={24} />
               </View>
-            ))}
-            <View style={styles.logoWrapper}>
-              <LogoNaya width={197} height={80} />
-            </View>
-          </View>
-
-          {/* Zone bas : champ téléphone + lien */}
-          <View style={styles.bottom}>
-            <Pressable onPress={() => inputRef.current?.focus()} style={styles.field}>
-              <SquircleView
-                squircleParams={{
-                  cornerRadius: 8, cornerSmoothing: 1,
-                  fillColor: '#FFFFFF',
-                  strokeColor: focused ? colors.primary.DEFAULT : '#E8E8E8',
-                  strokeWidth: 1,
-                }}
-                style={StyleSheet.absoluteFillObject}
-                pointerEvents="none"
-              />
-              <Pressable onPress={() => setSheetOpen(true)} style={styles.leftSlot} hitSlop={8}>
-                <View style={styles.flagContainer}>
-                  <FlagIcon code={country.code} width={36} height={24} />
-                </View>
-                <HugeiconsIcon icon={ArrowDown01Icon} size={16} color={colors.neutral[500]} strokeWidth={1.5} />
-              </Pressable>
-              <Text style={styles.dialCode}>{country.dialCode} </Text>
-              <TextInput
-                ref={inputRef}
-                style={styles.input}
-                placeholder="6 00 00 00 00"
-                placeholderTextColor="#B2B2B2"
-                value={phone}
-                onChangeText={t => {
-                  const formatted = formatPhone(t);
-                  setPhone(formatted);
-                  if (formatted.replace(/\D/g, '').length === 9) handleContinue();
-                }}
-                keyboardType="phone-pad"
-                returnKeyType="done"
-                onSubmitEditing={handleContinue}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-              />
+              <HugeiconsIcon icon={ArrowDown01Icon} size={16} color={colors.neutral[500]} strokeWidth={1.5} />
             </Pressable>
+            <Text style={styles.dialCode}>{country.dialCode} </Text>
+            <TextInput
+              ref={inputRef}
+              style={styles.input}
+              placeholder="6 00 00 00 00"
+              placeholderTextColor="#B2B2B2"
+              value={phone}
+              onChangeText={t => {
+                const formatted = formatPhone(t);
+                setPhone(formatted);
+                if (formatted.replace(/\D/g, '').length === 9) handleContinue();
+              }}
+              keyboardType="phone-pad"
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+            />
+          </Pressable>
 
-            <Pressable style={styles.problemLink}>
-              <Text style={styles.problemText}>Un problème pour vous connecter ?</Text>
-            </Pressable>
-          </View>
+          <Pressable style={styles.problemLink}>
+            <Text style={styles.problemText}>Un problème pour vous connecter ?</Text>
+          </Pressable>
+        </Animated.View>
 
-        </Pressable>
-      </KeyboardAvoidingView>
+      </Pressable>
 
       <CountryPicker
         visible={sheetOpen}
@@ -150,26 +202,22 @@ const styles = StyleSheet.create({
   },
   illustrationArea: {
     flex: 1,
-    overflow: 'hidden',
   },
+  mosaicWrapper: {
+    ...StyleSheet.absoluteFillObject,
+    top: 130,
+  },
+  mosaicImage: {
+    flex: 1,
+    width: '100%',
+  },
+  // Le logo est positionné au-dessus de la mosaïque (rendu après = devant)
   logoWrapper: {
     position: 'absolute',
-    top: 53,
-    left: 81,
-  },
-  photoShadow: {
-    position: 'absolute',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-    borderRadius: 8,
-  },
-  photoClip: {
-    flex: 1,
-    borderRadius: 8,
-    overflow: 'hidden',
+    top: 70,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
   },
   bottom: {
     gap: 24,

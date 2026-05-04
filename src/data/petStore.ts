@@ -5,6 +5,7 @@ export interface Pet {
   sex: string;
   sterilized: string;
   birthDate: string;
+  photoUri?: string;
 }
 
 const pets: Pet[] = [];

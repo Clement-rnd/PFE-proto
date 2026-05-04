@@ -1,9 +1,9 @@
-import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { ImageAdd02Icon, ArrowDown01Icon, Calendar04Icon } from '@hugeicons/core-free-icons';
+import { ImageAdd02Icon, ArrowDown01Icon, Calendar04Icon, ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import Svg, { Defs, ClipPath, Path, Image as SvgImage } from 'react-native-svg';
 import { getSvgPath, SquircleView } from 'react-native-figma-squircle';
 import { Textfield } from '../../src/components/ui/Textfield';
@@ -27,6 +27,7 @@ const SEX_OPTIONS = ['Femelle', 'Mâle', 'Inconnu'];
 const STERILIZED_OPTIONS = ['Oui', 'Non', 'Inconnu'];
 
 export default function AddPetScreen() {
+  const insets = useSafeAreaInsets();
   const hasPets = getPets().length > 0;
   const [name, setName] = useState('');
   const [species, setSpecies] = useState('');
@@ -48,29 +49,27 @@ export default function AddPetScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
       <ScreenBackground />
       {/* Header fixe */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
+          <Pressable onPress={() => router.back()} hitSlop={12}>
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
+          </Pressable>
           <Text style={styles.title}>Ajoutez votre animal</Text>
-          {!hasPets && (
-            <Pressable onPress={() => router.replace('/(tabs)/home')} hitSlop={8}>
-              <Text style={styles.skip}>Passer</Text>
-            </Pressable>
-          )}
         </View>
         <Text style={styles.description}>
           Ajoutez votre animal pour gérer les rendez-vous et les dossiers de santé.
         </Text>
       </View>
 
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 30 }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        automaticallyAdjustKeyboardInsets
       >
         {/* Avatar */}
         <View style={styles.avatarSection}>
@@ -188,6 +187,7 @@ export default function AddPetScreen() {
           </Pressable>
         )}
       </ScrollView>
+      </KeyboardAvoidingView>
 
       <RacePicker
         visible={racePickerOpen}
@@ -246,11 +246,10 @@ const styles = StyleSheet.create({
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: 8,
     height: 44,
   },
-  title: { fontSize: 20, fontWeight: '500', color: '#181818' },
-  skip: { fontSize: 16, fontWeight: '400', color: '#181818' },
+  title: { fontSize: 20, fontWeight: '500', color: '#181818', flex: 1 },
   description: {
     fontSize: 16,
     fontWeight: '300',

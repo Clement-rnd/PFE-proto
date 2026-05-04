@@ -1,25 +1,32 @@
-import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { SquircleView } from 'react-native-figma-squircle';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { SquircleView, getSvgPath } from 'react-native-figma-squircle';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon, ArrowDown01Icon, Calendar04Icon, ImageAdd02Icon } from '@hugeicons/core-free-icons';
+import Svg, { Defs, ClipPath, Path, Image as SvgImage } from 'react-native-svg';
 import { Textfield } from '../../src/components/ui/Textfield';
 import { Button } from '../../src/components/ui/Button';
 import { Chip } from '../../src/components/ui/Chip';
 import { BottomSheet } from '../../src/components/ui/BottomSheet';
 import { RacePicker } from '../../src/components/ui/RacePicker';
+import { PhotoPickerSheet } from '../../src/components/ui/PhotoPickerSheet';
 import { getPets, updatePet, deletePet } from '../../src/data/petStore';
 import { formatDate } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+
+const AVATAR_SIZE = 80;
+const AVATAR_INNER = AVATAR_SIZE - 1;
+const AVATAR_PATH = getSvgPath({ width: AVATAR_INNER, height: AVATAR_INNER, cornerRadius: 15.5, cornerSmoothing: 1 });
 
 const SPECIES = ['Chien', 'Chat', 'Lapin', "Cochon d'Inde", 'Hamster', 'Oiseau', 'Reptile', 'Poisson', 'Autre'];
 const SEX_OPTIONS = ['Femelle', 'Mâle', 'Inconnu'];
 const STERILIZED_OPTIONS = ['Oui', 'Non', 'Inconnu'];
 
 export default function EditPetScreen() {
+  const insets = useSafeAreaInsets();
   const { index } = useLocalSearchParams<{ index: string }>();
   const petIndex = parseInt(index ?? '0', 10);
   const original = getPets()[petIndex];
@@ -30,33 +37,44 @@ export default function EditPetScreen() {
   const [sex, setSex] = useState(original?.sex ?? '');
   const [sterilized, setSterilized] = useState(original?.sterilized ?? '');
   const [birthDate, setBirthDate] = useState(original?.birthDate ?? '');
+  const [photoUri, setPhotoUri] = useState<string | null>(original?.photoUri ?? null);
   const [speciesPickerOpen, setSpeciesPickerOpen] = useState(false);
   const [racePickerOpen, setRacePickerOpen] = useState(false);
   const [deleteSheetOpen, setDeleteSheetOpen] = useState(false);
+  const [photoPickerOpen, setPhotoPickerOpen] = useState(false);
 
   const isValid = name.trim().length > 0 && species.length > 0 && sex.length > 0 && sterilized.length > 0;
 
+  const hasChanges = name !== (original?.name ?? '')
+    || species !== (original?.species ?? '')
+    || JSON.stringify(races) !== JSON.stringify(original?.races ?? [])
+    || sex !== (original?.sex ?? '')
+    || sterilized !== (original?.sterilized ?? '')
+    || birthDate !== (original?.birthDate ?? '')
+    || photoUri !== (original?.photoUri ?? null);
+
   function handleConfirm() {
-    if (!isValid) return;
-    updatePet(petIndex, { name, species, races, sex, sterilized, birthDate });
+    if (!isValid || !hasChanges) return;
+    updatePet(petIndex, { name, species, races, sex, sterilized, birthDate, photoUri: photoUri ?? undefined });
     router.back();
   }
 
   function handleDelete() {
     setDeleteSheetOpen(false);
     deletePet(petIndex);
-    // Wait for the sheet close animation before navigating so useFocusEffect fires cleanly
     setTimeout(() => router.back(), 300);
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
       <ScreenBackground />
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 30 }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets
       >
         {/* Header */}
         <View style={styles.header}>
@@ -64,29 +82,37 @@ export default function EditPetScreen() {
             <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
           </Pressable>
           <Text style={styles.title}>Modifier votre animal</Text>
-          <Pressable onPress={handleConfirm} disabled={!isValid} hitSlop={8}>
-            <Text style={[styles.confirm, !isValid && styles.confirmDisabled]}>Confirmer</Text>
-          </Pressable>
         </View>
 
         {/* Photo */}
         <View style={styles.avatarSection}>
-          <Pressable style={styles.avatar}>
-            <SquircleView
-              squircleParams={{ cornerRadius: 16, cornerSmoothing: 1, fillColor: '#E8E8E8' }}
-              style={StyleSheet.absoluteFillObject}
-              pointerEvents="none"
-            />
-            <SquircleView
-              squircleParams={{ cornerRadius: 16, cornerSmoothing: 1, fillColor: 'rgba(0,0,0,0.3)' }}
-              style={StyleSheet.absoluteFillObject}
-              pointerEvents="none"
-            />
-            <View style={styles.avatarIcon}>
-              <HugeiconsIcon icon={ImageAdd02Icon} size={20} color="#FFFFFF" strokeWidth={1.5} />
-            </View>
+          <Pressable onPress={() => setPhotoPickerOpen(true)}>
+            <Svg width={AVATAR_SIZE} height={AVATAR_SIZE}>
+              <Defs>
+                <ClipPath id="edit-avatar-squircle">
+                  <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" />
+                </ClipPath>
+              </Defs>
+              <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" fill="#FFFFFF" stroke="#E8E8E8" strokeWidth={1} />
+              {photoUri && (
+                <SvgImage
+                  href={photoUri}
+                  width={AVATAR_SIZE}
+                  height={AVATAR_SIZE}
+                  clipPath="url(#edit-avatar-squircle)"
+                  preserveAspectRatio="xMidYMid slice"
+                />
+              )}
+            </Svg>
+            {!photoUri && (
+              <View style={StyleSheet.absoluteFill} pointerEvents="none">
+                <View style={styles.avatarIconWrap}>
+                  <HugeiconsIcon icon={ImageAdd02Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
+                </View>
+              </View>
+            )}
           </Pressable>
-          <Text style={styles.avatarLabel}>Modifier la photo</Text>
+          <Text style={styles.avatarLabel}>{photoUri ? 'Modifier la photo' : 'Ajouter une photo'}</Text>
         </View>
 
         {/* Champs */}
@@ -163,17 +189,25 @@ export default function EditPetScreen() {
           />
         </View>
 
-        {/* Supprimer */}
+        {/* Actions */}
+        <Button label="Confirmer" onPress={handleConfirm} disabled={!isValid || !hasChanges} />
         <Pressable onPress={() => setDeleteSheetOpen(true)} style={styles.deleteLink}>
           <Text style={styles.deleteLinkText}>Supprimer mon animal</Text>
         </Pressable>
       </ScrollView>
+      </KeyboardAvoidingView>
 
       <RacePicker
         visible={racePickerOpen}
         onClose={() => setRacePickerOpen(false)}
         onConfirm={setRaces}
         initial={races}
+      />
+
+      <PhotoPickerSheet
+        visible={photoPickerOpen}
+        onClose={() => setPhotoPickerOpen(false)}
+        onPhoto={setPhotoUri}
       />
 
       <BottomSheet visible={speciesPickerOpen} onClose={() => setSpeciesPickerOpen(false)}>
@@ -235,22 +269,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#181818',
   },
-  confirm: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: colors.primary.DEFAULT,
-  },
-  confirmDisabled: {
-    color: colors.neutral[300],
-  },
   avatarSection: { alignItems: 'center', gap: 8 },
-  avatar: {
-    width: 80,
-    height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarIcon: {
+  avatarIconWrap: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -1,4 +1,4 @@
-import { Pressable, Text, StyleSheet } from 'react-native';
+import { Pressable, Text, StyleSheet, Platform } from 'react-native';
 import { SquircleView } from 'react-native-figma-squircle';
 import { colors } from '../../theme/colors';
 
@@ -12,12 +12,21 @@ interface ButtonProps {
 export function Button({ label, onPress, disabled = false, variant = 'primary' }: ButtonProps) {
   const fillColor = disabled ? '#E8E8E8' : variant === 'danger' ? colors.danger.DEFAULT : colors.primary.DEFAULT;
   return (
-    <Pressable onPress={onPress} disabled={disabled} style={styles.btn}>
-      <SquircleView
-        squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor }}
-        style={StyleSheet.absoluteFillObject}
-        pointerEvents="none"
-      />
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      style={[
+        styles.btn,
+        Platform.OS === 'web' && { backgroundColor: fillColor, borderRadius: 8 },
+      ]}
+    >
+      {Platform.OS !== 'web' && (
+        <SquircleView
+          squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor }}
+          style={StyleSheet.absoluteFillObject}
+          pointerEvents="none"
+        />
+      )}
       <Text style={[styles.label, disabled && styles.labelDisabled]}>{label}</Text>
     </Pressable>
   );

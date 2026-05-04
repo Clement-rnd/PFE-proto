@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowRight01Icon, FemaleSymbolIcon, MaleSymbolIcon } from '@hugeicons/core-free-icons';
 import { SquircleView } from 'react-native-figma-squircle';
@@ -19,12 +19,20 @@ export function PetCard({ pet, onPress }: PetCardProps) {
   const isMale = pet.sex === 'Mâle';
 
   return (
-    <Pressable onPress={onPress} style={styles.card}>
-      <SquircleView
-        squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#FCEEF1', strokeWidth: 1 }}
-        style={StyleSheet.absoluteFillObject}
-        pointerEvents="none"
-      />
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.card,
+        Platform.OS === 'web' && { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#FCEEF1' },
+      ]}
+    >
+      {Platform.OS !== 'web' && (
+        <SquircleView
+          squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#FCEEF1', strokeWidth: 1 }}
+          style={StyleSheet.absoluteFillObject}
+          pointerEvents="none"
+        />
+      )}
 
       {/* Avatar */}
       <View style={styles.avatar}>

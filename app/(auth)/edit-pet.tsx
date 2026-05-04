@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { SquircleView, getSvgPath } from 'react-native-figma-squircle';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -87,29 +87,40 @@ export default function EditPetScreen() {
         {/* Photo */}
         <View style={styles.avatarSection}>
           <Pressable onPress={() => setPhotoPickerOpen(true)}>
-            <Svg width={AVATAR_SIZE} height={AVATAR_SIZE}>
-              <Defs>
-                <ClipPath id="edit-avatar-squircle">
-                  <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" />
-                </ClipPath>
-              </Defs>
-              <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" fill="#FFFFFF" stroke="#E8E8E8" strokeWidth={1} />
-              {photoUri && (
-                <SvgImage
-                  href={photoUri}
-                  width={AVATAR_SIZE}
-                  height={AVATAR_SIZE}
-                  clipPath="url(#edit-avatar-squircle)"
-                  preserveAspectRatio="xMidYMid slice"
-                />
-              )}
-            </Svg>
-            {!photoUri && (
-              <View style={StyleSheet.absoluteFill} pointerEvents="none">
-                <View style={styles.avatarIconWrap}>
-                  <HugeiconsIcon icon={ImageAdd02Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
-                </View>
+            {Platform.OS === 'web' ? (
+              <View style={styles.avatarWeb}>
+                {photoUri
+                  ? <Image source={{ uri: photoUri }} style={styles.avatarWebImage} resizeMode="cover" />
+                  : <HugeiconsIcon icon={ImageAdd02Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
+                }
               </View>
+            ) : (
+              <>
+                <Svg width={AVATAR_SIZE} height={AVATAR_SIZE}>
+                  <Defs>
+                    <ClipPath id="edit-avatar-squircle">
+                      <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" />
+                    </ClipPath>
+                  </Defs>
+                  <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" fill="#FFFFFF" stroke="#E8E8E8" strokeWidth={1} />
+                  {photoUri && (
+                    <SvgImage
+                      href={photoUri}
+                      width={AVATAR_SIZE}
+                      height={AVATAR_SIZE}
+                      clipPath="url(#edit-avatar-squircle)"
+                      preserveAspectRatio="xMidYMid slice"
+                    />
+                  )}
+                </Svg>
+                {!photoUri && (
+                  <View style={StyleSheet.absoluteFill} pointerEvents="none">
+                    <View style={styles.avatarIconWrap}>
+                      <HugeiconsIcon icon={ImageAdd02Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
+                    </View>
+                  </View>
+                )}
+              </>
             )}
           </Pressable>
           <Text style={styles.avatarLabel}>{photoUri ? 'Modifier la photo' : 'Ajouter une photo'}</Text>
@@ -130,12 +141,17 @@ export default function EditPetScreen() {
             <Text style={styles.fieldLabel}>
               Espèce<Text style={styles.asterisk}>*</Text>
             </Text>
-            <Pressable onPress={() => setSpeciesPickerOpen(true)} style={styles.dropdown}>
-              <SquircleView
-                squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#E8E8E8', strokeWidth: 1 }}
-                style={StyleSheet.absoluteFillObject}
-                pointerEvents="none"
-              />
+            <Pressable
+              onPress={() => setSpeciesPickerOpen(true)}
+              style={[styles.dropdown, Platform.OS === 'web' && { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#E8E8E8' }]}
+            >
+              {Platform.OS !== 'web' && (
+                <SquircleView
+                  squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#E8E8E8', strokeWidth: 1 }}
+                  style={StyleSheet.absoluteFillObject}
+                  pointerEvents="none"
+                />
+              )}
               <Text style={[styles.dropdownText, !species && styles.dropdownPlaceholder]}>
                 {species || 'Choisir une espèce'}
               </Text>
@@ -145,12 +161,17 @@ export default function EditPetScreen() {
 
           <View style={styles.fieldWrapper}>
             <Text style={styles.fieldLabel}>Race</Text>
-            <Pressable onPress={() => setRacePickerOpen(true)} style={styles.dropdown}>
-              <SquircleView
-                squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#E8E8E8', strokeWidth: 1 }}
-                style={StyleSheet.absoluteFillObject}
-                pointerEvents="none"
-              />
+            <Pressable
+              onPress={() => setRacePickerOpen(true)}
+              style={[styles.dropdown, Platform.OS === 'web' && { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#E8E8E8' }]}
+            >
+              {Platform.OS !== 'web' && (
+                <SquircleView
+                  squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#E8E8E8', strokeWidth: 1 }}
+                  style={StyleSheet.absoluteFillObject}
+                  pointerEvents="none"
+                />
+              )}
               <Text style={[styles.dropdownText, races.length === 0 && styles.dropdownPlaceholder]}>
                 {races.length > 0 ? races.join(' · ') : 'Choisir une race'}
               </Text>
@@ -217,9 +238,12 @@ export default function EditPetScreen() {
             <Pressable
               key={opt}
               onPress={() => { setSpecies(opt); setSpeciesPickerOpen(false); }}
-              style={styles.pickerRow}
+              style={[
+                styles.pickerRow,
+                Platform.OS === 'web' && opt === species && { backgroundColor: colors.primary[50], borderRadius: 8 },
+              ]}
             >
-              {opt === species && (
+              {Platform.OS !== 'web' && opt === species && (
                 <SquircleView
                   squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: colors.primary[50] }}
                   style={StyleSheet.absoluteFillObject}
@@ -270,6 +294,18 @@ const styles = StyleSheet.create({
     color: '#181818',
   },
   avatarSection: { alignItems: 'center', gap: 8 },
+  avatarWeb: {
+    width: 80,
+    height: 80,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarWebImage: { width: 80, height: 80 },
   avatarIconWrap: {
     flex: 1,
     alignItems: 'center',

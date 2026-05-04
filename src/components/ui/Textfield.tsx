@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Platform } from 'react-native';
 import { useRef, useState } from 'react';
 import type { KeyboardTypeOptions, ReturnKeyTypeOptions, TextInput as TextInputType } from 'react-native';
 import { SquircleView } from 'react-native-figma-squircle';
@@ -63,15 +63,17 @@ export function Textfield({
       ) : null}
 
       <Pressable onPress={() => inputRef.current?.focus()}>
-        <SquircleView
-          squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor, strokeColor, strokeWidth: 1 }}
-          style={styles.content}
-        >
+        <View style={styles.content}>
+          <SquircleView
+            squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor, strokeColor, strokeWidth: 1 }}
+            style={StyleSheet.absoluteFillObject}
+            pointerEvents="none"
+          />
           {leftSlot ?? null}
 
           <TextInput
             ref={inputRef}
-            style={styles.input}
+            style={[styles.input, Platform.OS === 'web' && styles.inputWeb]}
             placeholder={placeholder}
             placeholderTextColor="#B2B2B2"
             value={value}
@@ -89,7 +91,7 @@ export function Textfield({
           />
 
           {rightSlot ?? null}
-        </SquircleView>
+        </View>
       </Pressable>
 
       {helperText ? (
@@ -129,6 +131,9 @@ const styles = StyleSheet.create({
     lineHeight: 16 * 1.2,
     paddingVertical: 0,
   },
+  inputWeb: {
+    outlineStyle: 'none',
+  } as any,
   helperText: {
     fontSize: 12,
     fontWeight: '300',

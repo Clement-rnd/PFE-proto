@@ -63,12 +63,21 @@ export function Textfield({
       ) : null}
 
       <Pressable onPress={() => inputRef.current?.focus()}>
-        <View style={styles.content}>
-          <SquircleView
-            squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor, strokeColor, strokeWidth: 1 }}
-            style={StyleSheet.absoluteFillObject}
-            pointerEvents="none"
-          />
+        <View
+          style={[
+            styles.content,
+            Platform.OS === 'web'
+              ? { backgroundColor: fillColor, borderRadius: 8, borderWidth: 1, borderColor: strokeColor }
+              : null,
+          ]}
+        >
+          {Platform.OS !== 'web' && (
+            <SquircleView
+              squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor, strokeColor, strokeWidth: 1 }}
+              style={StyleSheet.absoluteFillObject}
+              pointerEvents="none"
+            />
+          )}
           {leftSlot ?? null}
 
           <TextInput

@@ -141,7 +141,8 @@ export default function LoginScreen() {
 
         {/* Champ téléphone + lien : remonte avec le clavier */}
         <Animated.View style={[styles.bottom, { transform: [{ translateY: bottomAnim }] }]}>
-          <View
+          <Pressable
+            onPress={() => inputRef.current?.focus()}
             style={[
               styles.field,
               Platform.OS === 'web' && {
@@ -173,7 +174,7 @@ export default function LoginScreen() {
             <Text style={styles.dialCode}>{country.dialCode} </Text>
             <TextInput
               ref={inputRef}
-              style={styles.input}
+              style={[styles.input, Platform.OS === 'web' && { outlineStyle: 'none' } as any]}
               placeholder="6 00 00 00 00"
               placeholderTextColor="#B2B2B2"
               value={phone}
@@ -189,7 +190,7 @@ export default function LoginScreen() {
                 <HugeiconsIcon icon={ArrowRight01Icon} size={20} color="#FFFFFF" strokeWidth={2} />
               </Pressable>
             )}
-          </View>
+          </Pressable>
 
           <Pressable style={styles.problemLink}>
             <Text style={styles.problemText}>Un problème pour vous connecter ?</Text>
@@ -270,7 +271,6 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: colors.neutral[900],
     paddingVertical: 0,
-    ...(Platform.OS === 'web' ? { outlineStyle: 'none' } as any : {}),
   },
   continueBtn: {
     width: 36,

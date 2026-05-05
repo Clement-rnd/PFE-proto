@@ -149,6 +149,7 @@ export default function LoginScreen() {
                 borderRadius: 8,
                 borderWidth: 1,
                 borderColor: focused ? colors.primary.DEFAULT : '#E8E8E8',
+                overflow: 'hidden',
               },
             ]}
           >
@@ -173,7 +174,7 @@ export default function LoginScreen() {
             <Text style={styles.dialCode}>{country.dialCode} </Text>
             <TextInput
               ref={inputRef}
-              style={[styles.input, isValid && { paddingRight: 44 }]}
+              style={styles.input}
               placeholder="6 00 00 00 00"
               placeholderTextColor="#B2B2B2"
               value={phone}
@@ -272,9 +273,6 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   continueBtn: {
-    position: 'absolute',
-    right: 10,
-    top: 10,
     width: 36,
     height: 36,
     borderRadius: 18,

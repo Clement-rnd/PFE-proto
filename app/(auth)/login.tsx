@@ -7,7 +7,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { router, useFocusEffect } from 'expo-router';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
+import { ArrowDown01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { CountryPicker } from '../../src/components/ui/CountryPicker';
 import { FlagIcon } from '../../src/components/ui/FlagIcon';
 import { LogoNaya } from '../../src/components/ui/LogoNaya';
@@ -173,7 +173,7 @@ export default function LoginScreen() {
             <Text style={styles.dialCode}>{country.dialCode} </Text>
             <TextInput
               ref={inputRef}
-              style={styles.input}
+              style={[styles.input, isValid && { paddingRight: 44 }]}
               placeholder="6 00 00 00 00"
               placeholderTextColor="#B2B2B2"
               value={phone}
@@ -184,6 +184,11 @@ export default function LoginScreen() {
               onSubmitEditing={handleContinue}
               returnKeyType="go"
             />
+            {isValid && (
+              <Pressable onPress={handleContinue} style={styles.continueBtn}>
+                <HugeiconsIcon icon={ArrowRight01Icon} size={20} color="#FFFFFF" strokeWidth={2} />
+              </Pressable>
+            )}
           </View>
 
           <Pressable style={styles.problemLink}>
@@ -265,6 +270,17 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: colors.neutral[900],
     paddingVertical: 0,
+  },
+  continueBtn: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.primary.DEFAULT,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   problemLink: {
     alignItems: 'center',

@@ -133,7 +133,14 @@ export default function AnimalDetailsScreen() {
 
         <View style={styles.menu}>
           {MENU_ITEMS.map(item => (
-            <Pressable key={item.key} style={styles.menuItem}>
+            <Pressable
+              key={item.key}
+              style={styles.menuItem}
+              onPress={item.key === 'info'
+                ? () => router.push({ pathname: '/(health)/animal-info', params: { index: petIndex } })
+                : undefined
+              }
+            >
               <View style={styles.iconSlot}>
                 <HugeiconsIcon icon={item.icon} size={24} color={colors.neutral[900]} strokeWidth={1.5} />
               </View>

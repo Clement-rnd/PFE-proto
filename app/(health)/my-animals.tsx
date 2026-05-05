@@ -1,10 +1,9 @@
-import { View, Text, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { Add01Icon, ArrowLeft01Icon } from '@hugeicons/core-free-icons';
-import { SquircleView } from 'react-native-figma-squircle';
 import { PetCard } from '../../src/components/ui/PetCard';
 import { Button } from '../../src/components/ui/Button';
 import { getPets, subscribe } from '../../src/data/petStore';
@@ -71,20 +70,11 @@ export default function HealthMyAnimalsScreen() {
               ))}
             </View>
 
-            <Pressable
+            <Button
+              label="Ajouter un animal"
+              icon={Add01Icon}
               onPress={() => router.push({ pathname: '/(auth)/add-pet', params: { returnBack: '1' } })}
-              style={[styles.addBtn, Platform.OS === 'web' && { backgroundColor: '#FAFAFA', borderRadius: 8, borderWidth: 1, borderColor: '#E8E8E8' }]}
-            >
-              {Platform.OS !== 'web' && (
-                <SquircleView
-                  squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FAFAFA', strokeColor: '#E8E8E8', strokeWidth: 1 }}
-                  style={StyleSheet.absoluteFillObject}
-                  pointerEvents="none"
-                />
-              )}
-              <HugeiconsIcon icon={Add01Icon} size={24} color="#181818" strokeWidth={1.5} />
-              <Text style={styles.addBtnLabel}>Ajouter un animal</Text>
-            </Pressable>
+            />
           </ScrollView>
         </AnimatedEntry>
       )}
@@ -137,12 +127,4 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   list: { gap: 4 },
-  addBtn: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-  },
-  addBtnLabel: { fontSize: 16, fontWeight: '400', color: '#181818' },
 });

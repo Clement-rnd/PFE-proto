@@ -122,6 +122,7 @@ export default function CreateProfileScreen() {
           </View>
         </View>
 
+        <View style={{ flex: 1 }} />
         <Button label="Créer un compte" onPress={handleContinue} disabled={!isValid} />
       </ScrollView>
       </AnimatedEntry>
@@ -146,6 +147,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 30,

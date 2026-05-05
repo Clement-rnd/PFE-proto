@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Platform, Image } from 'react-native';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowRight01Icon, FemaleSymbolIcon, MaleSymbolIcon } from '@hugeicons/core-free-icons';
 import { SquircleView } from 'react-native-figma-squircle';
@@ -9,12 +9,14 @@ import { computeAge } from '../../data/petStore';
 interface PetCardProps {
   pet: Pet;
   onPress?: () => void;
+  borderColor?: string;
 }
 
-export function PetCard({ pet, onPress }: PetCardProps) {
+export function PetCard({ pet, onPress, borderColor = '#E8E8E8' }: PetCardProps) {
   const age = computeAge(pet.birthDate);
   const raceLabel = pet.races.length === 2 ? 'croisé' : pet.races.join(' · ');
   const breedLine = [pet.species, raceLabel].filter(Boolean).join(' · ');
+  const infoLine = [breedLine, age].filter(Boolean).join(' · ');
   const isFemale = pet.sex === 'Femelle';
   const isMale = pet.sex === 'Mâle';
 
@@ -23,12 +25,12 @@ export function PetCard({ pet, onPress }: PetCardProps) {
       onPress={onPress}
       style={[
         styles.card,
-        Platform.OS === 'web' && { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#FCEEF1' },
+        Platform.OS === 'web' && { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor },
       ]}
     >
       {Platform.OS !== 'web' && (
         <SquircleView
-          squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#FCEEF1', strokeWidth: 1 }}
+          squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: borderColor, strokeWidth: 1 }}
           style={StyleSheet.absoluteFillObject}
           pointerEvents="none"
         />
@@ -36,7 +38,10 @@ export function PetCard({ pet, onPress }: PetCardProps) {
 
       {/* Avatar */}
       <View style={styles.avatar}>
-        <View style={styles.avatarPlaceholder} />
+        {pet.photoUri
+          ? <Image source={{ uri: pet.photoUri }} style={styles.avatarImage} resizeMode="cover" />
+          : <View style={styles.avatarPlaceholder} />
+        }
       </View>
 
       {/* Info */}
@@ -50,8 +55,7 @@ export function PetCard({ pet, onPress }: PetCardProps) {
             <HugeiconsIcon icon={MaleSymbolIcon} size={16} color="#4F9EF8" strokeWidth={1.5} />
           )}
         </View>
-        {breedLine ? <Text style={styles.sub} numberOfLines={1}>{breedLine}</Text> : null}
-        {age ? <Text style={styles.sub}>{age}</Text> : null}
+        {infoLine ? <Text style={styles.sub} numberOfLines={1}>{infoLine}</Text> : null}
       </View>
 
       {/* Chevron */}
@@ -73,13 +77,17 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     overflow: 'hidden',
   },
+  avatarImage: {
+    width: 56,
+    height: 56,
+  },
   avatarPlaceholder: {
     flex: 1,
     backgroundColor: '#E8E8E8',
   },
   info: {
     flex: 1,
-    gap: 4,
+    gap: 12,
   },
   nameRow: {
     flexDirection: 'row',

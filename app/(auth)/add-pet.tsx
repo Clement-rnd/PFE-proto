@@ -1,6 +1,6 @@
 import { View, Text, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ImageAdd02Icon, ArrowDown01Icon, ArrowLeft01Icon } from '@hugeicons/core-free-icons';
@@ -30,6 +30,7 @@ const DROPDOWN_WEB = { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth:
 
 export default function AddPetScreen() {
   const insets = useSafeAreaInsets();
+  const { returnBack } = useLocalSearchParams<{ returnBack?: string }>();
   const hasPets = getPets().length > 0;
   const [name, setName] = useState('');
   const [species, setSpecies] = useState('');
@@ -47,7 +48,11 @@ export default function AddPetScreen() {
 
   function handleSubmit() {
     addPet({ name, species, races, sex, sterilized, birthDate });
-    router.push('/(auth)/my-pets');
+    if (returnBack === '1') {
+      router.back();
+    } else {
+      router.push('/(auth)/my-pets');
+    }
   }
 
   return (

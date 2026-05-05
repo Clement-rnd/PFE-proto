@@ -57,6 +57,7 @@ export default function TabsLayout() {
     <Tabs
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{ headerShown: false }}
+      sceneContainerStyle={{ backgroundColor: 'transparent' }}
     >
       <Tabs.Screen name="home" />
       <Tabs.Screen name="health" />

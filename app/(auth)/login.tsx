@@ -7,7 +7,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { router, useFocusEffect } from 'expo-router';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
+import { ArrowDown01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { CountryPicker } from '../../src/components/ui/CountryPicker';
 import { FlagIcon } from '../../src/components/ui/FlagIcon';
 import { LogoNaya } from '../../src/components/ui/LogoNaya';
@@ -103,8 +103,10 @@ export default function LoginScreen() {
     return out;
   }
 
+  const isValid = phone.replace(/\D/g, '').length === 9;
+
   function handleContinue() {
-    if (phone.replace(/\D/g, '').length >= 6) {
+    if (isValid) {
       router.push({
         pathname: '/(auth)/verify',
         params: { phone: `${country.dialCode} ${phone}` },
@@ -176,15 +178,20 @@ export default function LoginScreen() {
               placeholder="6 00 00 00 00"
               placeholderTextColor="#B2B2B2"
               value={phone}
-              onChangeText={t => {
-                const formatted = formatPhone(t);
-                setPhone(formatted);
-                if (formatted.replace(/\D/g, '').length === 9) handleContinue();
-              }}
+              onChangeText={t => setPhone(formatPhone(t))}
               keyboardType="phone-pad"
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
+              onSubmitEditing={handleContinue}
+              returnKeyType="go"
             />
+            <Pressable
+              onPress={handleContinue}
+              disabled={!isValid}
+              style={[styles.continueBtn, isValid && styles.continueBtnActive]}
+            >
+              <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={isValid ? '#FFFFFF' : '#B2B2B2'} strokeWidth={2} />
+            </Pressable>
           </Pressable>
 
           <Pressable style={styles.problemLink}>
@@ -197,7 +204,7 @@ export default function LoginScreen() {
       <CountryPicker
         visible={sheetOpen}
         onClose={() => setSheetOpen(false)}
-        onSelect={setCountry}
+        onSelect={(c) => { setCountry(c); setPhone(''); }}
         selected={country}
       />
     </SafeAreaView>
@@ -266,6 +273,17 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: colors.neutral[900],
     paddingVertical: 0,
+  },
+  continueBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#E8E8E8',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  continueBtnActive: {
+    backgroundColor: colors.primary.DEFAULT,
   },
   problemLink: {
     alignItems: 'center',

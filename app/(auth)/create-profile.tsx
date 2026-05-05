@@ -14,6 +14,7 @@ import type { Country } from '../../src/data/countries';
 import { formatDate } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 type CountryWithFlag = Country & { flag: string };
 
@@ -39,6 +40,7 @@ export default function CreateProfileScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       <ScreenBackground />
+      <AnimatedEntry delay={0}>
       {/* Header fixe */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
@@ -51,7 +53,9 @@ export default function CreateProfileScreen() {
           Ajoutez vos informations personnelles pour terminer la configuration de votre compte.
         </Text>
       </View>
+      </AnimatedEntry>
 
+      <AnimatedEntry delay={100} style={{ flex: 1 }}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 16 }]}
@@ -120,6 +124,7 @@ export default function CreateProfileScreen() {
 
         <Button label="Créer un compte" onPress={handleContinue} disabled={!isValid} />
       </ScrollView>
+      </AnimatedEntry>
 
       <CountryPicker
         visible={pickerOpen}

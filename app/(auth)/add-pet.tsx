@@ -16,6 +16,7 @@ import { addPet, getPets } from '../../src/data/petStore';
 import { formatDate } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const AVATAR_SIZE = 80;
 const AVATAR_INNER = AVATAR_SIZE - 1;
@@ -51,6 +52,7 @@ export default function AddPetScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       <ScreenBackground />
+      <AnimatedEntry delay={0}>
       <View style={styles.header}>
         <View style={styles.titleRow}>
           <Pressable onPress={() => router.back()} hitSlop={12}>
@@ -62,7 +64,9 @@ export default function AddPetScreen() {
           Ajoutez votre animal pour gérer les rendez-vous et les dossiers de santé.
         </Text>
       </View>
+      </AnimatedEntry>
 
+      <AnimatedEntry delay={100} style={{ flex: 1 }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView
         style={styles.scroll}
@@ -203,6 +207,7 @@ export default function AddPetScreen() {
         )}
       </ScrollView>
       </KeyboardAvoidingView>
+      </AnimatedEntry>
 
       <RacePicker
         visible={racePickerOpen}

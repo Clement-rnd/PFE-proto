@@ -7,6 +7,7 @@ import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const CODE_LENGTH = 6;
 
@@ -41,13 +42,15 @@ export default function VerifyScreen() {
       >
         <Pressable style={styles.inner} onPress={() => Keyboard.dismiss()}>
           {/* Header */}
-          <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={24} color={colors.neutral[900]} strokeWidth={1.5} />
-            <Text style={styles.title}>Vérifiez votre numéro</Text>
-          </Pressable>
+          <AnimatedEntry delay={0}>
+            <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
+              <HugeiconsIcon icon={ArrowLeft01Icon} size={24} color={colors.neutral[900]} strokeWidth={1.5} />
+              <Text style={styles.title}>Vérifiez votre numéro</Text>
+            </Pressable>
+          </AnimatedEntry>
 
           {/* Zone bas */}
-          <View style={styles.bottom}>
+          <AnimatedEntry delay={120} style={styles.bottom}>
             <Text style={styles.instruction}>
               Entrez le code que vous avez reçu au{'\n'}
               <Text style={styles.phone}>{phone}</Text>
@@ -83,7 +86,7 @@ export default function VerifyScreen() {
             <Pressable style={styles.resendLink}>
               <Text style={styles.resendText}>Envoyer un nouveau code</Text>
             </Pressable>
-          </View>
+          </AnimatedEntry>
         </Pressable>
       </ScrollView>
 

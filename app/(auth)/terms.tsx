@@ -8,6 +8,7 @@ import { ArrowLeft01Icon, Tick01Icon } from '@hugeicons/core-free-icons';
 import { Button } from '../../src/components/ui/Button';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 function Checkbox({ checked, onPress }: { checked: boolean; onPress: () => void }) {
   return (
@@ -54,15 +55,17 @@ export default function TermsScreen() {
       <View style={styles.body}>
 
         {/* Header */}
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} hitSlop={12}>
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
-          </Pressable>
-          <Text style={styles.title}>Conditions générales d'utilisation</Text>
-        </View>
+        <AnimatedEntry delay={0}>
+          <View style={styles.header}>
+            <Pressable onPress={() => router.back()} hitSlop={12}>
+              <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
+            </Pressable>
+            <Text style={styles.title}>Conditions générales d'utilisation</Text>
+          </View>
+        </AnimatedEntry>
 
         {/* Contenu centré */}
-        <View style={styles.content}>
+        <AnimatedEntry delay={100} style={styles.content}>
           <View style={styles.illustration}>
             <View style={styles.illustrationPlaceholder} />
           </View>
@@ -98,13 +101,15 @@ export default function TermsScreen() {
               </Text>
             </Pressable>
           </View>
-        </View>
+        </AnimatedEntry>
 
-        <Button
-          label="Continuer"
-          onPress={() => router.push('/(auth)/add-pet')}
-          disabled={!canContinue}
-        />
+        <AnimatedEntry delay={200}>
+          <Button
+            label="Continuer"
+            onPress={() => router.push('/(auth)/add-pet')}
+            disabled={!canContinue}
+          />
+        </AnimatedEntry>
       </View>
     </SafeAreaView>
   );

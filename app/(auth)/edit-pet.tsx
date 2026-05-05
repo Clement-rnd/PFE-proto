@@ -16,6 +16,7 @@ import { getPets, updatePet, deletePet } from '../../src/data/petStore';
 import { formatDate } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const AVATAR_SIZE = 80;
 const AVATAR_INNER = AVATAR_SIZE - 1;
@@ -77,14 +78,17 @@ export default function EditPetScreen() {
         automaticallyAdjustKeyboardInsets
       >
         {/* Header */}
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} hitSlop={12}>
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
-          </Pressable>
-          <Text style={styles.title}>Modifier votre animal</Text>
-        </View>
+        <AnimatedEntry delay={0}>
+          <View style={styles.header}>
+            <Pressable onPress={() => router.back()} hitSlop={12}>
+              <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
+            </Pressable>
+            <Text style={styles.title}>Modifier votre animal</Text>
+          </View>
+        </AnimatedEntry>
 
         {/* Photo */}
+        <AnimatedEntry delay={80}>
         <View style={styles.avatarSection}>
           <Pressable onPress={() => setPhotoPickerOpen(true)}>
             {Platform.OS === 'web' ? (
@@ -125,8 +129,10 @@ export default function EditPetScreen() {
           </Pressable>
           <Text style={styles.avatarLabel}>{photoUri ? 'Modifier la photo' : 'Ajouter une photo'}</Text>
         </View>
+        </AnimatedEntry>
 
         {/* Champs */}
+        <AnimatedEntry delay={160}>
         <View style={styles.form}>
           <Textfield
             label="Nom de l'animal"
@@ -209,12 +215,15 @@ export default function EditPetScreen() {
             keyboardType="number-pad"
           />
         </View>
+        </AnimatedEntry>
 
         {/* Actions */}
-        <Button label="Confirmer" onPress={handleConfirm} disabled={!isValid || !hasChanges} />
-        <Pressable onPress={() => setDeleteSheetOpen(true)} style={styles.deleteLink}>
-          <Text style={styles.deleteLinkText}>Supprimer mon animal</Text>
-        </Pressable>
+        <AnimatedEntry delay={240}>
+          <Button label="Confirmer" onPress={handleConfirm} disabled={!isValid || !hasChanges} />
+          <Pressable onPress={() => setDeleteSheetOpen(true)} style={styles.deleteLink}>
+            <Text style={styles.deleteLinkText}>Supprimer mon animal</Text>
+          </Pressable>
+        </AnimatedEntry>
       </ScrollView>
       </KeyboardAvoidingView>
 

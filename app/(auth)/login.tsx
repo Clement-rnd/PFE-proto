@@ -141,8 +141,7 @@ export default function LoginScreen() {
 
         {/* Champ téléphone + lien : remonte avec le clavier */}
         <Animated.View style={[styles.bottom, { transform: [{ translateY: bottomAnim }] }]}>
-          <Pressable
-            onPress={() => inputRef.current?.focus()}
+          <View
             style={[
               styles.field,
               Platform.OS === 'web' && {
@@ -185,14 +184,12 @@ export default function LoginScreen() {
               onSubmitEditing={handleContinue}
               returnKeyType="go"
             />
-            <Pressable
-              onPress={handleContinue}
-              disabled={!isValid}
-              style={[styles.continueBtn, isValid && styles.continueBtnActive]}
-            >
-              <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={isValid ? '#FFFFFF' : '#B2B2B2'} strokeWidth={2} />
-            </Pressable>
-          </Pressable>
+            {isValid && (
+              <Pressable onPress={handleContinue} style={styles.continueBtn}>
+                <HugeiconsIcon icon={ArrowRight01Icon} size={20} color="#FFFFFF" strokeWidth={2} />
+              </Pressable>
+            )}
+          </View>
 
           <Pressable style={styles.problemLink}>
             <Text style={styles.problemText}>Un problème pour vous connecter ?</Text>
@@ -278,12 +275,9 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#E8E8E8',
+    backgroundColor: colors.primary.DEFAULT,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  continueBtnActive: {
-    backgroundColor: colors.primary.DEFAULT,
   },
   problemLink: {
     alignItems: 'center',

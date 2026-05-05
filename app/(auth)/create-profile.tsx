@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
 import { SquircleView } from 'react-native-figma-squircle';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -107,12 +107,20 @@ export default function CreateProfileScreen() {
             <Text style={styles.dropdownLabel}>
               Pays de résidence<Text style={styles.asterisk}>*</Text>
             </Text>
-            <Pressable onPress={() => setPickerOpen(true)} style={styles.dropdown}>
-              <SquircleView
-                squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#E8E8E8', strokeWidth: 1 }}
-                style={StyleSheet.absoluteFillObject}
-                pointerEvents="none"
-              />
+            <Pressable
+              onPress={() => setPickerOpen(true)}
+              style={[
+                styles.dropdown,
+                Platform.OS === 'web' && { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#E8E8E8' },
+              ]}
+            >
+              {Platform.OS !== 'web' && (
+                <SquircleView
+                  squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#E8E8E8', strokeWidth: 1 }}
+                  style={StyleSheet.absoluteFillObject}
+                  pointerEvents="none"
+                />
+              )}
               <View style={styles.flagBox}>
                 <FlagIcon code={country.code} width={36} height={24} />
               </View>

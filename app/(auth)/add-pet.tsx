@@ -59,17 +59,17 @@ export default function AddPetScreen() {
     <SafeAreaView style={styles.screen} edges={['top']}>
       <ScreenBackground />
       <AnimatedEntry delay={0}>
-      <View style={styles.header}>
         <View style={styles.titleRow}>
           <Pressable onPress={() => router.back()} hitSlop={12}>
             <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
           </Pressable>
           <Text style={styles.title}>Ajoutez votre animal</Text>
+          {!hasPets && (
+            <Pressable onPress={() => router.push('/(auth)/my-pets')} hitSlop={12}>
+              <Text style={styles.skipLink}>Passer</Text>
+            </Pressable>
+          )}
         </View>
-        <Text style={styles.description}>
-          Ajoutez votre animal pour gérer les rendez-vous et les dossiers de santé.
-        </Text>
-      </View>
       </AnimatedEntry>
 
       <AnimatedEntry delay={100} style={{ flex: 1 }}>
@@ -80,6 +80,10 @@ export default function AddPetScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        <Text style={styles.description}>
+          Ajoutez votre animal pour gérer les rendez-vous et les dossiers de santé.
+        </Text>
+
         {/* Avatar */}
         <View style={styles.avatarSection}>
           <Pressable onPress={() => setPhotoPickerOpen(true)}>
@@ -265,17 +269,13 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     gap: 24,
   },
-  header: {
-    gap: 4,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     height: 44,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   title: { fontSize: 20, fontWeight: '500', color: '#181818', flex: 1 },
   description: {
@@ -335,4 +335,5 @@ const styles = StyleSheet.create({
   pickerRowTextSelected: { color: colors.primary.DEFAULT, fontWeight: '500' },
   cancelLink: { alignItems: 'center', paddingVertical: 8 },
   cancelLinkText: { fontSize: 16, fontWeight: '500', color: '#181818' },
+  skipLink: { fontSize: 16, fontWeight: '300', color: colors.neutral[500] },
 });

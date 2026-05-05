@@ -65,7 +65,7 @@ export default function AddPetScreen() {
           </Pressable>
           <Text style={styles.title}>Ajoutez votre animal</Text>
           {!hasPets && (
-            <Pressable onPress={() => router.push('/(auth)/my-pets')} hitSlop={12}>
+            <Pressable onPress={() => router.replace('/(tabs)/home')} hitSlop={12}>
               <Text style={styles.skipLink}>Passer</Text>
             </Pressable>
           )}

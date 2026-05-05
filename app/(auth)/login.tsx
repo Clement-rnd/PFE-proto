@@ -149,7 +149,6 @@ export default function LoginScreen() {
                 borderRadius: 8,
                 borderWidth: 1,
                 borderColor: focused ? colors.primary.DEFAULT : '#E8E8E8',
-                overflow: 'hidden',
               },
             ]}
           >
@@ -271,6 +270,7 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: colors.neutral[900],
     paddingVertical: 0,
+    ...(Platform.OS === 'web' ? { outlineStyle: 'none' } as any : {}),
   },
   continueBtn: {
     width: 36,

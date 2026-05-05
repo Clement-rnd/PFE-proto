@@ -13,6 +13,7 @@ import { FlagIcon } from '../../src/components/ui/FlagIcon';
 import { LogoNaya } from '../../src/components/ui/LogoNaya';
 import { DEFAULT_COUNTRY } from '../../src/data/countries';
 import type { Country } from '../../src/data/countries';
+import { addPet, getPets } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
@@ -114,10 +115,21 @@ export default function LoginScreen() {
     }
   }
 
+  function handleSkip() {
+    if (getPets().length === 0) {
+      addPet({ name: 'Luna', species: 'Chat', races: ['Européen'], sex: 'Femelle', sterilized: 'Oui', birthDate: '12/03/2021' });
+      addPet({ name: 'Rocky', species: 'Chien', races: ['Labrador'], sex: 'Mâle', sterilized: 'Non', birthDate: '05/07/2019' });
+    }
+    router.replace('/(tabs)/home');
+  }
+
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <ScreenBackground />
       <Pressable style={styles.inner} onPress={Keyboard.dismiss}>
+        <Pressable onPress={handleSkip} style={styles.skipDevBtn} hitSlop={12}>
+          <Text style={styles.skipDevText}>Skip</Text>
+        </Pressable>
 
         {/* Zone illustration */}
         <View style={styles.illustrationArea}>
@@ -279,6 +291,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary.DEFAULT,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  skipDevBtn: {
+    alignSelf: 'flex-end',
+  },
+  skipDevText: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: colors.neutral[400],
+    textDecorationLine: 'underline',
   },
   problemLink: {
     alignItems: 'center',

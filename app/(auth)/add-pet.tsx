@@ -64,7 +64,7 @@ export default function AddPetScreen() {
             <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
           </Pressable>
           <Text style={styles.title}>Ajoutez votre animal</Text>
-          {!hasPets && (
+          {!hasPets && returnBack !== '1' && (
             <Pressable onPress={() => router.replace('/(tabs)/home')} hitSlop={12}>
               <Text style={styles.skipLink}>Passer</Text>
             </Pressable>

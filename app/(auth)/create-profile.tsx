@@ -11,7 +11,7 @@ import { CountryPicker } from '../../src/components/ui/CountryPicker';
 import { FlagIcon } from '../../src/components/ui/FlagIcon';
 import { DEFAULT_COUNTRY } from '../../src/data/countries';
 import type { Country } from '../../src/data/countries';
-import { formatDate } from '../../src/utils/date';
+import { formatDate, isDateComplete } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
@@ -29,7 +29,7 @@ export default function CreateProfileScreen() {
 
   const isValid = firstName.trim().length > 0
     && lastName.trim().length > 0
-    && birthDate.trim().length > 0;
+    && isDateComplete(birthDate);
 
   function handleContinue() {
     if (isValid) {

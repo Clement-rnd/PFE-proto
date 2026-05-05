@@ -13,7 +13,7 @@ import { BottomSheet } from '../../src/components/ui/BottomSheet';
 import { RacePicker } from '../../src/components/ui/RacePicker';
 import { PhotoPickerSheet } from '../../src/components/ui/PhotoPickerSheet';
 import { addPet, getPets } from '../../src/data/petStore';
-import { formatDate } from '../../src/utils/date';
+import { formatDate, isDateComplete } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
@@ -42,7 +42,8 @@ export default function AddPetScreen() {
   const [photoPickerOpen, setPhotoPickerOpen] = useState(false);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
 
-  const isValid = name.trim().length > 0 && species.length > 0 && sex.length > 0 && sterilized.length > 0;
+  const isValid = name.trim().length > 0 && species.length > 0 && sex.length > 0 && sterilized.length > 0
+    && (birthDate.length === 0 || isDateComplete(birthDate));
 
   function handleSubmit() {
     addPet({ name, species, races, sex, sterilized, birthDate });

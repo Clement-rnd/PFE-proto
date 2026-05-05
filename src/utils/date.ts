@@ -51,3 +51,7 @@ export function formatDate(raw: string): string {
 
   return `${dd}/${mm}/${yyyy}`;
 }
+
+export function isDateComplete(date: string): boolean {
+  return date.length === 10;
+}

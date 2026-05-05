@@ -65,7 +65,7 @@ export default function HealthMyAnimalsScreen() {
                 <PetCard
                   key={i}
                   pet={pet}
-                  onPress={() => router.push({ pathname: '/(auth)/edit-pet', params: { index: i } })}
+                  onPress={() => router.push({ pathname: '/(health)/animal-details', params: { index: i } })}
                 />
               ))}
             </View>

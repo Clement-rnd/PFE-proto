@@ -1,7 +1,7 @@
-import { View, Text, Pressable, StyleSheet, Image, Platform, Modal } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Image, Platform, Modal, Animated, Easing } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import {
   ArrowLeft01Icon, MoreVerticalIcon, ArrowRight01Icon,
@@ -31,7 +31,11 @@ export default function AnimalDetailsScreen() {
   const petIndex = parseInt(index ?? '0', 10);
   const pets = getPets();
   const pet = pets[petIndex];
+
   const [menuOpen, setMenuOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const sheetY = useRef(new Animated.Value(300)).current;
+  const backdropOpacity = useRef(new Animated.Value(0)).current;
 
   if (!pet) {
     router.back();
@@ -43,8 +47,32 @@ export default function AnimalDetailsScreen() {
   const sexIcon = pet.sex === 'Femelle' ? FemaleSymbolIcon : pet.sex === 'Mâle' ? MaleSymbolIcon : null;
   const sexColor = pet.sex === 'Femelle' ? colors.primary.DEFAULT : '#4A90D9';
 
-  function handleDelete() {
-    setMenuOpen(false);
+  function openMenu() {
+    sheetY.setValue(300);
+    backdropOpacity.setValue(0);
+    setMenuOpen(true);
+    Animated.parallel([
+      Animated.spring(sheetY, { toValue: 0, useNativeDriver: true, damping: 22, stiffness: 260 }),
+      Animated.timing(backdropOpacity, { toValue: 1, duration: 220, useNativeDriver: true }),
+    ]).start();
+  }
+
+  function closeMenu(callback?: () => void) {
+    Animated.parallel([
+      Animated.timing(sheetY, { toValue: 300, duration: 260, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(backdropOpacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+    ]).start(() => {
+      setMenuOpen(false);
+      callback?.();
+    });
+  }
+
+  function handleDeletePress() {
+    closeMenu(() => setDeleteOpen(true));
+  }
+
+  function handleDeleteConfirm() {
+    setDeleteOpen(false);
     deletePet(petIndex);
     router.back();
   }
@@ -58,7 +86,7 @@ export default function AnimalDetailsScreen() {
           <Pressable onPress={() => router.back()} hitSlop={12}>
             <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
           </Pressable>
-          <Pressable onPress={() => setMenuOpen(true)} hitSlop={12}>
+          <Pressable onPress={openMenu} hitSlop={12}>
             <HugeiconsIcon icon={MoreVerticalIcon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
           </Pressable>
         </View>
@@ -120,9 +148,10 @@ export default function AnimalDetailsScreen() {
       </AnimatedEntry>
 
       {/* Action sheet */}
-      <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
-        <Pressable style={styles.backdrop} onPress={() => setMenuOpen(false)}>
-          <Pressable style={styles.sheet} onPress={() => {}}>
+      <Modal visible={menuOpen} transparent animationType="none" onRequestClose={() => closeMenu()}>
+        <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => closeMenu()} />
+          <Animated.View style={[styles.sheet, { transform: [{ translateY: sheetY }] }]}>
             <View style={styles.sheetCard}>
               <Pressable style={styles.sheetItem}>
                 <HugeiconsIcon icon={Share05Icon} size={24} color={colors.neutral[900]} strokeWidth={1.5} />
@@ -132,17 +161,41 @@ export default function AnimalDetailsScreen() {
                 <HugeiconsIcon icon={Share03Icon} size={24} color={colors.neutral[900]} strokeWidth={1.5} />
                 <Text style={styles.sheetLabel}>Exporter les informations en PDF</Text>
               </Pressable>
-              <Pressable style={styles.sheetItem} onPress={handleDelete}>
+              <Pressable style={styles.sheetItem} onPress={handleDeletePress}>
                 <HugeiconsIcon icon={Delete02Icon} size={24} color={colors.danger.DEFAULT} strokeWidth={1.5} />
                 <Text style={[styles.sheetLabel, styles.sheetLabelDanger]}>Supprimer mon animal</Text>
               </Pressable>
             </View>
-
-            <Pressable style={styles.sheetCancel} onPress={() => setMenuOpen(false)}>
+            <Pressable style={styles.sheetCancel} onPress={() => closeMenu()}>
               <Text style={styles.sheetCancelLabel}>Annuler</Text>
             </Pressable>
-          </Pressable>
-        </Pressable>
+          </Animated.View>
+        </Animated.View>
+      </Modal>
+
+      {/* Delete confirmation dialog */}
+      <Modal visible={deleteOpen} transparent animationType="fade" onRequestClose={() => setDeleteOpen(false)}>
+        <View style={styles.dialogBackdrop}>
+          <View style={styles.dialog}>
+            <Text style={styles.dialogTitle}>Supprimer {pet.name}</Text>
+            <View style={styles.dialogBody}>
+              <Text style={styles.dialogText}>
+                {'Cette action est irréversible. '}
+              </Text>
+              <Text style={styles.dialogText}>
+                Toutes les données de {pet.name}, y compris son carnet de santé et ses documents, seront définitivement supprimées.
+              </Text>
+            </View>
+            <View style={styles.dialogActions}>
+              <Pressable style={styles.dialogBtnCancel} onPress={() => setDeleteOpen(false)}>
+                <Text style={styles.dialogBtnCancelLabel}>Annuler</Text>
+              </Pressable>
+              <Pressable style={styles.dialogBtnDelete} onPress={handleDeleteConfirm}>
+                <Text style={styles.dialogBtnDeleteLabel}>Supprimer</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
       </Modal>
     </SafeAreaView>
   );
@@ -164,10 +217,7 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     gap: 24,
   },
-  profile: {
-    alignItems: 'center',
-    gap: 16,
-  },
+  profile: { alignItems: 'center', gap: 16 },
   avatarWeb: {
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
@@ -179,20 +229,11 @@ const styles = StyleSheet.create({
   },
   avatarWebImg: { width: AVATAR_SIZE, height: AVATAR_SIZE },
   avatarPlaceholder: { flex: 1, backgroundColor: '#F5F5F5' },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   name: { fontSize: 24, fontWeight: '500', color: '#181818' },
   infoLine: { fontSize: 14, fontWeight: '300', color: '#4F4F4F', lineHeight: 14 * 1.2 },
   menu: { gap: 4 },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 56,
-    gap: 8,
-  },
+  menuItem: { flexDirection: 'row', alignItems: 'center', height: 56, gap: 8 },
   iconSlot: { width: 24, alignItems: 'center', justifyContent: 'center' },
   menuContent: { flex: 1, gap: 4, justifyContent: 'center' },
   menuLabel: { fontSize: 16, fontWeight: '300', color: '#181818' },
@@ -206,9 +247,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 50,
   },
-  sheet: {
-    gap: 8,
-  },
+  sheet: { gap: 8 },
   sheetCard: {
     backgroundColor: '#FAFAFA',
     borderRadius: 16,
@@ -237,4 +276,49 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   sheetCancelLabel: { fontSize: 16, fontWeight: '300', color: '#181818' },
+
+  // Delete dialog
+  dialogBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(9,10,10,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  dialog: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 16,
+    gap: 24,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  dialogTitle: { fontSize: 20, fontWeight: '500', color: '#181818', lineHeight: 20 * 1.2 },
+  dialogBody: { gap: 8 },
+  dialogText: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
+  dialogActions: { flexDirection: 'row', gap: 16 },
+  dialogBtnCancel: {
+    flex: 1,
+    height: 48,
+    backgroundColor: '#EDEDED',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dialogBtnCancelLabel: { fontSize: 14, fontWeight: '300', color: '#181818' },
+  dialogBtnDelete: {
+    flex: 1,
+    height: 48,
+    backgroundColor: '#E11D48',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dialogBtnDeleteLabel: { fontSize: 14, fontWeight: '300', color: '#FFF1F2' },
 });

@@ -114,23 +114,23 @@ export default function AnimalInfoScreen() {
     Animated.spring(segAnim, {
       toValue: newTab === 'general' ? 0 : 1,
       useNativeDriver: true,
-      damping: 20,
-      stiffness: 200,
+      damping: 32,
+      stiffness: 180,
     }).start();
 
     Animated.timing(contentTranslateX, {
       toValue: direction * -SLIDE_DISTANCE,
-      duration: 200,
-      easing: Easing.out(Easing.cubic),
+      duration: 210,
+      easing: Easing.inOut(Easing.quad),
       useNativeDriver: true,
     }).start(() => {
       contentTranslateX.setValue(direction * SLIDE_DISTANCE);
       setTab(newTab);
-      Animated.spring(contentTranslateX, {
+      Animated.timing(contentTranslateX, {
         toValue: 0,
+        duration: 260,
+        easing: Easing.out(Easing.quad),
         useNativeDriver: true,
-        damping: 22,
-        stiffness: 220,
       }).start();
     });
   }

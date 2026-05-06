@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView, StyleSheet, Image, Platform, Animated } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, Image, Platform, Animated, Dimensions, Easing } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState, useRef } from 'react';
@@ -14,10 +14,18 @@ import { getSvgPath } from 'react-native-figma-squircle';
 import { usePets } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
-import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const AVATAR_SIZE = 80;
 const AVATAR_PATH = getSvgPath({ width: AVATAR_SIZE - 1, height: AVATAR_SIZE - 1, cornerRadius: 13, cornerSmoothing: 1 });
+const SLIDE_DISTANCE = Dimensions.get('window').width;
+
+const PET_IMAGES = [
+  require('../../assets/images/pet-1.png'),
+  require('../../assets/images/pet-2.png'),
+  require('../../assets/images/pet-3.png'),
+  require('../../assets/images/pet-4.png'),
+  require('../../assets/images/pet-5.png'),
+];
 
 type Tab = 'general' | 'medical';
 
@@ -88,12 +96,11 @@ export default function AnimalInfoScreen() {
   const [segContainerWidth, setSegContainerWidth] = useState(0);
 
   const segAnim = useRef(new Animated.Value(0)).current;
-  const contentOpacity = useRef(new Animated.Value(1)).current;
-  const contentTranslateY = useRef(new Animated.Value(0)).current;
+  const contentTranslateX = useRef(new Animated.Value(0)).current;
 
   if (!pet) return null;
 
-  // segmented pill: container = padding(4)*2 + gap(8) + 2*segWidth → segWidth = (W-16)/2
+  const fallbackImage = PET_IMAGES[petIndex % PET_IMAGES.length];
   const segWidth = segContainerWidth > 0 ? (segContainerWidth - 16) / 2 : 0;
   const pillTranslateX = segAnim.interpolate({
     inputRange: [0, 1],
@@ -102,19 +109,29 @@ export default function AnimalInfoScreen() {
 
   function switchTab(newTab: Tab) {
     if (newTab === tab) return;
+    const direction = newTab === 'medical' ? 1 : -1;
+
     Animated.spring(segAnim, {
       toValue: newTab === 'general' ? 0 : 1,
       useNativeDriver: true,
       damping: 20,
       stiffness: 200,
     }).start();
-    Animated.timing(contentOpacity, { toValue: 0, duration: 80, useNativeDriver: true }).start(() => {
+
+    Animated.timing(contentTranslateX, {
+      toValue: direction * -SLIDE_DISTANCE,
+      duration: 200,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start(() => {
+      contentTranslateX.setValue(direction * SLIDE_DISTANCE);
       setTab(newTab);
-      contentTranslateY.setValue(14);
-      Animated.parallel([
-        Animated.timing(contentOpacity, { toValue: 1, duration: 180, useNativeDriver: true }),
-        Animated.spring(contentTranslateY, { toValue: 0, useNativeDriver: true, damping: 18, stiffness: 180 }),
-      ]).start();
+      Animated.spring(contentTranslateX, {
+        toValue: 0,
+        useNativeDriver: true,
+        damping: 22,
+        stiffness: 220,
+      }).start();
     });
   }
 
@@ -122,28 +139,27 @@ export default function AnimalInfoScreen() {
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <ScreenBackground />
 
-      <AnimatedEntry delay={0}>
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} hitSlop={12}>
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
-          </Pressable>
-          <Text style={styles.title}>Informations</Text>
-          <Pressable
-            hitSlop={12}
-            onPress={() => router.push({ pathname: '/(health)/animal-edit', params: { index: String(petIndex) } })}
-          >
-            <Text style={styles.actionBtn}>Modifier</Text>
-          </Pressable>
-        </View>
-      </AnimatedEntry>
+      {/* Header — pas d'animation d'entrée */}
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} hitSlop={12}>
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
+        </Pressable>
+        <Text style={styles.title}>Informations</Text>
+        <Pressable
+          hitSlop={12}
+          onPress={() => router.push({ pathname: '/(health)/animal-edit', params: { index: String(petIndex) } })}
+        >
+          <Text style={styles.actionBtn}>Modifier</Text>
+        </Pressable>
+      </View>
 
-      <AnimatedEntry delay={100} style={styles.body}>
+      <View style={styles.body}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Segmented control */}
+          {/* Segmented control — pas d'animation d'entrée, seul le pill slide */}
           <View
             style={styles.segmented}
             onLayout={(e) => setSegContainerWidth(e.nativeEvent.layout.width)}
@@ -161,100 +177,101 @@ export default function AnimalInfoScreen() {
             </Pressable>
           </View>
 
-          {/* Animated tab content */}
-          <Animated.View style={[styles.tabContent, { opacity: contentOpacity, transform: [{ translateY: contentTranslateY }] }]}>
-            {tab === 'general' ? (
-              <>
-                {/* Avatar */}
-                <View style={styles.avatarRow}>
-                  {Platform.OS === 'web' ? (
-                    <View style={styles.avatarWeb}>
-                      {pet.photoUri
-                        ? <Image source={{ uri: pet.photoUri }} style={styles.avatarWebImg} resizeMode="cover" />
-                        : <View style={styles.avatarPlaceholder} />
-                      }
-                    </View>
-                  ) : (
-                    <Svg width={AVATAR_SIZE} height={AVATAR_SIZE}>
-                      <Defs>
-                        <ClipPath id={`info-clip-${petIndex}`}>
-                          <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" />
-                        </ClipPath>
-                      </Defs>
-                      <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" fill="#FFFFFF" stroke="#E8E8E8" strokeWidth={1} />
-                      {pet.photoUri && (
+          {/* Contenu qui slide gauche/droite */}
+          <View style={styles.tabContentClip}>
+            <Animated.View style={[styles.tabContent, { transform: [{ translateX: contentTranslateX }] }]}>
+              {tab === 'general' ? (
+                <>
+                  {/* Avatar */}
+                  <View style={styles.avatarRow}>
+                    {Platform.OS === 'web' ? (
+                      <View style={styles.avatarWeb}>
+                        <Image
+                          source={pet.photoUri ? { uri: pet.photoUri } : fallbackImage}
+                          style={styles.avatarWebImg}
+                          resizeMode="cover"
+                        />
+                      </View>
+                    ) : (
+                      <Svg width={AVATAR_SIZE} height={AVATAR_SIZE}>
+                        <Defs>
+                          <ClipPath id={`info-clip-${petIndex}`}>
+                            <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" />
+                          </ClipPath>
+                        </Defs>
+                        <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" fill="#FFFFFF" stroke="#E8E8E8" strokeWidth={1} />
                         <SvgImage
-                          href={pet.photoUri}
+                          href={pet.photoUri ?? fallbackImage}
                           width={AVATAR_SIZE}
                           height={AVATAR_SIZE}
                           clipPath={`url(#info-clip-${petIndex})`}
                           preserveAspectRatio="xMidYMid slice"
                         />
-                      )}
-                    </Svg>
-                  )}
-                </View>
+                      </Svg>
+                    )}
+                  </View>
 
-                <Section title="Identité">
-                  <InfoRow label="Nom de l'animal" value={pet.name} />
-                  <Divider />
-                  <InfoRow label="Espèce" value={pet.species} />
-                  <Divider />
-                  <InfoRow label="Race" value={pet.races.join(', ')} />
-                  <Divider />
-                  <InfoRow label="Sexe" value={pet.sex} />
-                  <Divider />
-                  <InfoRow label="Date de naissance" value={pet.birthDate} />
-                </Section>
+                  <Section title="Identité">
+                    <InfoRow label="Nom de l'animal" value={pet.name} />
+                    <Divider />
+                    <InfoRow label="Espèce" value={pet.species} />
+                    <Divider />
+                    <InfoRow label="Race" value={pet.races.join(', ')} />
+                    <Divider />
+                    <InfoRow label="Sexe" value={pet.sex} />
+                    <Divider />
+                    <InfoRow label="Date de naissance" value={pet.birthDate} />
+                  </Section>
 
-                <Section title="Caractéristiques">
-                  <InfoRow label="Stérilisation" value={pet.sterilized} />
-                  <Divider />
-                  <InfoRow label="Couleur du pelage" value={pet.coatColor ?? '—'} />
-                </Section>
+                  <Section title="Caractéristiques">
+                    <InfoRow label="Stérilisation" value={pet.sterilized} />
+                    <Divider />
+                    <InfoRow label="Couleur du pelage" value={pet.coatColor ?? '—'} />
+                  </Section>
 
-                <Section title="Administratif">
-                  <InfoRow label="Type d'identification" value={pet.identType ?? '—'} />
-                  <Divider />
-                  <InfoRow label="Numéro d'identification" value={pet.identNumber ?? '—'} />
-                  <Divider />
-                  <InfoRow label="Assurance" value={pet.insurance ?? '—'} />
-                </Section>
-              </>
-            ) : (
-              <>
-                {/* Info banner */}
-                <View style={styles.alertBanner}>
-                  <HugeiconsIcon icon={HelpCircleIcon} size={16} color="#39438D" strokeWidth={1.5} />
-                  <Text style={styles.alertText}>
-                    Ces informations sont mises à jour uniquement par votre vétérinaire.
-                  </Text>
-                </View>
+                  <Section title="Administratif">
+                    <InfoRow label="Type d'identification" value={pet.identType ?? '—'} />
+                    <Divider />
+                    <InfoRow label="Numéro d'identification" value={pet.identNumber ?? '—'} />
+                    <Divider />
+                    <InfoRow label="Assurance" value={pet.insurance ?? '—'} />
+                  </Section>
+                </>
+              ) : (
+                <>
+                  {/* Info banner */}
+                  <View style={styles.alertBanner}>
+                    <HugeiconsIcon icon={HelpCircleIcon} size={16} color="#39438D" strokeWidth={1.5} />
+                    <Text style={styles.alertText}>
+                      Ces informations sont mises à jour uniquement par votre vétérinaire.
+                    </Text>
+                  </View>
 
-                {/* Mensurations */}
-                <MedicalSection title="Mensurations">
-                  <MedicalRow
-                    icon={TapeMeasureIcon}
-                    label="Taille"
-                    subtitle="59 cm"
-                    hasArrow
-                    onPress={() => router.push({ pathname: '/(health)/animal-size', params: { index: String(petIndex) } })}
-                  />
-                  <MedicalRow icon={WeightScaleIcon} label="Poids" subtitle="30 kg" hasArrow />
-                </MedicalSection>
+                  {/* Mensurations */}
+                  <MedicalSection title="Mensurations">
+                    <MedicalRow
+                      icon={TapeMeasureIcon}
+                      label="Taille"
+                      subtitle="59 cm"
+                      hasArrow
+                      onPress={() => router.push({ pathname: '/(health)/animal-size', params: { index: String(petIndex) } })}
+                    />
+                    <MedicalRow icon={WeightScaleIcon} label="Poids" subtitle="30 kg" hasArrow />
+                  </MedicalSection>
 
-                {/* Informations médicales */}
-                <MedicalSection title="Informations médicales">
-                  <MedicalRow icon={BloodIcon} label="Groupe sanguin" subtitle="DEA 1.1 positif" />
-                  <MedicalRow icon={AlertCircleIcon} label="Allergies" subtitle="4 allergies diagnostiquées" hasArrow />
-                  <MedicalRow icon={PulseRectangle01Icon} label="Maladies chroniques" subtitle="3 maladies chroniques diagnostiquées" hasArrow />
-                  <MedicalRow icon={TransactionHistoryIcon} label="Antécédents médicaux" hasArrow />
-                </MedicalSection>
-              </>
-            )}
-          </Animated.View>
+                  {/* Informations médicales */}
+                  <MedicalSection title="Informations médicales">
+                    <MedicalRow icon={BloodIcon} label="Groupe sanguin" subtitle="DEA 1.1 positif" />
+                    <MedicalRow icon={AlertCircleIcon} label="Allergies" subtitle="4 allergies diagnostiquées" hasArrow />
+                    <MedicalRow icon={PulseRectangle01Icon} label="Maladies chroniques" subtitle="3 maladies chroniques diagnostiquées" hasArrow />
+                    <MedicalRow icon={TransactionHistoryIcon} label="Antécédents médicaux" hasArrow />
+                  </MedicalSection>
+                </>
+              )}
+            </Animated.View>
+          </View>
         </ScrollView>
-      </AnimatedEntry>
+      </View>
     </SafeAreaView>
   );
 }
@@ -301,7 +318,8 @@ const styles = StyleSheet.create({
   segmentLabel: { fontSize: 16, fontWeight: '300', color: '#717171' },
   segmentLabelActive: { color: '#181818' },
 
-  // Animated tab content
+  // Sliding tab content
+  tabContentClip: { overflow: 'hidden' },
   tabContent: { gap: 24 },
 
   // Avatar (Général tab)
@@ -314,11 +332,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E8E8E8',
     overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   avatarWebImg: { width: AVATAR_SIZE, height: AVATAR_SIZE },
-  avatarPlaceholder: { flex: 1, backgroundColor: '#F5F5F5' },
 
   // Général tab — sections
   section: { gap: 12 },
@@ -346,11 +361,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 13,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   alertText: {
     flex: 1,

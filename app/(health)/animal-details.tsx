@@ -19,6 +19,14 @@ import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 const AVATAR_SIZE = 96;
 const AVATAR_PATH = getSvgPath({ width: AVATAR_SIZE - 1, height: AVATAR_SIZE - 1, cornerRadius: 15.5, cornerSmoothing: 1 });
 
+const PET_IMAGES = [
+  require('../../assets/images/pet-1.png'),
+  require('../../assets/images/pet-2.png'),
+  require('../../assets/images/pet-3.png'),
+  require('../../assets/images/pet-4.png'),
+  require('../../assets/images/pet-5.png'),
+];
+
 const MENU_ITEMS = [
   { key: 'info',       label: 'Informations', icon: IdentityCardIcon, subtitle: null },
   { key: 'treatments', label: 'Traitements',  icon: Medicine02Icon,   subtitle: '2 traitements en cours' },
@@ -32,6 +40,7 @@ export default function AnimalDetailsScreen() {
   const pets = usePets();
   const pet = pets[petIndex];
 
+  const fallbackImage = PET_IMAGES[petIndex % PET_IMAGES.length];
   const [menuOpen, setMenuOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const sheetY = useRef(new Animated.Value(300)).current;
@@ -96,10 +105,11 @@ export default function AnimalDetailsScreen() {
         <View style={styles.profile}>
           {Platform.OS === 'web' ? (
             <View style={styles.avatarWeb}>
-              {pet.photoUri
-                ? <Image source={{ uri: pet.photoUri }} style={styles.avatarWebImg} resizeMode="cover" />
-                : <View style={styles.avatarPlaceholder} />
-              }
+              <Image
+                source={pet.photoUri ? { uri: pet.photoUri } : fallbackImage}
+                style={styles.avatarWebImg}
+                resizeMode="cover"
+              />
             </View>
           ) : (
             <Svg width={AVATAR_SIZE} height={AVATAR_SIZE}>
@@ -109,15 +119,13 @@ export default function AnimalDetailsScreen() {
                 </ClipPath>
               </Defs>
               <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" fill="#FFFFFF" stroke="#E8E8E8" strokeWidth={1} />
-              {pet.photoUri && (
-                <SvgImage
-                  href={pet.photoUri}
-                  width={AVATAR_SIZE}
-                  height={AVATAR_SIZE}
-                  clipPath={`url(#detail-clip-${petIndex})`}
-                  preserveAspectRatio="xMidYMid slice"
-                />
-              )}
+              <SvgImage
+                href={pet.photoUri ?? fallbackImage}
+                width={AVATAR_SIZE}
+                height={AVATAR_SIZE}
+                clipPath={`url(#detail-clip-${petIndex})`}
+                preserveAspectRatio="xMidYMid slice"
+              />
             </Svg>
           )}
 
@@ -235,7 +243,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   avatarWebImg: { width: AVATAR_SIZE, height: AVATAR_SIZE },
-  avatarPlaceholder: { flex: 1, backgroundColor: '#F5F5F5' },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   name: { fontSize: 24, fontWeight: '500', color: '#181818' },
   infoLine: { fontSize: 14, fontWeight: '300', color: '#4F4F4F', lineHeight: 14 * 1.2 },

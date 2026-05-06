@@ -1,12 +1,12 @@
 import { View, Text, Pressable, ScrollView, StyleSheet, Image, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
-import { useState, useCallback } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import Svg, { Defs, ClipPath, Path, Image as SvgImage } from 'react-native-svg';
 import { getSvgPath } from 'react-native-figma-squircle';
-import { getPets } from '../../src/data/petStore';
+import { usePets } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
@@ -38,14 +38,9 @@ export default function AnimalInfoScreen() {
   const { index } = useLocalSearchParams<{ index?: string }>();
   const petIndex = parseInt(index ?? '0', 10);
 
-  const [pet, setPet] = useState(() => getPets()[petIndex]);
+  const pets = usePets();
+  const pet = pets[petIndex];
   const [tab, setTab] = useState<Tab>('general');
-
-  useFocusEffect(useCallback(() => {
-    const updated = getPets()[petIndex];
-    if (!updated) { router.back(); return; }
-    setPet(updated);
-  }, [petIndex]));
 
   if (!pet) return null;
 

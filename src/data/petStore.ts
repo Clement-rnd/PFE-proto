@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 export interface Pet {
   name: string;
   species: string;
@@ -41,6 +43,12 @@ export function updatePet(index: number, pet: Pet) {
 export function deletePet(index: number) {
   pets.splice(index, 1);
   notify();
+}
+
+export function usePets(): Pet[] {
+  const [data, setData] = useState<Pet[]>(getPets);
+  useEffect(() => subscribe(() => setData(getPets())), []);
+  return data;
 }
 
 export function computeAge(birthDate: string): string {

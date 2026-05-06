@@ -11,7 +11,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import Svg, { Defs, ClipPath, Path, Image as SvgImage } from 'react-native-svg';
 import { getSvgPath } from 'react-native-figma-squircle';
-import { getPets, deletePet, computeAge } from '../../src/data/petStore';
+import { usePets, deletePet, computeAge } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
@@ -29,7 +29,7 @@ const MENU_ITEMS = [
 export default function AnimalDetailsScreen() {
   const { index } = useLocalSearchParams<{ index?: string }>();
   const petIndex = parseInt(index ?? '0', 10);
-  const pets = getPets();
+  const pets = usePets();
   const pet = pets[petIndex];
 
   const [menuOpen, setMenuOpen] = useState(false);

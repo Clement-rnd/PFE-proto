@@ -15,11 +15,11 @@ import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 // ── Chart (full state) ────────────────────────────────────────────────────────
 
-const NAYA_DATA = [45, 47.5, 50, 53, 55.5, 57.5, 58.5, 59];
-const BREED_DATA = [47, 50, 53, 55.5, 58, 59.5, 61, 62];
+const NAYA_DATA = [23, 25, 26.5, 27.5, 28.5, 29.5, 30, 30];
+const BREED_DATA = [24, 26.5, 28.5, 30, 31.5, 32.5, 33, 33.5];
 const MONTHS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû'];
-const Y_MIN = 40;
-const Y_MAX = 65;
+const Y_MIN = 20;
+const Y_MAX = 36;
 const CHART_H = 160;
 const PAD_L = 36;
 const PAD_R = 12;
@@ -36,7 +36,7 @@ function LineChart({ width }: { width: number }) {
   const toD = (data: number[]) =>
     data.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xFor(i).toFixed(1)} ${yFor(v).toFixed(1)}`).join(' ');
 
-  const yLabels = [40, 50, 60];
+  const yLabels = [20, 28, 36];
   const xLabels = [0, 2, 4, 6, 7];
 
   return (
@@ -71,19 +71,14 @@ function EmptyChartIllustration() {
   const originX = 9;
   const originY = 68;
 
-  // Simplified pink curve: starts bottom-left, ends top-right
   const curvePath = `M ${originX + 18} ${originY - 4} C ${originX + 32} ${originY - 18}, ${originX + 50} ${originY - 36}, ${originX + 74} ${originY - 58}`;
 
   return (
     <Svg width={W} height={H}>
-      {/* Grid dashed lines */}
       <Line x1={originX} y1={originY - 46} x2={W} y2={originY - 46} stroke="#E8E8E8" strokeWidth={1} strokeDasharray="4,3" />
       <Line x1={originX} y1={originY - 23} x2={W} y2={originY - 23} stroke="#E8E8E8" strokeWidth={1} strokeDasharray="4,3" />
-      {/* Y axis */}
       <Line x1={originX} y1={0} x2={originX} y2={originY} stroke="#DCDCDC" strokeWidth={1.5} strokeDasharray="4,3" />
-      {/* X axis */}
       <Line x1={originX} y1={originY} x2={W} y2={originY} stroke="#DCDCDC" strokeWidth={1.5} strokeDasharray="4,3" />
-      {/* Pink curve */}
       <Path d={curvePath} stroke={colors.primary.DEFAULT} strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
@@ -94,10 +89,10 @@ function EmptyChartIllustration() {
 type HistoryEntry = { icon: any; iconBg: string; title: string; detail: string; value: string };
 
 const HISTORY: HistoryEntry[] = [
-  { icon: StethoscopeIcon, iconBg: '#E5E8FA', title: 'Bilan annuel',          detail: '8 avr. 2026 · Dr. Martin',  value: '59 cm' },
-  { icon: WeightScaleIcon, iconBg: '#FEF0F2', title: 'Pesée vétérinaire',     detail: '12 jan. 2026 · Dr. Martin', value: '57 cm' },
-  { icon: InjectionIcon,   iconBg: '#F0FDF4', title: 'Vaccin annuel + pesée', detail: '3 sep. 2025 · Dr. Dupont',  value: '55 cm' },
-  { icon: TapeMeasureIcon, iconBg: '#FFF7ED', title: 'Consultation',           detail: '21 mai 2025 · Dr. Dupont',  value: '52 cm' },
+  { icon: StethoscopeIcon, iconBg: '#E5E8FA', title: 'Bilan annuel',          detail: '8 avr. 2026 · Dr. Martin',  value: '30 kg' },
+  { icon: WeightScaleIcon, iconBg: '#FEF0F2', title: 'Pesée vétérinaire',     detail: '12 jan. 2026 · Dr. Martin', value: '29.5 kg' },
+  { icon: InjectionIcon,   iconBg: '#F0FDF4', title: 'Vaccin annuel + pesée', detail: '3 sep. 2025 · Dr. Dupont',  value: '28 kg' },
+  { icon: TapeMeasureIcon, iconBg: '#FFF7ED', title: 'Consultation',           detail: '21 mai 2025 · Dr. Dupont',  value: '26 kg' },
 ];
 
 function HistoryRow({ entry, last }: { entry: HistoryEntry; last: boolean }) {
@@ -120,7 +115,7 @@ function HistoryRow({ entry, last }: { entry: HistoryEntry; last: boolean }) {
 
 // ── Screen ────────────────────────────────────────────────────────────────────
 
-export default function AnimalSizeScreen() {
+export default function AnimalWeightScreen() {
   const { index } = useLocalSearchParams<{ index?: string }>();
   const petIndex = parseInt(index ?? '0', 10);
   const pets = usePets();
@@ -129,7 +124,6 @@ export default function AnimalSizeScreen() {
 
   if (!pet) return null;
 
-  // En prod ce booléen viendrait du store ; ici on simule : le premier animal a des données
   const hasData = petIndex === 0;
 
   return (
@@ -141,7 +135,7 @@ export default function AnimalSizeScreen() {
           <Pressable onPress={() => router.back()} hitSlop={12}>
             <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
           </Pressable>
-          <Text style={styles.title}>Taille de {pet.name}</Text>
+          <Text style={styles.title}>Poids de {pet.name}</Text>
           <View style={{ width: 28 }} />
         </View>
       </AnimatedEntry>
@@ -162,7 +156,7 @@ export default function AnimalSizeScreen() {
             ) : (
               <View style={{ flex: 1, gap: 8 }}>
                 <Text style={styles.alertText}>
-                  Seul votre vétérinaire peut renseigner les mesures de votre animal.
+                  Seul votre vétérinaire peut renseigner le poids de votre animal.
                 </Text>
                 <Text style={styles.alertText}>
                   Pensez à prendre RDV pour un suivi régulier.
@@ -179,10 +173,10 @@ export default function AnimalSizeScreen() {
               <View style={styles.card}>
                 <Text style={styles.cardDateLabel}>Dernière mise à jour le 8 avril 2026</Text>
                 <View style={styles.valueRow}>
-                  <Text style={styles.valueText}>59 cm</Text>
+                  <Text style={styles.valueText}>30 kg</Text>
                   <View style={styles.trendBadge}>
                     <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} color="#16A34A" strokeWidth={2} />
-                    <Text style={styles.trendText}>+2 cm</Text>
+                    <Text style={styles.trendText}>+0.5 kg</Text>
                   </View>
                 </View>
               </View>
@@ -191,7 +185,7 @@ export default function AnimalSizeScreen() {
             {/* Chart card */}
             <AnimatedEntry delay={200}>
               <View style={styles.chartCard}>
-                <Text style={styles.chartTitle}>Évolution de la taille</Text>
+                <Text style={styles.chartTitle}>Évolution du poids</Text>
                 <View style={styles.chartArea} onLayout={(e) => setChartWidth(e.nativeEvent.layout.width)}>
                   <LineChart width={chartWidth} />
                 </View>
@@ -224,9 +218,9 @@ export default function AnimalSizeScreen() {
           <AnimatedEntry delay={140} style={{ flex: 1 }}>
             <View style={styles.emptyCard}>
               <EmptyChartIllustration />
-              <Text style={styles.emptyTitle}>Pas encore de mesures</Text>
+              <Text style={styles.emptyTitle}>Pas encore de pesées</Text>
               <Text style={styles.emptyBody}>
-                Les mesures de {pet.name} seront ajoutées par votre vétérinaire lors des consultations.
+                Le poids de {pet.name} sera renseigné par votre vétérinaire lors des consultations.
               </Text>
             </View>
           </AnimatedEntry>
@@ -269,7 +263,6 @@ const styles = StyleSheet.create({
     lineHeight: 16 * 1.2,
   },
 
-  // Full state — current value card
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
@@ -292,7 +285,6 @@ const styles = StyleSheet.create({
   },
   trendText: { fontSize: 14, fontWeight: '500', color: '#16A34A' },
 
-  // Full state — chart card
   chartCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
@@ -308,7 +300,6 @@ const styles = StyleSheet.create({
   legendLine: { width: 16, height: 2, borderRadius: 1 },
   legendLabel: { fontSize: 12, fontWeight: '300', color: '#717171' },
 
-  // Full state — history
   historySection: { gap: 12 },
   historySectionTitle: { fontSize: 16, fontWeight: '500', color: '#717171', lineHeight: 16 * 1.4 },
   historyCard: {
@@ -332,7 +323,6 @@ const styles = StyleSheet.create({
   historyValue: { fontSize: 16, fontWeight: '500', color: '#181818' },
   divider: { height: 1, backgroundColor: '#DCDCDC', marginHorizontal: 16 },
 
-  // Empty state
   emptyCard: {
     flex: 1,
     backgroundColor: '#FFFFFF',

@@ -175,17 +175,18 @@ export default function AnimalAllergiesScreen() {
       </View>
 
       {hasData ? (
-        <AnimatedEntry delay={80} style={{ flex: 1 }}>
-          <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Filter chips */}
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Filter chips */}
+          <AnimatedEntry delay={80}>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chipsRow}
+              style={{ marginHorizontal: -16 }}
+              contentContainerStyle={[styles.chipsRow, { paddingHorizontal: 16 }]}
             >
               <Pressable style={styles.chipTri} onPress={openSheet}>
                 <HugeiconsIcon icon={FilterHorizontalIcon} size={16} color="#fcfcfc" strokeWidth={1.5} />
@@ -204,8 +205,10 @@ export default function AnimalAllergiesScreen() {
                 );
               })}
             </ScrollView>
+          </AnimatedEntry>
 
-            {/* Grouped list */}
+          {/* Grouped list */}
+          <AnimatedEntry delay={140}>
             <Animated.View style={{ opacity: listOpacity, gap: 24 }}>
               {groups.map(group => (
                 <View key={group.key} style={styles.section}>
@@ -226,8 +229,8 @@ export default function AnimalAllergiesScreen() {
                 </View>
               ))}
             </Animated.View>
-          </ScrollView>
-        </AnimatedEntry>
+          </AnimatedEntry>
+        </ScrollView>
       ) : (
         /* Empty state */
         <AnimatedEntry delay={80} style={{ flex: 1 }}>
@@ -324,7 +327,7 @@ const styles = StyleSheet.create({
     height: 32, paddingHorizontal: 8, gap: 4, borderRadius: 8,
     backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E8E8E8',
   },
-  chipSelected: { backgroundColor: '#181818', borderColor: 'transparent' },
+  chipSelected: { backgroundColor: colors.primary.DEFAULT, borderColor: 'transparent' },
   chipLabel: { fontSize: 12, fontWeight: '300', color: '#4F4F4F' },
   chipLabelSelected: { color: '#fcfcfc' },
 

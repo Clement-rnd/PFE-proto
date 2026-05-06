@@ -22,11 +22,10 @@ export function AnimatedEntry({ children, delay = 0, style }: Props) {
 
   useFocusEffect(useCallback(() => {
     opacity.value = 0;
-    translateY.value = 20;
+    translateY.value = 14;
     const easing = Easing.out(Easing.cubic);
-    const startDelay = 60 + delay;
-    opacity.value = withDelay(startDelay, withTiming(1, { duration: 350, easing }));
-    translateY.value = withDelay(startDelay, withTiming(0, { duration: 350, easing }));
+    opacity.value = withDelay(delay, withTiming(1, { duration: 450, easing }));
+    translateY.value = withDelay(delay, withTiming(0, { duration: 420, easing }));
 
     return () => {
       cancelAnimation(opacity);

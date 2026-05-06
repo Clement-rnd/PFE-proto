@@ -81,16 +81,16 @@ export default function AnimalAllergyDetailScreen() {
             </View>
           </View>
 
-          {/* Symptômes observés */}
-          <View style={styles.section}>
-            <SectionTitle label="Symptômes observés" />
-            <BulletList items={allergy.symptoms} bulletColor="#8E9AF6" />
-          </View>
-
           {/* Animal concerné */}
           <View style={styles.section}>
             <SectionTitle label="Animal concerné" />
             <PetCard pet={pet} index={petIndex} />
+          </View>
+
+          {/* Symptômes observés */}
+          <View style={styles.section}>
+            <SectionTitle label="Symptômes observés" />
+            <BulletList items={allergy.symptoms} bulletColor="#8E9AF6" />
           </View>
 
           {/* À éviter */}

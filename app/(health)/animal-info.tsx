@@ -146,12 +146,16 @@ export default function AnimalInfoScreen() {
           <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
         </Pressable>
         <Text style={styles.title}>Informations</Text>
-        <Pressable
-          hitSlop={12}
-          onPress={() => router.push({ pathname: '/(health)/animal-edit', params: { index: String(petIndex) } })}
-        >
-          <Text style={styles.actionBtn}>Modifier</Text>
-        </Pressable>
+        {tab === 'general' ? (
+          <Pressable
+            hitSlop={12}
+            onPress={() => router.push({ pathname: '/(health)/animal-edit', params: { index: String(petIndex) } })}
+          >
+            <Text style={styles.actionBtn}>Modifier</Text>
+          </Pressable>
+        ) : (
+          <View style={{ width: 60 }} />
+        )}
       </View>
 
       <AnimatedEntry delay={80} style={styles.body}>
@@ -257,7 +261,7 @@ export default function AnimalInfoScreen() {
                       hasArrow
                       onPress={() => router.push({ pathname: '/(health)/animal-size', params: { index: String(petIndex) } })}
                     />
-                    <MedicalRow icon={WeightScaleIcon} label="Poids" subtitle="30 kg" hasArrow />
+                    <MedicalRow icon={WeightScaleIcon} label="Poids" subtitle="30 kg" hasArrow onPress={() => router.push({ pathname: '/(health)/animal-weight', params: { index: String(petIndex) } })} />
                   </MedicalSection>
 
                   {/* Informations médicales */}
@@ -270,7 +274,7 @@ export default function AnimalInfoScreen() {
                     hasArrow
                     onPress={() => router.push({ pathname: '/(health)/animal-allergies', params: { index: String(petIndex) } })}
                   />
-                    <MedicalRow icon={PulseRectangle01Icon} label="Maladies chroniques" subtitle="3 maladies chroniques diagnostiquées" hasArrow />
+                    <MedicalRow icon={PulseRectangle01Icon} label="Maladies chroniques" subtitle="3 maladies chroniques diagnostiquées" hasArrow onPress={() => router.push({ pathname: '/(health)/animal-chronic-diseases', params: { index: String(petIndex) } })} />
                     <MedicalRow icon={TransactionHistoryIcon} label="Antécédents médicaux" hasArrow />
                   </MedicalSection>
                 </>

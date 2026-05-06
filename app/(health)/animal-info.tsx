@@ -14,6 +14,7 @@ import { getSvgPath } from 'react-native-figma-squircle';
 import { usePets } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const AVATAR_SIZE = 80;
 const AVATAR_PATH = getSvgPath({ width: AVATAR_SIZE - 1, height: AVATAR_SIZE - 1, cornerRadius: 13, cornerSmoothing: 1 });
@@ -153,7 +154,7 @@ export default function AnimalInfoScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.body}>
+      <AnimatedEntry delay={80} style={styles.body}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
@@ -262,7 +263,13 @@ export default function AnimalInfoScreen() {
                   {/* Informations médicales */}
                   <MedicalSection title="Informations médicales">
                     <MedicalRow icon={BloodIcon} label="Groupe sanguin" subtitle="DEA 1.1 positif" />
-                    <MedicalRow icon={AlertCircleIcon} label="Allergies" subtitle="4 allergies diagnostiquées" hasArrow />
+                    <MedicalRow
+                    icon={AlertCircleIcon}
+                    label="Allergies"
+                    subtitle="4 allergies diagnostiquées"
+                    hasArrow
+                    onPress={() => router.push({ pathname: '/(health)/animal-allergies', params: { index: String(petIndex) } })}
+                  />
                     <MedicalRow icon={PulseRectangle01Icon} label="Maladies chroniques" subtitle="3 maladies chroniques diagnostiquées" hasArrow />
                     <MedicalRow icon={TransactionHistoryIcon} label="Antécédents médicaux" hasArrow />
                   </MedicalSection>
@@ -271,7 +278,7 @@ export default function AnimalInfoScreen() {
             </Animated.View>
           </View>
         </ScrollView>
-      </View>
+      </AnimatedEntry>
     </SafeAreaView>
   );
 }

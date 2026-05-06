@@ -64,6 +64,7 @@ export default function HealthMyAnimalsScreen() {
               {pets.map((pet, i) => (
                 <PetCard
                   key={i}
+                  index={i}
                   pet={pet}
                   onPress={() => router.push({ pathname: '/(health)/animal-details', params: { index: i } })}
                 />

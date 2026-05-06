@@ -1,0 +1,433 @@
+import {
+  View, Text, Pressable, ScrollView, StyleSheet, Modal,
+  Animated, Easing,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useRef, useState } from 'react';
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import {
+  ArrowLeft01Icon, ArrowRight01Icon, FilterHorizontalIcon, HelpCircleIcon,
+  ChickenThighsIcon, Bug02Icon, MoleculesIcon, Medicine02Icon,
+} from '@hugeicons/core-free-icons';
+import { usePets } from '../../src/data/petStore';
+import { colors } from '../../src/theme/colors';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+
+// ── Types & data ──────────────────────────────────────────────────────────────
+
+type SortMode = 'categories' | 'severity';
+type CategoryFilter = 'Alimentaire' | 'Environnementale' | 'Médical' | null;
+
+type Allergy = {
+  name: string;
+  category: 'Alimentaire' | 'Environnementale' | 'Médical';
+  severity: 'Risque faible' | 'Risque modéré' | 'Risque élevé';
+  icon: any;
+};
+
+const ALLERGIES: Allergy[] = [
+  { name: 'Poulet',              category: 'Alimentaire',      severity: 'Risque faible', icon: ChickenThighsIcon },
+  { name: 'Acariens',            category: 'Environnementale', severity: 'Risque modéré', icon: Bug02Icon },
+  { name: 'Pollen de graminées', category: 'Environnementale', severity: 'Risque faible', icon: MoleculesIcon },
+  { name: 'Pénicilline',         category: 'Médical',          severity: 'Risque élevé',  icon: Medicine02Icon },
+];
+
+const CATEGORY_ORDER = ['Alimentaire', 'Environnementale', 'Médical'] as const;
+const SEVERITY_ORDER = ['Risque élevé', 'Risque modéré', 'Risque faible'] as const;
+
+const RISK_STYLE: Record<string, { bg: string; text: string }> = {
+  'Risque faible': { bg: '#e5faf5', text: '#1d745f' },
+  'Risque modéré': { bg: '#fceee3', text: '#ea863e' },
+  'Risque élevé':  { bg: '#fff1f2', text: '#e11d48' },
+};
+
+function getGroups(sort: SortMode, filter: CategoryFilter) {
+  const base = filter ? ALLERGIES.filter(a => a.category === filter) : ALLERGIES;
+  if (sort === 'categories') {
+    return CATEGORY_ORDER
+      .map(cat => ({ key: cat, title: `${cat} (${base.filter(a => a.category === cat).length})`, items: base.filter(a => a.category === cat) }))
+      .filter(g => g.items.length > 0);
+  }
+  return SEVERITY_ORDER
+    .map(sev => ({ key: sev, title: `${sev} (${base.filter(a => a.severity === sev).length})`, items: base.filter(a => a.severity === sev) }))
+    .filter(g => g.items.length > 0);
+}
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function AllergyRow({ allergy }: { allergy: Allergy }) {
+  const risk = RISK_STYLE[allergy.severity];
+  return (
+    <Pressable style={styles.allergyRow}>
+      <View style={styles.allergyIconBox}>
+        <HugeiconsIcon icon={allergy.icon} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
+      </View>
+      <View style={styles.allergyContent}>
+        <Text style={styles.allergyName} numberOfLines={1}>{allergy.name}</Text>
+        <View style={[styles.riskTag, { backgroundColor: risk.bg }]}>
+          <Text style={[styles.riskTagText, { color: risk.text }]}>{allergy.severity}</Text>
+        </View>
+      </View>
+      <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={colors.neutral[400]} strokeWidth={1.5} />
+    </Pressable>
+  );
+}
+
+// ── Screen ────────────────────────────────────────────────────────────────────
+
+export default function AnimalAllergiesScreen() {
+  const { index } = useLocalSearchParams<{ index?: string }>();
+  const petIndex = parseInt(index ?? '0', 10);
+  const pets = usePets();
+  const pet = pets[petIndex];
+
+  const [sortMode, setSortMode] = useState<SortMode>('categories');
+  const [pendingSort, setPendingSort] = useState<SortMode>('categories');
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const sheetY = useRef(new Animated.Value(300)).current;
+  const backdropOpacity = useRef(new Animated.Value(0)).current;
+  const listOpacity = useRef(new Animated.Value(1)).current;
+
+  if (!pet) return null;
+
+  // Demo : premier animal a des données
+  const hasData = petIndex === 0;
+  const groups = getGroups(sortMode, categoryFilter);
+
+  // ── Bottom sheet ────────────────────────────────────────────────────────────
+
+  function openSheet() {
+    setPendingSort(sortMode);
+    sheetY.setValue(300);
+    backdropOpacity.setValue(0);
+    setSheetOpen(true);
+    Animated.parallel([
+      Animated.spring(sheetY, { toValue: 0, useNativeDriver: true, damping: 22, stiffness: 260 }),
+      Animated.timing(backdropOpacity, { toValue: 1, duration: 220, useNativeDriver: true }),
+    ]).start();
+  }
+
+  function closeSheet(callback?: () => void) {
+    Animated.parallel([
+      Animated.timing(sheetY, { toValue: 300, duration: 260, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(backdropOpacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+    ]).start(() => {
+      setSheetOpen(false);
+      callback?.();
+    });
+  }
+
+  function animateList(fn: () => void) {
+    Animated.timing(listOpacity, { toValue: 0, duration: 120, useNativeDriver: true }).start(() => {
+      fn();
+      Animated.timing(listOpacity, { toValue: 1, duration: 200, useNativeDriver: true }).start();
+    });
+  }
+
+  function applySort(mode: SortMode) {
+    closeSheet(() => {
+      if (mode !== sortMode) animateList(() => setSortMode(mode));
+    });
+  }
+
+  function selectFilter(cat: CategoryFilter) {
+    if (cat === categoryFilter) return;
+    animateList(() => setCategoryFilter(cat));
+  }
+
+  // ── Chips ───────────────────────────────────────────────────────────────────
+
+  const FILTER_CHIPS: { label: string; value: CategoryFilter }[] = [
+    { label: `Tout (${ALLERGIES.length})`, value: null },
+    ...CATEGORY_ORDER.map(cat => ({
+      label: `${cat} (${ALLERGIES.filter(a => a.category === cat).length})`,
+      value: cat as CategoryFilter,
+    })),
+  ];
+
+  // ── Render ──────────────────────────────────────────────────────────────────
+
+  return (
+    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
+
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} hitSlop={12}>
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
+        </Pressable>
+        <Text style={styles.title}>Allergies de {pet.name}</Text>
+        <View style={{ width: 28 }} />
+      </View>
+
+      {hasData ? (
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Filter chips */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chipsRow}
+          >
+            {/* Tri chip — always active */}
+            <Pressable style={styles.chipTri} onPress={openSheet}>
+              <HugeiconsIcon icon={FilterHorizontalIcon} size={16} color="#fcfcfc" strokeWidth={1.5} />
+              <Text style={styles.chipTriLabel}>Tri</Text>
+            </Pressable>
+
+            {/* Category filter chips */}
+            {FILTER_CHIPS.map(({ label, value }) => {
+              const selected = categoryFilter === value;
+              return (
+                <Pressable
+                  key={label}
+                  style={[styles.chip, selected && styles.chipSelected]}
+                  onPress={() => selectFilter(value)}
+                >
+                  <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{label}</Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+
+          {/* Grouped list */}
+          <Animated.View style={{ opacity: listOpacity, gap: 24 }}>
+            {groups.map(group => (
+              <View key={group.key} style={styles.section}>
+                <Text style={styles.sectionTitle}>{group.title}</Text>
+                <View style={styles.allergyList}>
+                  {group.items.map(a => <AllergyRow key={a.name} allergy={a} />)}
+                </View>
+              </View>
+            ))}
+          </Animated.View>
+        </ScrollView>
+      ) : (
+        /* Empty state */
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.alertBanner}>
+            <HugeiconsIcon icon={HelpCircleIcon} size={16} color="#39438D" strokeWidth={1.5} />
+            <View style={{ flex: 1, gap: 8 }}>
+              <Text style={styles.alertText}>
+                Seul votre vétérinaire peut renseigner les allergies de votre animal.
+              </Text>
+              <Text style={styles.alertText}>
+                Pensez à prendre RDV pour un suivi régulier.
+              </Text>
+            </View>
+          </View>
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>Aucune allergie connue</Text>
+            <Text style={styles.emptyBody}>
+              {pet.name} n'a pas d'allergie diagnostiquée. Cette section sera mise à jour par votre vétérinaire.
+            </Text>
+          </View>
+        </ScrollView>
+      )}
+
+      {/* Sort bottom sheet */}
+      <Modal visible={sheetOpen} transparent animationType="none" onRequestClose={() => closeSheet()}>
+        <Animated.View style={[styles.sortBackdrop, { opacity: backdropOpacity }]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => closeSheet()} />
+          <Animated.View style={[styles.sortSheet, { transform: [{ translateY: sheetY }] }]}>
+            {/* Grab handle */}
+            <View style={styles.grabHandleWrap}>
+              <View style={styles.grabHandle} />
+            </View>
+            {/* Content */}
+            <View style={styles.sheetContent}>
+              <Text style={styles.sheetTitle}>Trier par</Text>
+              <View style={styles.sortOptions}>
+                {([
+                  { mode: 'categories' as SortMode, label: 'Catégorie' },
+                  { mode: 'severity'   as SortMode, label: 'Gravité'   },
+                ]).map(({ mode, label }) => {
+                  const active = pendingSort === mode;
+                  return (
+                    <Pressable
+                      key={mode}
+                      style={[styles.sortOption, active && styles.sortOptionActive]}
+                      onPress={() => { setPendingSort(mode); applySort(mode); }}
+                    >
+                      <View style={[styles.radio, active && styles.radioActive]}>
+                        {active && <View style={styles.radioInner} />}
+                      </View>
+                      <Text style={styles.sortOptionLabel}>{label}</Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          </Animated.View>
+        </Animated.View>
+      </Modal>
+    </SafeAreaView>
+  );
+}
+
+// ── Styles ────────────────────────────────────────────────────────────────────
+
+const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: 'transparent' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    height: 44,
+    gap: 8,
+  },
+  title: { flex: 1, fontSize: 20, fontWeight: '500', color: '#181818' },
+  scroll: { flex: 1 },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 16 },
+
+  // Chips
+  chipsRow: { gap: 8 },
+  chipTri: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 32,
+    paddingHorizontal: 8,
+    gap: 4,
+    borderRadius: 8,
+    backgroundColor: '#181818',
+  },
+  chipTriLabel: { fontSize: 16, fontWeight: '300', color: '#fcfcfc' },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 32,
+    paddingHorizontal: 8,
+    gap: 4,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+  },
+  chipSelected: { backgroundColor: '#181818', borderColor: 'transparent' },
+  chipLabel: { fontSize: 12, fontWeight: '300', color: '#4F4F4F' },
+  chipLabelSelected: { color: '#fcfcfc' },
+
+  // Section & list
+  section: { gap: 12 },
+  sectionTitle: { fontSize: 16, fontWeight: '500', color: '#717171', lineHeight: 16 * 1.4 },
+  allergyList: { gap: 8 },
+  allergyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 64,
+    paddingLeft: 16,
+    paddingRight: 8,
+    gap: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+  },
+  allergyIconBox: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  allergyContent: { flex: 1, gap: 4, justifyContent: 'center' },
+  allergyName: { fontSize: 16, fontWeight: '300', color: '#181818' },
+  riskTag: {
+    alignSelf: 'flex-start',
+    height: 24,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  riskTagText: { fontSize: 12, fontWeight: '300' },
+
+  // Empty state
+  alertBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: '#E5E8FA',
+    borderWidth: 1,
+    borderColor: '#8E9AF6',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 13,
+  },
+  alertText: { fontSize: 16, fontWeight: '300', color: '#39438D', lineHeight: 16 * 1.2 },
+  emptyCard: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+    paddingHorizontal: 16,
+    paddingVertical: 24,
+    gap: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: { fontSize: 16, fontWeight: '500', color: '#181818', lineHeight: 16 * 1.4 },
+  emptyBody: { fontSize: 16, fontWeight: '300', color: '#717171', lineHeight: 16 * 1.4, textAlign: 'center' },
+
+  // Sort bottom sheet
+  sortBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(9,10,10,0.5)',
+    justifyContent: 'flex-end',
+  },
+  sortSheet: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 8,
+    paddingBottom: 34,
+  },
+  grabHandleWrap: {
+    paddingVertical: 16,
+    alignItems: 'center',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+  },
+  grabHandle: { width: 48, height: 5, backgroundColor: '#DCDCDC', borderRadius: 100 },
+  sheetContent: { paddingHorizontal: 16, gap: 16 },
+  sheetTitle: { fontSize: 24, fontWeight: '700', color: '#181818', lineHeight: 32 },
+  sortOptions: { gap: 8 },
+  sortOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 56,
+    paddingHorizontal: 16,
+    gap: 8,
+    borderRadius: 8,
+  },
+  sortOptionActive: { backgroundColor: '#fcf7f9' },
+  sortOptionLabel: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
+  radio: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioActive: { borderColor: '#ff5a7d' },
+  radioInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#ff5a7d' },
+});

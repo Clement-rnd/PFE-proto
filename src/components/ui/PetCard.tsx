@@ -6,13 +6,23 @@ import { colors } from '../../theme/colors';
 import type { Pet } from '../../data/petStore';
 import { computeAge } from '../../data/petStore';
 
+const PET_IMAGES = [
+  require('../../../assets/images/pet-1.png'),
+  require('../../../assets/images/pet-2.png'),
+  require('../../../assets/images/pet-3.png'),
+  require('../../../assets/images/pet-4.png'),
+  require('../../../assets/images/pet-5.png'),
+];
+
 interface PetCardProps {
   pet: Pet;
+  index?: number;
   onPress?: () => void;
   borderColor?: string;
 }
 
-export function PetCard({ pet, onPress, borderColor = '#E8E8E8' }: PetCardProps) {
+export function PetCard({ pet, index = 0, onPress, borderColor = '#E8E8E8' }: PetCardProps) {
+  const fallbackImage = PET_IMAGES[index % PET_IMAGES.length];
   const age = computeAge(pet.birthDate);
   const raceLabel = pet.races.length === 2 ? 'croisé' : pet.races.join(' · ');
   const breedLine = [pet.species, raceLabel].filter(Boolean).join(' · ');
@@ -38,10 +48,11 @@ export function PetCard({ pet, onPress, borderColor = '#E8E8E8' }: PetCardProps)
 
       {/* Avatar */}
       <View style={styles.avatar}>
-        {pet.photoUri
-          ? <Image source={{ uri: pet.photoUri }} style={styles.avatarImage} resizeMode="cover" />
-          : <View style={styles.avatarPlaceholder} />
-        }
+        <Image
+          source={pet.photoUri ? { uri: pet.photoUri } : fallbackImage}
+          style={styles.avatarImage}
+          resizeMode="cover"
+        />
       </View>
 
       {/* Info */}
@@ -80,10 +91,6 @@ const styles = StyleSheet.create({
   avatarImage: {
     width: 56,
     height: 56,
-  },
-  avatarPlaceholder: {
-    flex: 1,
-    backgroundColor: '#E8E8E8',
   },
   info: {
     flex: 1,

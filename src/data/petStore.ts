@@ -6,6 +6,10 @@ export interface Pet {
   sterilized: string;
   birthDate: string;
   photoUri?: string;
+  coatColor?: string;
+  identType?: string;
+  identNumber?: string;
+  insurance?: string;
 }
 
 const pets: Pet[] = [];

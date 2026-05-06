@@ -1,7 +1,7 @@
 import { View, Text, Pressable, ScrollView, StyleSheet, Image, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
+import { useState, useCallback } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import Svg, { Defs, ClipPath, Path, Image as SvgImage } from 'react-native-svg';
@@ -24,11 +24,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
     </View>
   );
 }
-
-function Divider() {
-  return <View style={styles.divider} />;
-}
-
+function Divider() { return <View style={styles.divider} />; }
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={styles.section}>
@@ -41,14 +37,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function AnimalInfoScreen() {
   const { index } = useLocalSearchParams<{ index?: string }>();
   const petIndex = parseInt(index ?? '0', 10);
-  const pets = getPets();
-  const pet = pets[petIndex];
+
+  const [pet, setPet] = useState(() => getPets()[petIndex]);
   const [tab, setTab] = useState<Tab>('general');
 
-  if (!pet) {
-    router.back();
-    return null;
-  }
+  useFocusEffect(useCallback(() => {
+    const updated = getPets()[petIndex];
+    if (!updated) { router.back(); return; }
+    setPet(updated);
+  }, [petIndex]));
+
+  if (!pet) return null;
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
@@ -60,39 +59,30 @@ export default function AnimalInfoScreen() {
             <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
           </Pressable>
           <Text style={styles.title}>Informations</Text>
-          <Pressable hitSlop={12}>
-            <Text style={styles.modifierBtn}>Modifier</Text>
+          <Pressable
+            hitSlop={12}
+            onPress={() => router.push({ pathname: '/(health)/animal-edit', params: { index: String(petIndex) } })}
+          >
+            <Text style={styles.actionBtn}>Modifier</Text>
           </Pressable>
         </View>
       </AnimatedEntry>
 
-      <AnimatedEntry delay={100} style={{ flex: 1 }}>
+      <AnimatedEntry delay={100} style={styles.body}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Segmented control */}
           <View style={styles.segmented}>
-            <Pressable
-              style={[styles.segment, tab === 'general' && styles.segmentActive]}
-              onPress={() => setTab('general')}
-            >
-              <Text style={[styles.segmentLabel, tab === 'general' && styles.segmentLabelActive]}>
-                Général
-              </Text>
+            <Pressable style={[styles.segment, tab === 'general' && styles.segmentActive]} onPress={() => setTab('general')}>
+              <Text style={[styles.segmentLabel, tab === 'general' && styles.segmentLabelActive]}>Général</Text>
             </Pressable>
-            <Pressable
-              style={[styles.segment, tab === 'medical' && styles.segmentActive]}
-              onPress={() => setTab('medical')}
-            >
-              <Text style={[styles.segmentLabel, tab === 'medical' && styles.segmentLabelActive]}>
-                Médical
-              </Text>
+            <Pressable style={[styles.segment, tab === 'medical' && styles.segmentActive]} onPress={() => setTab('medical')}>
+              <Text style={[styles.segmentLabel, tab === 'medical' && styles.segmentLabelActive]}>Médical</Text>
             </Pressable>
           </View>
 
-          {/* Avatar */}
           <View style={styles.avatarRow}>
             {Platform.OS === 'web' ? (
               <View style={styles.avatarWeb}>
@@ -139,15 +129,15 @@ export default function AnimalInfoScreen() {
               <Section title="Caractéristiques">
                 <InfoRow label="Stérilisation" value={pet.sterilized} />
                 <Divider />
-                <InfoRow label="Couleur du pelage" value="Inconnue" />
+                <InfoRow label="Couleur du pelage" value={pet.coatColor ?? '—'} />
               </Section>
 
               <Section title="Administratif">
-                <InfoRow label="Type d'identification" value="Inconnue" />
+                <InfoRow label="Type d'identification" value={pet.identType ?? '—'} />
                 <Divider />
-                <InfoRow label="Numéro d'identification" value="Inconnue" />
+                <InfoRow label="Numéro d'identification" value={pet.identNumber ?? '—'} />
                 <Divider />
-                <InfoRow label="Assurance" value="Inconnue" />
+                <InfoRow label="Assurance" value={pet.insurance ?? '—'} />
               </Section>
             </>
           ) : (
@@ -171,26 +161,11 @@ const styles = StyleSheet.create({
     height: 44,
     gap: 8,
   },
-  title: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '500',
-    color: '#181818',
-  },
-  modifierBtn: {
-    fontSize: 16,
-    fontWeight: '300',
-    color: '#181818',
-  },
+  title: { flex: 1, fontSize: 20, fontWeight: '500', color: '#181818' },
+  actionBtn: { fontSize: 16, fontWeight: '300', color: '#181818' },
+  body: { flex: 1 },
   scroll: { flex: 1 },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 32,
-    gap: 24,
-  },
-
-  // Segmented control
+  scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 24 },
   segmented: {
     flexDirection: 'row',
     backgroundColor: '#EDEDED',
@@ -199,12 +174,7 @@ const styles = StyleSheet.create({
     height: 56,
     gap: 8,
   },
-  segment: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 6,
-  },
+  segment: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 6 },
   segmentActive: {
     backgroundColor: '#FFFFFF',
     shadowColor: '#000',
@@ -213,16 +183,8 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  segmentLabel: {
-    fontSize: 16,
-    fontWeight: '300',
-    color: '#717171',
-  },
-  segmentLabelActive: {
-    color: '#181818',
-  },
-
-  // Avatar
+  segmentLabel: { fontSize: 16, fontWeight: '300', color: '#717171' },
+  segmentLabelActive: { color: '#181818' },
   avatarRow: { alignItems: 'center' },
   avatarWeb: {
     width: AVATAR_SIZE,
@@ -232,18 +194,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E8E8E8',
     overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarWebImg: { width: AVATAR_SIZE, height: AVATAR_SIZE },
   avatarPlaceholder: { flex: 1, backgroundColor: '#F5F5F5' },
-
-  // Sections
   section: { gap: 12 },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#717171',
-    lineHeight: 16 * 1.4,
-  },
+  sectionTitle: { fontSize: 16, fontWeight: '500', color: '#717171', lineHeight: 16 * 1.4 },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
@@ -251,40 +208,10 @@ const styles = StyleSheet.create({
     borderColor: '#E8E8E8',
     overflow: 'hidden',
   },
-
-  // List rows
-  row: {
-    height: 56,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    gap: 4,
-  },
-  rowLabel: {
-    fontSize: 14,
-    fontWeight: '300',
-    color: '#B2B2B2',
-    lineHeight: 14 * 1.4,
-  },
-  rowValue: {
-    fontSize: 16,
-    fontWeight: '300',
-    color: '#181818',
-    lineHeight: 16 * 1.4,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#DCDCDC',
-    marginHorizontal: 16,
-  },
-
-  // Empty tab
-  emptyTab: {
-    paddingTop: 40,
-    alignItems: 'center',
-  },
-  emptyTabText: {
-    fontSize: 16,
-    fontWeight: '300',
-    color: '#B2B2B2',
-  },
+  row: { height: 56, paddingHorizontal: 16, justifyContent: 'center', gap: 4 },
+  rowLabel: { fontSize: 14, fontWeight: '300', color: '#B2B2B2', lineHeight: 14 * 1.4 },
+  rowValue: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
+  divider: { height: 1, backgroundColor: '#DCDCDC', marginHorizontal: 16 },
+  emptyTab: { paddingTop: 40, alignItems: 'center' },
+  emptyTabText: { fontSize: 16, fontWeight: '300', color: '#B2B2B2' },
 });

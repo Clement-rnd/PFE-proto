@@ -1,4 +1,5 @@
-import { AlertCircleIcon, PulseRectangle01Icon, BloodIcon } from '@hugeicons/core-free-icons';
+import { PulseRectangle01Icon, BloodIcon } from '@hugeicons/core-free-icons';
+import { dermatiteCustomIcon } from '../components/icons/DermatiteIcon';
 
 export type Treatment = {
   name: string;
@@ -19,7 +20,7 @@ export const CHRONIC_DISEASES: ChronicDisease[] = [
   {
     name: 'Dermatite atopique',
     category: 'Dermatologique',
-    icon: AlertCircleIcon,
+    icon: dermatiteCustomIcon,
     symptoms: ['Démangeaisons', 'Léchage des pattes', 'Rougeurs sur le ventre'],
     treatment: {
       name: 'Apoquel - 16 mg',

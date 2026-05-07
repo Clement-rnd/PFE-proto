@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon, ArrowRight01Icon, Medicine02Icon } from '@hugeicons/core-free-icons';
+import { AppIcon } from '../../src/components/ui/AppIcon';
 import { usePets } from '../../src/data/petStore';
 import { CHRONIC_DISEASES } from '../../src/data/chronicDiseasesData';
 import { colors } from '../../src/theme/colors';
@@ -61,7 +62,7 @@ export default function AnimalChronicDiseaseDetailScreen() {
           {/* Disease header */}
           <View style={styles.diseaseHeader}>
             <View style={styles.diseaseIconBox}>
-              <HugeiconsIcon icon={disease.icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
+              <AppIcon icon={disease.icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
             </View>
             <View style={styles.diseaseHeaderContent}>
               <Text style={styles.diseaseName} numberOfLines={1}>{disease.name}</Text>

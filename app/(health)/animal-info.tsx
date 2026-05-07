@@ -6,9 +6,11 @@ import { HugeiconsIcon } from '@hugeicons/react-native';
 import {
   ArrowLeft01Icon, ArrowRight01Icon,
   TapeMeasureIcon, WeightScaleIcon, BloodIcon,
-  AlertCircleIcon, PulseRectangle01Icon, TransactionHistoryIcon,
+  PulseRectangle01Icon, TransactionHistoryIcon,
   HelpCircleIcon,
 } from '@hugeicons/core-free-icons';
+import { AppIcon } from '../../src/components/ui/AppIcon';
+import { allergyCustomIcon } from '../../src/components/icons/AllergyIcon';
 import Svg, { Defs, ClipPath, Path, Image as SvgImage } from 'react-native-svg';
 import { getSvgPath } from 'react-native-figma-squircle';
 import { usePets } from '../../src/data/petStore';
@@ -72,7 +74,7 @@ function MedicalRow({ icon, label, subtitle, hasArrow = false, onPress }: Medica
   return (
     <Pressable style={styles.medRow} onPress={onPress} disabled={!onPress}>
       <View style={styles.medRowIcon}>
-        <HugeiconsIcon icon={icon} size={24} color={colors.neutral[900]} strokeWidth={1.5} />
+        <AppIcon icon={icon} size={24} color={colors.neutral[900]} strokeWidth={1.5} />
       </View>
       <View style={styles.medRowContent}>
         <Text style={styles.medRowLabel}>{label}</Text>
@@ -98,6 +100,11 @@ export default function AnimalInfoScreen() {
 
   const segAnim = useRef(new Animated.Value(0)).current;
   const contentTranslateX = useRef(new Animated.Value(0)).current;
+  const modifierOpacity = segAnim.interpolate({
+    inputRange: [0, 0.4, 1],
+    outputRange: [1, 0, 0],
+    extrapolate: 'clamp',
+  });
 
   if (!pet) return null;
 
@@ -146,25 +153,26 @@ export default function AnimalInfoScreen() {
           <HugeiconsIcon icon={ArrowLeft01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
         </Pressable>
         <Text style={styles.title}>Informations</Text>
-        {tab === 'general' ? (
+        <Animated.View
+          style={{ opacity: modifierOpacity, width: 60, alignItems: 'flex-end' }}
+          pointerEvents={tab === 'general' ? 'auto' : 'none'}
+        >
           <Pressable
             hitSlop={12}
             onPress={() => router.push({ pathname: '/(health)/animal-edit', params: { index: String(petIndex) } })}
           >
             <Text style={styles.actionBtn}>Modifier</Text>
           </Pressable>
-        ) : (
-          <View style={{ width: 60 }} />
-        )}
+        </Animated.View>
       </View>
 
-      <AnimatedEntry delay={80} style={styles.body}>
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Segmented control — pas d'animation d'entrée, seul le pill slide */}
+      <ScrollView
+        style={[styles.scroll, styles.body]}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Segmented control */}
+        <AnimatedEntry delay={60}>
           <View
             style={styles.segmented}
             onLayout={(e) => setSegContainerWidth(e.nativeEvent.layout.width)}
@@ -181,8 +189,10 @@ export default function AnimalInfoScreen() {
               <Text style={[styles.segmentLabel, tab === 'medical' && styles.segmentLabelActive]}>Médical</Text>
             </Pressable>
           </View>
+        </AnimatedEntry>
 
-          {/* Contenu qui slide gauche/droite */}
+        {/* Contenu qui slide gauche/droite */}
+        <AnimatedEntry delay={130}>
           <View style={styles.tabContentClip}>
             <Animated.View style={[styles.tabContent, { transform: [{ translateX: contentTranslateX }] }]}>
               {tab === 'general' ? (
@@ -268,12 +278,12 @@ export default function AnimalInfoScreen() {
                   <MedicalSection title="Informations médicales">
                     <MedicalRow icon={BloodIcon} label="Groupe sanguin" subtitle="DEA 1.1 positif" />
                     <MedicalRow
-                    icon={AlertCircleIcon}
-                    label="Allergies"
-                    subtitle="4 allergies diagnostiquées"
-                    hasArrow
-                    onPress={() => router.push({ pathname: '/(health)/animal-allergies', params: { index: String(petIndex) } })}
-                  />
+                      icon={allergyCustomIcon}
+                      label="Allergies"
+                      subtitle="4 allergies diagnostiquées"
+                      hasArrow
+                      onPress={() => router.push({ pathname: '/(health)/animal-allergies', params: { index: String(petIndex) } })}
+                    />
                     <MedicalRow icon={PulseRectangle01Icon} label="Maladies chroniques" subtitle="3 maladies chroniques diagnostiquées" hasArrow onPress={() => router.push({ pathname: '/(health)/animal-chronic-diseases', params: { index: String(petIndex) } })} />
                     <MedicalRow icon={TransactionHistoryIcon} label="Antécédents médicaux" hasArrow />
                   </MedicalSection>
@@ -281,8 +291,8 @@ export default function AnimalInfoScreen() {
               )}
             </Animated.View>
           </View>
-        </ScrollView>
-      </AnimatedEntry>
+        </AnimatedEntry>
+      </ScrollView>
     </SafeAreaView>
   );
 }

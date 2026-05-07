@@ -1,11 +1,11 @@
-import { medicationCustomIcon } from '../components/icons/MedicationIcon';
+import { Medicine02Icon, DropperIcon } from '@hugeicons/core-free-icons';
 
 export type TreatmentStatus = 'active' | 'finished' | 'paused';
 
 export type Traitement = {
   id: string;
   name: string;
-  icon: typeof medicationCustomIcon;
+  icon: any;
   petIndex: number;
   petName: string;
   doctor: string;
@@ -23,7 +23,7 @@ export const TRAITEMENTS: Traitement[] = [
   {
     id: 'apoquel-cooper',
     name: 'Apoquel - 16 mg',
-    icon: medicationCustomIcon,
+    icon: Medicine02Icon,
     petIndex: 0,
     petName: 'Cooper',
     doctor: 'Dr. LEROY',
@@ -38,7 +38,7 @@ export const TRAITEMENTS: Traitement[] = [
   {
     id: 'meloxicam-cooper',
     name: 'Meloxicam - 0.5 mg',
-    icon: medicationCustomIcon,
+    icon: Medicine02Icon,
     petIndex: 0,
     petName: 'Cooper',
     doctor: 'Dr. DUPONT',
@@ -53,7 +53,7 @@ export const TRAITEMENTS: Traitement[] = [
   {
     id: 'forthyron-cooper',
     name: 'Forthyron - 200 mcg',
-    icon: medicationCustomIcon,
+    icon: Medicine02Icon,
     petIndex: 0,
     petName: 'Cooper',
     doctor: 'Dr. MARTIN',
@@ -67,7 +67,7 @@ export const TRAITEMENTS: Traitement[] = [
   {
     id: 'stronghold-luna',
     name: 'Stronghold - 60 mg',
-    icon: medicationCustomIcon,
+    icon: DropperIcon,
     petIndex: 1,
     petName: 'Luna',
     doctor: 'Dr. MARTIN',
@@ -81,7 +81,7 @@ export const TRAITEMENTS: Traitement[] = [
   {
     id: 'amoxicilline-cooper',
     name: 'Amoxicilline - 500 mg',
-    icon: medicationCustomIcon,
+    icon: Medicine02Icon,
     petIndex: 0,
     petName: 'Cooper',
     doctor: 'Dr. MARTIN',

@@ -70,13 +70,14 @@ export default function HealthMyAnimalsScreen() {
                 />
               ))}
             </View>
-
+          </ScrollView>
+          <View style={styles.footer}>
             <Button
               label="Ajouter un animal"
               icon={Add01Icon}
               onPress={() => router.push({ pathname: '/(auth)/add-pet', params: { returnBack: '1' } })}
             />
-          </ScrollView>
+          </View>
         </AnimatedEntry>
       )}
     </SafeAreaView>
@@ -124,8 +125,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 8,
-    paddingBottom: 24,
+    paddingBottom: 8,
     gap: 16,
   },
   list: { gap: 4 },
+  footer: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
 });

@@ -23,8 +23,8 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-title" content="NAYA" />
         <link rel="apple-touch-icon" href="/icon.png" />
 
-        {/* Empêche le zoom au tap sur les inputs */}
         <style>{`
+          html, body { background-color: #FEF0F2; }
           input, select, textarea { font-size: 16px !important; }
         `}</style>
 

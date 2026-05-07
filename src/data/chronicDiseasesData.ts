@@ -1,4 +1,4 @@
-import { PulseRectangle01Icon, BloodIcon } from '@hugeicons/core-free-icons';
+import { Bone02Icon, DnaIcon } from '@hugeicons/core-free-icons';
 import { dermatiteCustomIcon } from '../components/icons/DermatiteIcon';
 
 export type Treatment = {
@@ -12,6 +12,7 @@ export type ChronicDisease = {
   name: string;
   category: string;
   icon: any;
+  diagnosedDate: string;
   symptoms: string[];
   treatment: Treatment | null;
 };
@@ -21,6 +22,7 @@ export const CHRONIC_DISEASES: ChronicDisease[] = [
     name: 'Dermatite atopique',
     category: 'Dermatologique',
     icon: dermatiteCustomIcon,
+    diagnosedDate: 'janv. 2025',
     symptoms: ['Démangeaisons', 'Léchage des pattes', 'Rougeurs sur le ventre'],
     treatment: {
       name: 'Apoquel - 16 mg',
@@ -30,10 +32,11 @@ export const CHRONIC_DISEASES: ChronicDisease[] = [
     },
   },
   {
-    name: 'Arthrose légère',
-    category: 'Locomotrice',
-    icon: PulseRectangle01Icon,
-    symptoms: ['Boiterie légère', 'Raideur matinale', 'Douleur à la palpation'],
+    name: 'Dysplasie des hanches',
+    category: 'Articulaire',
+    icon: Bone02Icon,
+    diagnosedDate: 'nov. 2024',
+    symptoms: ['Boiterie légère', 'Douleur à la palpation des hanches', 'Difficulté à se lever'],
     treatment: {
       name: 'Meloxicam - 0.5 mg',
       since: 'Depuis Juin 2024',
@@ -43,8 +46,9 @@ export const CHRONIC_DISEASES: ChronicDisease[] = [
   },
   {
     name: 'Hypothyroïdie',
-    category: 'Endocrinologique',
-    icon: BloodIcon,
+    category: 'Endocrinien',
+    icon: DnaIcon,
+    diagnosedDate: 'oct. 2024',
     symptoms: ['Fatigue excessive', 'Prise de poids', 'Perte de poils'],
     treatment: {
       name: 'Forthyron - 200 mcg',
@@ -54,5 +58,3 @@ export const CHRONIC_DISEASES: ChronicDisease[] = [
     },
   },
 ];
-
-export const DISEASE_CATEGORIES = ['Dermatologique', 'Locomotrice', 'Endocrinologique'] as const;

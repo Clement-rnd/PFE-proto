@@ -285,7 +285,7 @@ export default function AnimalInfoScreen() {
                       onPress={() => router.push({ pathname: '/(health)/animal-allergies', params: { index: String(petIndex) } })}
                     />
                     <MedicalRow icon={PulseRectangle01Icon} label="Maladies chroniques" subtitle="3 maladies chroniques diagnostiquées" hasArrow onPress={() => router.push({ pathname: '/(health)/animal-chronic-diseases', params: { index: String(petIndex) } })} />
-                    <MedicalRow icon={TransactionHistoryIcon} label="Antécédents médicaux" hasArrow />
+                    <MedicalRow icon={TransactionHistoryIcon} label="Antécédents médicaux" hasArrow onPress={() => router.push({ pathname: '/(health)/animal-medical-history', params: { index: String(petIndex) } })} />
                   </MedicalSection>
                 </>
               )}

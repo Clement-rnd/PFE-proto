@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   treatmentRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 64,
+    height: 56,
     paddingLeft: 16,
     paddingRight: 8,
     gap: 8,

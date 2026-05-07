@@ -40,7 +40,7 @@ const MENU_ITEMS = [
     label: 'Traitements',
     icon: Medicine02Icon,
     subtitle: 'Aucun traitement en cours',
-    route: null,
+    route: '/(health)/traitements',
   },
 ];
 

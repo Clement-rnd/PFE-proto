@@ -144,9 +144,12 @@ export default function AnimalDetailsScreen() {
             <Pressable
               key={item.key}
               style={styles.menuItem}
-              onPress={item.key === 'info'
-                ? () => router.push({ pathname: '/(health)/animal-info', params: { index: petIndex } })
-                : undefined
+              onPress={
+                item.key === 'info'
+                  ? () => router.push({ pathname: '/(health)/animal-info', params: { index: petIndex } })
+                  : item.key === 'treatments'
+                  ? () => router.push({ pathname: '/(health)/animal-traitements', params: { index: petIndex } })
+                  : undefined
               }
             >
               <View style={styles.iconSlot}>

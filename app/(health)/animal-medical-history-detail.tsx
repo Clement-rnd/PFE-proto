@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  documentContent: { flex: 1, gap: 4, justifyContent: 'center' },
+  documentContent: { flex: 1, gap: 8, justifyContent: 'center' },
   documentName: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
   documentMeta: { fontSize: 14, fontWeight: '300', color: '#B2B2B2', lineHeight: 14 * 1.2 },
 });

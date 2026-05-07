@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     width: 28, height: 28, borderRadius: 8,
     backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center',
   },
-  diseaseContent: { flex: 1, gap: 4, justifyContent: 'center' },
+  diseaseContent: { flex: 1, gap: 8, justifyContent: 'center' },
   diseaseName: { fontSize: 16, fontWeight: '300', color: '#181818' },
   diseaseSubRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   diseaseTag: {

@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   menu: { gap: 4 },
   menuItem: { flexDirection: 'row', alignItems: 'center', height: 56, gap: 8 },
   iconSlot: { width: 24, alignItems: 'center', justifyContent: 'center' },
-  menuContent: { flex: 1, gap: 4, justifyContent: 'center' },
+  menuContent: { flex: 1, gap: 8, justifyContent: 'center' },
   menuLabel: { fontSize: 16, fontWeight: '300', color: '#181818' },
   menuSubtitle: { fontSize: 12, fontWeight: '300', color: '#B2B2B2' },
 

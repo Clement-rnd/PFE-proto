@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  consultContent: { flex: 1, gap: 6, justifyContent: 'center' },
+  consultContent: { flex: 1, gap: 8, justifyContent: 'center' },
   consultName: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
   consultMeta: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   statusTag: {

@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   medRowIcon: { width: 24, alignItems: 'center', justifyContent: 'center' },
-  medRowContent: { flex: 1, gap: 4, justifyContent: 'center' },
+  medRowContent: { flex: 1, gap: 8, justifyContent: 'center' },
   medRowLabel: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
   medRowSub: { fontSize: 12, fontWeight: '300', color: '#B2B2B2', lineHeight: 12 * 1.4 },
 });

@@ -84,7 +84,7 @@ export default function AnimalEditScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <ScreenBackground />
 
       <AnimatedEntry delay={0}>
@@ -103,7 +103,7 @@ export default function AnimalEditScreen() {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <ScrollView
             style={styles.scroll}
-            contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 30 }]}
+            contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
@@ -265,12 +265,14 @@ export default function AnimalEditScreen() {
               </View>
             </View>
 
-            <Button label="Sauvegarder" onPress={handleSave} disabled={!isValid} />
-
             <Pressable onPress={() => setDeleteOpen(true)} style={styles.deleteLink} hitSlop={8}>
               <Text style={styles.deleteLinkText}>Supprimer mon animal</Text>
             </Pressable>
           </ScrollView>
+
+          <View style={styles.footer}>
+            <Button label="Sauvegarder" onPress={handleSave} disabled={!isValid} />
+          </View>
         </KeyboardAvoidingView>
       </AnimatedEntry>
 
@@ -336,7 +338,8 @@ const styles = StyleSheet.create({
   confirmBtnDisabled: { color: colors.neutral[300] },
   body: { flex: 1 },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 16, paddingTop: 16, gap: 48 },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24, gap: 48 },
+  footer: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
 
   avatarSection: { alignItems: 'center', gap: 8 },
   avatarWeb: {

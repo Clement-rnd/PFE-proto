@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     width: 28, height: 28, borderRadius: 8,
     backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center',
   },
-  allergyContent: { flex: 1, gap: 4, justifyContent: 'center' },
+  allergyContent: { flex: 1, gap: 8, justifyContent: 'center' },
   allergyName: { fontSize: 16, fontWeight: '300', color: '#181818' },
   tag: { alignSelf: 'flex-start', height: 24, paddingHorizontal: 8, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   tagText: { fontSize: 12, fontWeight: '300' },

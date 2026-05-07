@@ -19,7 +19,7 @@ const MENU_ITEMS = [
     label: 'Consultations',
     icon: CalendarFavorite01Icon,
     subtitle: null,
-    route: null,
+    route: '/(health)/consultations',
   },
   {
     key: 'my-animals',

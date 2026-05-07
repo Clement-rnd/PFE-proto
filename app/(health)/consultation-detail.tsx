@@ -4,11 +4,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { AppIcon } from '../../src/components/ui/AppIcon';
-import { usePets } from '../../src/data/petStore';
 import { CONSULTATIONS, type ConsultationStatus } from '../../src/data/consultationsData';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
-import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const STATUS_STYLES: Record<ConsultationStatus, { bg: string; text: string; label: string }> = {
@@ -33,14 +31,11 @@ function InfoRow({ label, value, last }: { label: string; value: string; last?: 
 }
 
 export default function ConsultationDetailScreen() {
-  const { id, petIndex: petIndexParam } = useLocalSearchParams<{ id?: string; petIndex?: string }>();
-  const petIndex = parseInt(petIndexParam ?? '0', 10);
-  const pets = usePets();
-  const pet = pets[petIndex];
+  const { id } = useLocalSearchParams<{ id?: string }>();
 
   const consult = CONSULTATIONS.find(c => c.id === id);
 
-  if (!pet || !consult) return null;
+  if (!consult) return null;
 
   const tag = STATUS_STYLES[consult.status];
 
@@ -85,12 +80,6 @@ export default function ConsultationDetailScreen() {
               <InfoRow label="Clinique" value={consult.clinic} />
               <InfoRow label="Date du rendez-vous" value={consult.dateTime} last />
             </View>
-          </View>
-
-          {/* Animal concerné */}
-          <View style={styles.section}>
-            <SectionTitle label="Animal concerné" />
-            <PetCard pet={pet} index={petIndex} />
           </View>
 
           {/* Motif */}

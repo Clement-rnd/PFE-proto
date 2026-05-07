@@ -2,13 +2,12 @@ import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { ArrowLeft01Icon, ArrowRight01Icon, Medicine02Icon } from '@hugeicons/core-free-icons';
+import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { AppIcon } from '../../src/components/ui/AppIcon';
-import { usePets } from '../../src/data/petStore';
 import { CHRONIC_DISEASES } from '../../src/data/chronicDiseasesData';
+import { medicationCustomIcon } from '../../src/components/icons/MedicationIcon';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
-import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -32,14 +31,11 @@ function BulletRow({ text, last }: { text: string; last: boolean }) {
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 export default function AnimalChronicDiseaseDetailScreen() {
-  const { name, petIndex: petIndexParam } = useLocalSearchParams<{ name?: string; petIndex?: string }>();
-  const petIndex = parseInt(petIndexParam ?? '0', 10);
-  const pets = usePets();
-  const pet = pets[petIndex];
+  const { name } = useLocalSearchParams<{ name?: string }>();
 
   const disease = CHRONIC_DISEASES.find(d => d.name === name);
 
-  if (!pet || !disease) return null;
+  if (!disease) return null;
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
@@ -72,12 +68,6 @@ export default function AnimalChronicDiseaseDetailScreen() {
             </View>
           </View>
 
-          {/* Animal concerné */}
-          <View style={styles.section}>
-            <SectionTitle label="Animal concerné" />
-            <PetCard pet={pet} index={petIndex} />
-          </View>
-
           {/* Traitement en cours */}
           {disease.treatment && (
             <View style={styles.section}>
@@ -86,7 +76,7 @@ export default function AnimalChronicDiseaseDetailScreen() {
                 {/* Medication row */}
                 <Pressable style={styles.treatmentRow}>
                   <View style={styles.treatmentIconBox}>
-                    <HugeiconsIcon icon={Medicine02Icon} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
+                    <AppIcon icon={medicationCustomIcon} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
                   </View>
                   <View style={styles.treatmentContent}>
                     <Text style={styles.treatmentName}>{disease.treatment.name}</Text>

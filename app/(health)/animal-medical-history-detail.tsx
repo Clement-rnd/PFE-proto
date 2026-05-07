@@ -3,11 +3,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon, ArrowRight01Icon, File02Icon } from '@hugeicons/core-free-icons';
-import { usePets } from '../../src/data/petStore';
 import { MEDICAL_HISTORY } from '../../src/data/medicalHistoryData';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
-import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 function SectionTitle({ label }: { label: string }) {
@@ -61,14 +59,11 @@ function DocumentRow({ name, size, date, last }: { name: string; size: string; d
 }
 
 export default function AnimalMedicalHistoryDetailScreen() {
-  const { id, petIndex: petIndexParam } = useLocalSearchParams<{ id?: string; petIndex?: string }>();
-  const petIndex = parseInt(petIndexParam ?? '0', 10);
-  const pets = usePets();
-  const pet = pets[petIndex];
+  const { id } = useLocalSearchParams<{ id?: string }>();
 
   const event = MEDICAL_HISTORY.find(e => e.id === id);
 
-  if (!pet || !event) return null;
+  if (!event) return null;
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
@@ -112,12 +107,6 @@ export default function AnimalMedicalHistoryDetailScreen() {
                 : <InfoRow label="Date" value={event.dateLabel} last />
               }
             </InfoCard>
-          </View>
-
-          {/* Animal concerné */}
-          <View style={styles.section}>
-            <SectionTitle label="Animal concerné" />
-            <PetCard pet={pet} index={petIndex} />
           </View>
 
           {/* Motif */}

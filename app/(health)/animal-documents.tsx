@@ -70,9 +70,7 @@ export default function AnimalDocumentsScreen() {
                 <Text style={styles.alertText}>Pensez à prendre RDV pour un suivi régulier.</Text>
               </View>
             </View>
-            <View style={styles.emptyCard}>
-              <Text style={styles.emptyBody}>Votre vétérinaire n'a pas encore ajouté de documents concernant {pet.name}.</Text>
-            </View>
+            <Text style={styles.emptyBody}>Votre vétérinaire n'a pas encore ajouté de documents concernant {pet.name}.</Text>
           </ScrollView>
         ) : (
           <ScrollView
@@ -230,18 +228,7 @@ const styles = StyleSheet.create({
   alertText: { flex: 1, fontSize: 16, fontWeight: '300', color: '#39438D', lineHeight: 16 * 1.2 },
 
   // Empty
-  emptyCard: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#E8E8E8',
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyBody: { fontSize: 16, fontWeight: '300', color: '#717171', lineHeight: 16 * 1.4, textAlign: 'center' },
+  emptyBody: { fontSize: 16, fontWeight: '300', color: '#717171', lineHeight: 16 * 1.4, textAlign: 'center', paddingHorizontal: 16 },
 
   // List
   group: { gap: 12 },

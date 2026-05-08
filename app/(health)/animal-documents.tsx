@@ -12,10 +12,10 @@ import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const FILTERS: { label: string; type: DocumentType | null }[] = [
-  { label: 'Tout',          type: null },
-  { label: 'Ordonnances',   type: 'ordonnance' },
-  { label: 'Analyses',      type: 'analyse' },
-  { label: 'Comptes-rendus',type: 'compte-rendu' },
+  { label: 'Tout',           type: null },
+  { label: 'Ordonnances',    type: 'ordonnance' },
+  { label: 'Analyses',       type: 'analyse' },
+  { label: 'Comptes-rendus', type: 'compte-rendu' },
 ];
 
 export default function AnimalDocumentsScreen() {
@@ -56,47 +56,7 @@ export default function AnimalDocumentsScreen() {
         <View style={{ width: 28 }} />
       </View>
 
-      {hasData && (
-        <>
-          <View style={styles.searchWrapper}>
-            <View style={styles.searchBar}>
-              <HugeiconsIcon icon={Search01Icon} size={18} color={colors.neutral[400]} strokeWidth={1.5} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search"
-                placeholderTextColor={colors.neutral[400]}
-                value={search}
-                onChangeText={setSearch}
-              />
-            </View>
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.chipsScroll}
-            contentContainerStyle={styles.chipsRow}
-          >
-            {FILTERS.map(f => {
-              const isActive = activeFilter === f.type;
-              const count = f.type === null ? counts.all : counts[f.type];
-              return (
-                <Pressable
-                  key={f.label}
-                  style={[styles.chip, isActive && styles.chipActive]}
-                  onPress={() => setActiveFilter(f.type)}
-                >
-                  <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
-                    {f.label} ({count})
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </>
-      )}
-
-      <View style={{ flex: 1 }}>
+      <AnimatedEntry delay={80} style={{ flex: 1 }}>
         {!hasData ? (
           <ScrollView
             style={styles.scroll}
@@ -120,6 +80,42 @@ export default function AnimalDocumentsScreen() {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
+            {/* Search */}
+            <View style={styles.searchBar}>
+              <HugeiconsIcon icon={Search01Icon} size={18} color={colors.neutral[400]} strokeWidth={1.5} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Rechercher"
+                placeholderTextColor={colors.neutral[400]}
+                value={search}
+                onChangeText={setSearch}
+              />
+            </View>
+
+            {/* Filter chips */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.chipsRow}
+            >
+              {FILTERS.map(f => {
+                const isActive = activeFilter === f.type;
+                const count = f.type === null ? counts.all : counts[f.type];
+                return (
+                  <Pressable
+                    key={f.label}
+                    style={[styles.chip, isActive && styles.chipActive]}
+                    onPress={() => setActiveFilter(f.type)}
+                  >
+                    <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
+                      {f.label} ({count})
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+
+            {/* Year groups */}
             {years.map(year => {
               const yearDocs = filtered.filter(d => d.year === year);
               return (
@@ -165,7 +161,7 @@ export default function AnimalDocumentsScreen() {
             })}
           </ScrollView>
         )}
-      </View>
+      </AnimatedEntry>
     </SafeAreaView>
   );
 }
@@ -182,10 +178,9 @@ const styles = StyleSheet.create({
   },
   title: { flex: 1, fontSize: 20, fontWeight: '500', color: '#181818' },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 24 },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 16 },
 
   // Search
-  searchWrapper: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -198,8 +193,7 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 16, fontWeight: '300', color: '#181818' },
 
   // Chips
-  chipsScroll: { flexShrink: 0 },
-  chipsRow: { paddingHorizontal: 16, paddingBottom: 8, gap: 8, flexDirection: 'row' },
+  chipsRow: { gap: 8, flexDirection: 'row' },
   chip: {
     height: 32,
     paddingHorizontal: 12,
@@ -210,10 +204,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  chipActive: {
-    backgroundColor: colors.primary.DEFAULT,
-    borderColor: colors.primary.DEFAULT,
-  },
+  chipActive: { backgroundColor: colors.primary.DEFAULT, borderColor: colors.primary.DEFAULT },
   chipLabel: { fontSize: 14, fontWeight: '300', color: '#4F4F4F' },
   chipLabelActive: { color: '#FFFFFF', fontWeight: '500' },
 

@@ -25,7 +25,6 @@ function InfoRow({ label, value, last }: { label: string; value: string; last?: 
   return (
     <>
       <View style={styles.infoRow}>
-        <ScreenBackground />
         <Text style={styles.infoRowLabel}>{label}</Text>
         <Text style={styles.infoRowValue}>{value}</Text>
       </View>
@@ -51,6 +50,7 @@ export default function TraitementDetailScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

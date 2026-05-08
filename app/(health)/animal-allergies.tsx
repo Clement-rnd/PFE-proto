@@ -59,7 +59,6 @@ function AllergyRow({ allergy, sortMode, onPress }: AllergyRowProps) {
   return (
     <Pressable style={styles.allergyRow} onPress={onPress}>
       <View style={styles.allergyIconBox}>
-        <ScreenBackground />
         <HugeiconsIcon icon={allergy.icon} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
       </View>
       <View style={styles.allergyContent}>
@@ -165,6 +164,7 @@ export default function AnimalAllergiesScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

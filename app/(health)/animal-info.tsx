@@ -37,7 +37,6 @@ type Tab = 'general' | 'medical';
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.infoRow}>
-      <ScreenBackground />
       <Text style={styles.infoRowLabel}>{label}</Text>
       <Text style={styles.infoRowValue}>{value || '—'}</Text>
     </View>
@@ -146,6 +145,7 @@ export default function AnimalInfoScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       {/* Header — pas d'animation d'entrée */}
       <View style={styles.header}>

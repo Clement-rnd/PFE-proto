@@ -99,7 +99,6 @@ function HistoryRow({ entry, last }: { entry: HistoryEntry; last: boolean }) {
   return (
     <>
       <View style={styles.historyRow}>
-        <ScreenBackground />
         <View style={[styles.historyIconBox, { backgroundColor: entry.iconBg }]}>
           <HugeiconsIcon icon={entry.icon} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
         </View>
@@ -129,6 +128,7 @@ export default function AnimalWeightScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <AnimatedEntry delay={0}>
         <View style={styles.header}>

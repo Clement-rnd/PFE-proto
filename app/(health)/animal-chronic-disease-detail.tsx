@@ -20,7 +20,6 @@ function BulletRow({ text, last }: { text: string; last: boolean }) {
   return (
     <>
       <View style={styles.bulletRow}>
-        <ScreenBackground />
         <View style={styles.bullet} />
         <Text style={styles.bulletText}>{text}</Text>
       </View>
@@ -40,6 +39,7 @@ export default function AnimalChronicDiseaseDetailScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

@@ -19,7 +19,6 @@ function SectionTitle({ label }: { label: string }) {
 function BulletList({ items, bulletColor }: { items: string[]; bulletColor: string }) {
   return (
     <View style={styles.bulletCard}>
-      <ScreenBackground />
       {items.map((item, i) => (
         <View key={i}>
           <View style={styles.bulletRow}>
@@ -49,6 +48,7 @@ export default function AnimalAllergyDetailScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

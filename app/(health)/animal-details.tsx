@@ -151,6 +151,8 @@ export default function AnimalDetailsScreen() {
                   ? () => router.push({ pathname: '/(health)/animal-traitements', params: { index: petIndex } })
                   : item.key === 'vaccines'
                   ? () => router.push({ pathname: '/(health)/animal-vaccins', params: { index: petIndex } })
+                  : item.key === 'documents'
+                  ? () => router.push({ pathname: '/(health)/animal-documents', params: { index: petIndex } })
                   : undefined
               }
             >

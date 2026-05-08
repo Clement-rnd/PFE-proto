@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 24 },
 
   // Search
-  searchWrapper: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 4 },
+  searchWrapper: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 16, fontWeight: '300', color: '#181818' },
 
   // Chips
-  chipsRow: { paddingHorizontal: 16, paddingBottom: 4, gap: 8, flexDirection: 'row' },
+  chipsRow: { paddingHorizontal: 16, paddingBottom: 8, gap: 8, flexDirection: 'row' },
   chip: {
     height: 32,
     paddingHorizontal: 12,

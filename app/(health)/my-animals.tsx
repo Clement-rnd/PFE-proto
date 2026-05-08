@@ -8,7 +8,6 @@ import { PetCard } from '../../src/components/ui/PetCard';
 import { Button } from '../../src/components/ui/Button';
 import { getPets, subscribe } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 export default function HealthMyAnimalsScreen() {
@@ -26,7 +25,6 @@ export default function HealthMyAnimalsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <AnimatedEntry delay={0}>
         <View style={styles.header}>

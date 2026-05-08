@@ -7,7 +7,6 @@ import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon, Tick01Icon } from '@hugeicons/core-free-icons';
 import { Button } from '../../src/components/ui/Button';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 function Checkbox({ checked, onPress }: { checked: boolean; onPress: () => void }) {
@@ -51,7 +50,6 @@ export default function TermsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
       <View style={styles.body}>
 
         {/* Header */}

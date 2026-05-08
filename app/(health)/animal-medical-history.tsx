@@ -6,7 +6,6 @@ import { ArrowLeft01Icon, ArrowRight01Icon, HelpCircleIcon } from '@hugeicons/co
 import { usePets } from '../../src/data/petStore';
 import { MEDICAL_HISTORY } from '../../src/data/medicalHistoryData';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 export default function AnimalMedicalHistoryScreen() {
@@ -27,7 +26,6 @@ export default function AnimalMedicalHistoryScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

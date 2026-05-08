@@ -6,7 +6,6 @@ import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { usePets } from '../../src/data/petStore';
 import { ALLERGIES, RISK_STYLE } from '../../src/data/allergiesData';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
@@ -48,7 +47,6 @@ export default function AnimalAllergyDetailScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

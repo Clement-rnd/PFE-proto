@@ -15,7 +15,6 @@ import { PhotoPickerSheet } from '../../src/components/ui/PhotoPickerSheet';
 import { addPet, getPets } from '../../src/data/petStore';
 import { formatDate, isDateComplete } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const AVATAR_SIZE = 80;
@@ -57,7 +56,6 @@ export default function AddPetScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <ScreenBackground />
       <AnimatedEntry delay={0}>
         <View style={styles.titleRow}>
           <Pressable onPress={() => router.back()} hitSlop={12}>

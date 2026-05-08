@@ -7,7 +7,6 @@ import { AppIcon } from '../../src/components/ui/AppIcon';
 import { usePets } from '../../src/data/petStore';
 import { TRAITEMENTS, type TreatmentStatus } from '../../src/data/traitementsData';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
@@ -50,7 +49,6 @@ export default function TraitementDetailScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

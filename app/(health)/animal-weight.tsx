@@ -10,7 +10,6 @@ import Svg, { Path, Line, Text as SvgText, Circle } from 'react-native-svg';
 import { useState } from 'react';
 import { usePets } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 // ── Chart (full state) ────────────────────────────────────────────────────────
@@ -128,7 +127,6 @@ export default function AnimalWeightScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <AnimatedEntry delay={0}>
         <View style={styles.header}>

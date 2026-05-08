@@ -14,7 +14,6 @@ import {
   ALLERGIES, CATEGORY_ORDER, SEVERITY_ORDER, RISK_STYLE,
 } from '../../src/data/allergiesData';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -164,7 +163,6 @@ export default function AnimalAllergiesScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

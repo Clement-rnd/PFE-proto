@@ -13,7 +13,6 @@ import Svg, { Defs, ClipPath, Path, Image as SvgImage } from 'react-native-svg';
 import { getSvgPath } from 'react-native-figma-squircle';
 import { usePets, deletePet, computeAge } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const AVATAR_SIZE = 96;
@@ -88,7 +87,6 @@ export default function AnimalDetailsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <AnimatedEntry delay={0}>
         <View style={styles.header}>

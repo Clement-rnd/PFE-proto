@@ -15,7 +15,6 @@ import { DEFAULT_COUNTRY } from '../../src/data/countries';
 import type { Country } from '../../src/data/countries';
 import { addPet, getPets } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 type CountryWithFlag = Country & { flag: string };
 
@@ -125,7 +124,6 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
       <Pressable style={styles.inner} onPress={Keyboard.dismiss}>
         <Pressable onPress={handleSkip} style={styles.skipDevBtn} hitSlop={12}>
           <Text style={styles.skipDevText}>Skip</Text>

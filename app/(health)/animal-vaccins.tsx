@@ -6,7 +6,6 @@ import { ArrowLeft01Icon, ArrowRight01Icon, HelpCircleIcon, InjectionIcon } from
 import { usePets } from '../../src/data/petStore';
 import { VACCINS, type VaccineStatus } from '../../src/data/vaccinsData';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const STATUS_STYLES: Record<VaccineStatus, { bg: string; text: string; label: string }> = {
@@ -41,7 +40,6 @@ export default function AnimalVaccinsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

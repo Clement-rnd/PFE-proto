@@ -6,7 +6,6 @@ import { ArrowLeft01Icon, InjectionIcon, Alert01Icon, CalendarAdd01Icon } from '
 import { usePets } from '../../src/data/petStore';
 import { VACCINS, type VaccineStatus } from '../../src/data/vaccinsData';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { PetCard } from '../../src/components/ui/PetCard';
 import { Button } from '../../src/components/ui/Button';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
@@ -51,7 +50,6 @@ export default function VaccinDetailScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

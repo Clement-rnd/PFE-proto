@@ -6,7 +6,6 @@ import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { AppIcon } from '../../src/components/ui/AppIcon';
 import { CONSULTATIONS, type ConsultationStatus } from '../../src/data/consultationsData';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 const STATUS_STYLES: Record<ConsultationStatus, { bg: string; text: string; label: string }> = {
@@ -23,7 +22,6 @@ const groups = years.map(year => ({
 export default function ConsultationsScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

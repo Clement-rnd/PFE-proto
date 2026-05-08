@@ -7,7 +7,6 @@ import { AppIcon } from '../../src/components/ui/AppIcon';
 import { CHRONIC_DISEASES } from '../../src/data/chronicDiseasesData';
 import { medicationCustomIcon } from '../../src/components/icons/MedicationIcon';
 import { colors } from '../../src/theme/colors';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -39,7 +38,6 @@ export default function AnimalChronicDiseaseDetailScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

@@ -9,7 +9,6 @@ import {
   Medicine02Icon,
   ArrowRight01Icon,
 } from '@hugeicons/core-free-icons';
-import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { colors } from '../../src/theme/colors';
 
@@ -47,7 +46,6 @@ const MENU_ITEMS = [
 export default function HealthScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <ScreenBackground />
       <View style={styles.body}>
 
         <AnimatedEntry delay={0}>

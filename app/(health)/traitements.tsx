@@ -1,11 +1,10 @@
-import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon, ArrowRight01Icon, HelpCircleIcon } from '@hugeicons/core-free-icons';
 import { AppIcon } from '../../src/components/ui/AppIcon';
-import { SegmentedControl } from '../../src/components/ui/SegmentedControl';
 import { TRAITEMENTS, type TreatmentStatus } from '../../src/data/traitementsData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
@@ -27,6 +26,16 @@ const ACTIVE_SECTION_LABELS: Partial<Record<TreatmentStatus, string>> = {
 
 export default function TraitementsScreen() {
   const [tab, setTab] = useState(0);
+  const [segContainerWidth, setSegContainerWidth] = useState(0);
+  const segAnim = useRef(new Animated.Value(0)).current;
+  const segWidth = segContainerWidth > 0 ? (segContainerWidth - 16) / 2 : 0;
+  const pillTranslateX = segAnim.interpolate({ inputRange: [0, 1], outputRange: [0, segWidth + 8] });
+
+  function switchTab(index: number) {
+    if (index === tab) return;
+    Animated.spring(segAnim, { toValue: index, useNativeDriver: true, damping: 32, stiffness: 180 }).start();
+    setTab(index);
+  }
 
   const activeItems = TRAITEMENTS.filter(t => t.status === 'active' || t.status === 'upcoming' || t.status === 'paused');
   const expiredItems = TRAITEMENTS.filter(t => t.status === 'finished');
@@ -45,11 +54,6 @@ export default function TraitementsScreen() {
   }
   yearGroups.sort((a, b) => b.year - a.year);
 
-  const segments = [
-    { label: 'En cours', count: activeItems.length },
-    { label: 'Expiré', count: expiredItems.length },
-  ];
-
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <ScreenBackground />
@@ -63,7 +67,20 @@ export default function TraitementsScreen() {
       </View>
 
       <View style={styles.segmentWrapper}>
-        <SegmentedControl options={segments} selected={tab} onChange={setTab} />
+        <View
+          style={styles.segmented}
+          onLayout={(e) => setSegContainerWidth(e.nativeEvent.layout.width)}
+        >
+          {segWidth > 0 && (
+            <Animated.View style={[styles.segmentPill, { width: segWidth, transform: [{ translateX: pillTranslateX }] }]} />
+          )}
+          <Pressable style={styles.segment} onPress={() => switchTab(0)}>
+            <Text style={[styles.segmentLabel, tab === 0 && styles.segmentLabelActive]}>En cours</Text>
+          </Pressable>
+          <Pressable style={styles.segment} onPress={() => switchTab(1)}>
+            <Text style={[styles.segmentLabel, tab === 1 && styles.segmentLabelActive]}>Expiré</Text>
+          </Pressable>
+        </View>
       </View>
 
       <AnimatedEntry delay={80} style={{ flex: 1 }}>
@@ -182,8 +199,30 @@ const styles = StyleSheet.create({
     height: 44,
     gap: 8,
   },
-  title: { flex: 1, fontSize: 24, fontWeight: '500', color: '#181818' },
+  title: { flex: 1, fontSize: 20, fontWeight: '500', color: '#181818' },
   segmentWrapper: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
+  segmented: {
+    flexDirection: 'row',
+    backgroundColor: '#EDEDED',
+    borderRadius: 8,
+    padding: 4,
+    height: 56,
+    gap: 8,
+  },
+  segmentPill: {
+    position: 'absolute',
+    top: 4, left: 4, bottom: 4,
+    borderRadius: 6,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  segment: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 6 },
+  segmentLabel: { fontSize: 16, fontWeight: '300', color: '#717171' },
+  segmentLabelActive: { color: '#181818' },
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 24 },
 

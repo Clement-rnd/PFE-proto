@@ -340,8 +340,8 @@ const styles = StyleSheet.create({
   segmentLabelActive: { color: '#181818' },
 
   // Sliding tab content
-  tabContentClip: { overflow: 'hidden' },
-  tabContent: { gap: 24 },
+  tabContentClip: { overflow: 'hidden', marginHorizontal: -16 },
+  tabContent: { gap: 24, paddingHorizontal: 16 },
 
   // Avatar (Général tab)
   avatarRow: { alignItems: 'center' },

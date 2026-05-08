@@ -2,6 +2,8 @@ import { Medicine02Icon, DropperIcon } from '@hugeicons/core-free-icons';
 
 export type TreatmentStatus = 'active' | 'upcoming' | 'finished' | 'paused';
 
+export type TreatmentDocument = { name: string; size: string; date: string };
+
 export type Traitement = {
   id: string;
   name: string;
@@ -15,11 +17,15 @@ export type Traitement = {
   status: TreatmentStatus;
   posologie: string;
   prise: string;
+  duree?: string;
   reason?: string;
   diseaseId?: string;
-  daysInfo?: string;   // "7 jours restants" | "Dans 45 jours"
-  dateRange?: string;  // "Juin - Juil. 2024" pour les terminés
-  year?: number;       // pour le groupement par année dans l'onglet Expiré
+  daysInfo?: string;
+  dateRange?: string;
+  year?: number;
+  totalDays?: number;
+  elapsedDays?: number;
+  documents?: TreatmentDocument[];
 };
 
 export const TRAITEMENTS: Traitement[] = [
@@ -35,9 +41,15 @@ export const TRAITEMENTS: Traitement[] = [
     status: 'active',
     posologie: '1 cp / jour',
     prise: 'Matin avec repas',
+    duree: 'Traitement chronique (janv. 2025 → en cours)',
     reason: 'Traitement contre les démangeaisons liées à la dermatite atopique.',
     diseaseId: 'Dermatite atopique',
     daysInfo: '21 jours restants',
+    totalDays: 90,
+    elapsedDays: 69,
+    documents: [
+      { name: 'ordonnance-apoquel-janv-2025.pdf', size: '1.2 MB', date: '8 janv. 2025' },
+    ],
   },
   {
     id: 'meloxicam-cooper',
@@ -51,9 +63,12 @@ export const TRAITEMENTS: Traitement[] = [
     status: 'active',
     posologie: '1 cp / jour',
     prise: 'Soir avec repas',
+    duree: 'Pendant 14 jours (1 nov. → 15 nov. 2024)',
     reason: "Anti-inflammatoire pour la gestion de la douleur liée à la dysplasie des hanches.",
     diseaseId: 'Dysplasie des hanches',
     daysInfo: '7 jours restants',
+    totalDays: 14,
+    elapsedDays: 7,
   },
   {
     id: 'forthyron-cooper',
@@ -67,6 +82,7 @@ export const TRAITEMENTS: Traitement[] = [
     status: 'upcoming',
     posologie: '2 cp / jour',
     prise: 'Matin à jeun',
+    duree: 'À vie',
     diseaseId: 'Hypothyroïdie',
     daysInfo: 'Dans 14 jours',
   },
@@ -82,8 +98,11 @@ export const TRAITEMENTS: Traitement[] = [
     status: 'active',
     posologie: '1 pipette / mois',
     prise: 'Application cutanée',
+    duree: 'Mensuel (mars 2025 → en cours)',
     reason: 'Traitement antiparasitaire mensuel préventif.',
     daysInfo: '12 jours restants',
+    totalDays: 30,
+    elapsedDays: 18,
   },
   {
     id: 'amoxicilline-cooper',

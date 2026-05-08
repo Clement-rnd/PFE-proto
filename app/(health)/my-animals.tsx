@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { Add01Icon, ArrowLeft01Icon } from '@hugeicons/core-free-icons';
+import { Add01Icon, ArrowLeft01Icon, Tick01Icon } from '@hugeicons/core-free-icons';
 import { PetCard } from '../../src/components/ui/PetCard';
 import { Button } from '../../src/components/ui/Button';
 import { getPets, subscribe } from '../../src/data/petStore';
@@ -23,6 +23,7 @@ export default function HealthMyAnimalsScreen() {
   }, []));
 
   const isEmpty = pets.length === 0;
+  const STATUS_TAG = { label: 'À jour', bg: '#E5FAF5', text: '#1D745F', icon: Tick01Icon };
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
@@ -68,6 +69,8 @@ export default function HealthMyAnimalsScreen() {
                   key={i}
                   index={i}
                   pet={pet}
+                  compact
+                  statusTag={STATUS_TAG}
                   onPress={() => router.push({ pathname: '/(health)/animal-details', params: { index: i } })}
                 />
               ))}
@@ -130,6 +133,6 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     gap: 16,
   },
-  list: { gap: 4 },
+  list: { gap: 8 },
   footer: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
 });

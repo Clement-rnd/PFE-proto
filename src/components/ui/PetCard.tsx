@@ -19,9 +19,11 @@ interface PetCardProps {
   index?: number;
   onPress?: () => void;
   borderColor?: string;
+  compact?: boolean;
+  statusTag?: { label: string; bg: string; text: string; icon?: any };
 }
 
-export function PetCard({ pet, index = 0, onPress, borderColor = '#E8E8E8' }: PetCardProps) {
+export function PetCard({ pet, index = 0, onPress, borderColor = '#E8E8E8', compact = false, statusTag }: PetCardProps) {
   const fallbackImage = PET_IMAGES[index % PET_IMAGES.length];
   const age = computeAge(pet.birthDate);
   const raceLabel = pet.races.length === 2 ? 'croisé' : pet.races.join(' · ');
@@ -29,6 +31,7 @@ export function PetCard({ pet, index = 0, onPress, borderColor = '#E8E8E8' }: Pe
   const infoLine = [breedLine, age].filter(Boolean).join(' · ');
   const isFemale = pet.sex === 'Femelle';
   const isMale = pet.sex === 'Mâle';
+  const avatarSize = compact ? 48 : 56;
 
   return (
     <Pressable
@@ -47,10 +50,10 @@ export function PetCard({ pet, index = 0, onPress, borderColor = '#E8E8E8' }: Pe
       )}
 
       {/* Avatar */}
-      <View style={styles.avatar}>
+      <View style={[styles.avatar, { width: avatarSize, height: avatarSize }]}>
         <Image
           source={pet.photoUri ? { uri: pet.photoUri } : fallbackImage}
-          style={styles.avatarImage}
+          style={{ width: avatarSize, height: avatarSize }}
           resizeMode="cover"
         />
       </View>
@@ -66,8 +69,18 @@ export function PetCard({ pet, index = 0, onPress, borderColor = '#E8E8E8' }: Pe
             <HugeiconsIcon icon={MaleSymbolIcon} size={16} color="#4F9EF8" strokeWidth={1.5} />
           )}
         </View>
-        {infoLine ? <Text style={styles.sub} numberOfLines={1}>{infoLine}</Text> : null}
+        {!compact && infoLine ? <Text style={styles.sub} numberOfLines={1}>{infoLine}</Text> : null}
       </View>
+
+      {/* Status tag */}
+      {statusTag && (
+        <View style={[styles.tag, { backgroundColor: statusTag.bg }]}>
+          {statusTag.icon && (
+            <HugeiconsIcon icon={statusTag.icon} size={16} color={statusTag.text} strokeWidth={1.5} />
+          )}
+          <Text style={[styles.tagText, { color: statusTag.text }]}>{statusTag.label}</Text>
+        </View>
+      )}
 
       {/* Chevron */}
       {onPress && <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={colors.neutral[400]} strokeWidth={1.5} />}
@@ -112,4 +125,14 @@ const styles = StyleSheet.create({
     color: '#4F4F4F',
     lineHeight: 14 * 1.2,
   },
+  tag: {
+    flexDirection: 'row',
+    height: 24,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  tagText: { fontSize: 12, fontWeight: '300', lineHeight: 12 * 1.4 },
 });

@@ -123,9 +123,11 @@ export default function TraitementsScreen() {
                               <View style={[styles.statusTag, { backgroundColor: tag.bg }]}>
                                 <Text style={[styles.statusTagText, { color: tag.text }]}>{tag.label}</Text>
                               </View>
-                              <Text style={styles.subtitle}>
-                                · {t.petName}{t.daysInfo ? ` · ${t.daysInfo}` : ''}
-                              </Text>
+                              <Text style={styles.metaDot}>·</Text>
+                              <View style={styles.tagPet}>
+                                <Text style={styles.tagPetText}>{t.petName}</Text>
+                              </View>
+                              {t.daysInfo && <Text style={styles.subtitle}>· {t.daysInfo}</Text>}
                             </View>
                           </View>
                           <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={colors.neutral[400]} strokeWidth={1.5} />
@@ -167,9 +169,12 @@ export default function TraitementsScreen() {
                         </View>
                         <View style={styles.content}>
                           <Text style={styles.name} numberOfLines={1}>{t.name} · {t.posologie}</Text>
-                          <Text style={styles.subtitle}>
-                            · {t.petName}{t.dateRange ? ` · ${t.dateRange}` : ''}
-                          </Text>
+                          <View style={styles.meta}>
+                            <View style={styles.tagPet}>
+                              <Text style={styles.tagPetText}>{t.petName}</Text>
+                            </View>
+                            {t.dateRange && <Text style={styles.subtitle}>· {t.dateRange}</Text>}
+                          </View>
                         </View>
                         <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={colors.neutral[400]} strokeWidth={1.5} />
                       </Pressable>
@@ -279,6 +284,16 @@ const styles = StyleSheet.create({
   },
   statusTagText: { fontSize: 12, fontWeight: '300', lineHeight: 12 * 1.4 },
   subtitle: { fontSize: 12, fontWeight: '300', color: '#B2B2B2', lineHeight: 12 * 1.4 },
+  metaDot: { fontSize: 12, fontWeight: '300', color: '#B2B2B2' },
+  tagPet: {
+    height: 24,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    backgroundColor: '#FCEEF1',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tagPetText: { fontSize: 12, fontWeight: '300', color: '#FF5A7D' },
 
   emptyCenter: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyText: { fontSize: 16, fontWeight: '300', color: '#717171' },

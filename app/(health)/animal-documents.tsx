@@ -82,11 +82,11 @@ export default function AnimalDocumentsScreen() {
           >
             {/* Search */}
             <View style={styles.searchBar}>
-              <HugeiconsIcon icon={Search01Icon} size={18} color={colors.neutral[400]} strokeWidth={1.5} />
+              <HugeiconsIcon icon={Search01Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
               <TextInput
                 style={styles.searchInput}
                 placeholder="Rechercher"
-                placeholderTextColor={colors.neutral[400]}
+                placeholderTextColor="#B2B2B2"
                 value={search}
                 onChangeText={setSearch}
               />
@@ -185,10 +185,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    height: 44,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingHorizontal: 12,
+    height: 56,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+    paddingHorizontal: 16,
   },
   searchInput: { flex: 1, fontSize: 16, fontWeight: '300', color: '#181818' },
 
@@ -196,7 +198,7 @@ const styles = StyleSheet.create({
   chipsRow: { gap: 8, flexDirection: 'row' },
   chip: {
     height: 32,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     borderRadius: 8,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   chipActive: { backgroundColor: colors.primary.DEFAULT, borderColor: colors.primary.DEFAULT },
-  chipLabel: { fontSize: 14, fontWeight: '300', color: '#4F4F4F' },
+  chipLabel: { fontSize: 12, fontWeight: '300', color: '#4F4F4F' },
   chipLabelActive: { color: '#FFFFFF', fontWeight: '500' },
 
   // Alert

@@ -13,10 +13,10 @@ import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const STATUS_STYLES: Record<TreatmentStatus, { bg: string; text: string; label: string }> = {
-  active:   { bg: '#EDFAF2', text: '#52A76A', label: 'En cours' },
+  active:   { bg: '#E5FAF5', text: '#1D745F', label: 'En cours' },
   upcoming: { bg: '#E5E8FA', text: '#39438D', label: 'À venir' },
   finished: { bg: '#F5F5F5', text: '#4F4F4F', label: 'Terminé' },
-  paused:   { bg: '#FFF8EC', text: '#F5A623', label: 'Suspendu' },
+  paused:   { bg: '#FCEEE3', text: '#EA863E', label: 'Suspendu' },
 };
 
 const ACTIVE_ORDER: TreatmentStatus[] = ['active', 'upcoming', 'paused'];

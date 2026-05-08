@@ -15,7 +15,7 @@ export function Chip({ label, selected, onPress }: ChipProps) {
       style={[
         styles.chip,
         Platform.OS === 'web' && {
-          backgroundColor: selected ? colors.primary[50] : '#FFFFFF',
+          backgroundColor: selected ? colors.primary.DEFAULT : '#FFFFFF',
           borderRadius: 8,
           borderWidth: 1,
           borderColor: selected ? colors.primary.DEFAULT : '#E8E8E8',
@@ -27,7 +27,7 @@ export function Chip({ label, selected, onPress }: ChipProps) {
           squircleParams={{
             cornerRadius: 8,
             cornerSmoothing: 1,
-            fillColor: selected ? colors.primary[50] : '#FFFFFF',
+            fillColor: selected ? colors.primary.DEFAULT : '#FFFFFF',
             strokeColor: selected ? colors.primary.DEFAULT : '#E8E8E8',
             strokeWidth: 1,
           }}
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     color: '#4F4F4F',
   },
   labelSelected: {
-    color: colors.primary.DEFAULT,
+    color: '#FFFFFF',
     fontWeight: '500',
   },
 });

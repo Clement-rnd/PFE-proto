@@ -2,6 +2,7 @@ import { View, Text, TextInput, Pressable, StyleSheet, Platform } from 'react-na
 import { useRef, useState } from 'react';
 import type { KeyboardTypeOptions, ReturnKeyTypeOptions, TextInput as TextInputType } from 'react-native';
 import { SquircleView } from 'react-native-figma-squircle';
+import { HugeiconsIcon } from '@hugeicons/react-native';
 import { colors } from '../../theme/colors';
 
 interface TextfieldProps {
@@ -14,6 +15,7 @@ interface TextfieldProps {
   rightSlot?: React.ReactNode;
   helperText?: string;
   helperTextType?: 'default' | 'info' | 'success' | 'warning' | 'danger';
+  helperIcon?: React.ComponentType<any>;
   keyboardType?: KeyboardTypeOptions;
   onSubmitEditing?: () => void;
   returnKeyType?: ReturnKeyTypeOptions;
@@ -40,6 +42,7 @@ export function Textfield({
   rightSlot,
   helperText,
   helperTextType = 'default',
+  helperIcon,
   keyboardType = 'default',
   onSubmitEditing,
   returnKeyType,
@@ -104,9 +107,14 @@ export function Textfield({
       </Pressable>
 
       {helperText ? (
-        <Text style={[styles.helperText, { color: helperColors[helperTextType] }]}>
-          {helperText}
-        </Text>
+        <View style={styles.helperRow}>
+          {helperIcon ? (
+            <HugeiconsIcon icon={helperIcon} size={14} color={helperColors[helperTextType]} strokeWidth={1.5} />
+          ) : null}
+          <Text style={[styles.helperText, { color: helperColors[helperTextType] }]}>
+            {helperText}
+          </Text>
+        </View>
       ) : null}
     </View>
   );
@@ -143,9 +151,15 @@ const styles = StyleSheet.create({
   inputWeb: {
     outlineStyle: 'none',
   } as any,
+  helperRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
   helperText: {
     fontSize: 12,
     fontWeight: '300',
     lineHeight: 12 * 1.2,
+    flex: 1,
   },
 });

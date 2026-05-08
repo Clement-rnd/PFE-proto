@@ -7,7 +7,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import {
-  ArrowLeft01Icon, ArrowDown01Icon, ImageAdd02Icon, CloudUploadIcon,
+  ArrowLeft01Icon, ArrowDown01Icon, ImageAdd02Icon, CloudUploadIcon, HelpCircleIcon,
 } from '@hugeicons/core-free-icons';
 import Svg, { Defs, ClipPath, Path, Image as SvgImage } from 'react-native-svg';
 import { getSvgPath, SquircleView } from 'react-native-figma-squircle';
@@ -37,7 +37,7 @@ const PET_IMAGES = [
 const SPECIES = ['Chien', 'Chat', 'Lapin', "Cochon d'Inde", 'Hamster', 'Oiseau', 'Reptile', 'Poisson', 'Autre'];
 const SEX_OPTIONS = ['Femelle', 'Mâle', 'Inconnu'];
 const STERILIZED_OPTIONS = ['Oui', 'Non', 'Inconnu'];
-const IDENT_TYPES = ['Tatouage', 'Puce'];
+const IDENT_TYPES = ['Tatouage', 'Puce', 'Inconnu'];
 const INSURANCE_OPTIONS = ['Oui', 'Non'];
 const DROPDOWN_WEB = { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#E8E8E8' };
 
@@ -226,7 +226,8 @@ export default function AnimalEditScreen() {
                   value={identNumber}
                   onChangeText={setIdentNumber}
                   keyboardType="number-pad"
-                  helperText="15 chiffres pour la puce électronique, 5 pour le tatouage"
+                  helperText="Un numéro d'identification valide contient 15 chiffres."
+                  helperIcon={HelpCircleIcon}
                 />
 
                 <View style={styles.fieldWrapper}>
@@ -240,7 +241,7 @@ export default function AnimalEditScreen() {
                   <Text style={styles.fieldLabel}>Attestation d'assurance</Text>
                   <Pressable style={[styles.uploadZone, Platform.OS === 'web' && styles.uploadZoneWeb]}>
                     {Platform.OS !== 'web' && (
-                      <SquircleView squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FAFAFA', strokeColor: '#E8E8E8', strokeWidth: 1 }} style={StyleSheet.absoluteFillObject} pointerEvents="none" />
+                      <SquircleView squircleParams={{ cornerRadius: 8, cornerSmoothing: 1, fillColor: '#FFFFFF', strokeColor: '#E8E8E8', strokeWidth: 1 }} style={StyleSheet.absoluteFillObject} pointerEvents="none" />
                     )}
                     <View style={styles.uploadIcon}>
                       <HugeiconsIcon icon={CloudUploadIcon} size={20} color={colors.neutral[400]} strokeWidth={1.5} />
@@ -353,8 +354,8 @@ const styles = StyleSheet.create({
   chips: { flexDirection: 'row', gap: 8 },
 
   uploadZone: { height: 64, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, gap: 12 },
-  uploadZoneWeb: { backgroundColor: '#FAFAFA', borderRadius: 8, borderWidth: 1, borderColor: '#E8E8E8' },
-  uploadIcon: { width: 36, height: 36, backgroundColor: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  uploadZoneWeb: { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#E8E8E8' },
+  uploadIcon: { width: 36, height: 36, backgroundColor: '#F5F5F5', borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   uploadLabel: { fontSize: 14, fontWeight: '300', color: '#717171' },
 
   deleteLink: { alignItems: 'center', paddingVertical: 8 },

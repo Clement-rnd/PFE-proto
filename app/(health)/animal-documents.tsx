@@ -95,7 +95,7 @@ export default function AnimalDocumentsScreen() {
         </>
       )}
 
-      <AnimatedEntry delay={80} style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         {!hasData ? (
           <ScrollView
             style={styles.scroll}
@@ -164,7 +164,7 @@ export default function AnimalDocumentsScreen() {
             })}
           </ScrollView>
         )}
-      </AnimatedEntry>
+      </View>
     </SafeAreaView>
   );
 }

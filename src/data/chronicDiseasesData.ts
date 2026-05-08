@@ -1,11 +1,21 @@
-import { Bone02Icon, DnaIcon } from '@hugeicons/core-free-icons';
+import { Bone02Icon, Atom01Icon, PillIcon, InjectionIcon } from '@hugeicons/core-free-icons';
 import { dermatiteCustomIcon } from '../components/icons/DermatiteIcon';
+
+export type TreatmentType = 'cachet' | 'injection' | 'sirop' | 'autre';
 
 export type Treatment = {
   name: string;
   since: string;
   posologie: string;
   prise: string;
+  type: TreatmentType;
+};
+
+export const TREATMENT_ICON: Record<TreatmentType, any> = {
+  cachet: PillIcon,
+  injection: InjectionIcon,
+  sirop: PillIcon,
+  autre: PillIcon,
 };
 
 export type ChronicDisease = {
@@ -29,6 +39,7 @@ export const CHRONIC_DISEASES: ChronicDisease[] = [
       since: 'Depuis Janvier 2025',
       posologie: '1 cp / jour',
       prise: 'Matin avec repas',
+      type: 'cachet',
     },
   },
   {
@@ -42,12 +53,13 @@ export const CHRONIC_DISEASES: ChronicDisease[] = [
       since: 'Depuis Juin 2024',
       posologie: '1 cp / jour',
       prise: 'Soir avec repas',
+      type: 'cachet',
     },
   },
   {
     name: 'Hypothyroïdie',
     category: 'Endocrinien',
-    icon: DnaIcon,
+    icon: Atom01Icon,
     diagnosedDate: 'oct. 2024',
     symptoms: ['Fatigue excessive', 'Prise de poids', 'Perte de poils'],
     treatment: {
@@ -55,6 +67,7 @@ export const CHRONIC_DISEASES: ChronicDisease[] = [
       since: 'Depuis Mars 2025',
       posologie: '1 cp / jour',
       prise: 'Matin à jeun',
+      type: 'cachet',
     },
   },
 ];

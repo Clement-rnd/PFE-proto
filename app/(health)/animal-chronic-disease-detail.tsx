@@ -4,8 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { AppIcon } from '../../src/components/ui/AppIcon';
-import { CHRONIC_DISEASES } from '../../src/data/chronicDiseasesData';
-import { medicationCustomIcon } from '../../src/components/icons/MedicationIcon';
+import { CHRONIC_DISEASES, TREATMENT_ICON } from '../../src/data/chronicDiseasesData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
@@ -76,7 +75,7 @@ export default function AnimalChronicDiseaseDetailScreen() {
                 {/* Medication row */}
                 <Pressable style={styles.treatmentRow}>
                   <View style={styles.treatmentIconBox}>
-                    <AppIcon icon={medicationCustomIcon} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
+                    <HugeiconsIcon icon={TREATMENT_ICON[disease.treatment.type]} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
                   </View>
                   <View style={styles.treatmentContent}>
                     <Text style={styles.treatmentName}>{disease.treatment.name}</Text>

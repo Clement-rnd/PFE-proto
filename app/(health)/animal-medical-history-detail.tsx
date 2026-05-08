@@ -31,9 +31,9 @@ function InfoRow({ label, value, last }: { label: string; value: string; last?: 
 function TreatmentRow({ value, last }: { value: string; last?: boolean }) {
   return (
     <>
-      <View style={styles.treatmentRow}>
-        <View style={styles.treatmentBullet} />
-        <Text style={styles.treatmentText}>{value}</Text>
+      <View style={styles.infoRow}>
+        <Text style={styles.infoRowLabel}>Médicament</Text>
+        <Text style={styles.infoRowValue}>{value}</Text>
       </View>
       {!last && <View style={styles.divider} />}
     </>
@@ -215,23 +215,6 @@ const styles = StyleSheet.create({
 
   reasonCard: { paddingHorizontal: 16, paddingVertical: 16 },
   reasonText: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
-
-  treatmentRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    minHeight: 56,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 12,
-  },
-  treatmentBullet: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.primary.DEFAULT,
-    flexShrink: 0,
-  },
-  treatmentText: { flex: 1, fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
 
   documentRow: {
     flexDirection: 'row',

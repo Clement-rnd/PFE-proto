@@ -12,39 +12,56 @@ import {
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { colors } from '../../src/theme/colors';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
-
-const MENU_ITEMS = [
-  {
-    key: 'consultations',
-    label: 'Consultations',
-    icon: CalendarFavorite01Icon,
-    subtitle: null,
-    route: '/(health)/consultations',
-  },
-  {
-    key: 'my-animals',
-    label: 'Mes animaux',
-    icon: Folder01Icon,
-    subtitle: null,
-    route: '/(health)/my-animals',
-  },
-  {
-    key: 'prescriptions',
-    label: 'Ordonnances',
-    icon: MedicalFileIcon,
-    subtitle: 'Aucune ordonnance en cours',
-    route: '/(health)/prescriptions',
-  },
-  {
-    key: 'treatments',
-    label: 'Traitements',
-    icon: Medicine02Icon,
-    subtitle: 'Aucun traitement en cours',
-    route: '/(health)/traitements',
-  },
-];
+import { DOCUMENTS } from '../../src/data/documentsData';
+import { TRAITEMENTS } from '../../src/data/traitementsData';
 
 export default function HealthScreen() {
+  const activeOrdonnances = DOCUMENTS.filter(d => d.type === 'ordonnance' && d.status !== 'expired').length;
+  const activeTraitements = TRAITEMENTS.filter(t => t.status === 'active' || t.status === 'upcoming' || t.status === 'paused').length;
+
+  const ordonnancesSubtitle = activeOrdonnances === 0
+    ? 'Aucune ordonnance en cours'
+    : activeOrdonnances === 1
+    ? '1 ordonnance en cours'
+    : `${activeOrdonnances} ordonnances en cours`;
+
+  const traitementsSubtitle = activeTraitements === 0
+    ? 'Aucun traitement en cours'
+    : activeTraitements === 1
+    ? '1 traitement en cours'
+    : `${activeTraitements} traitements en cours`;
+
+  const MENU_ITEMS = [
+    {
+      key: 'consultations',
+      label: 'Consultations',
+      icon: CalendarFavorite01Icon,
+      subtitle: null,
+      route: '/(health)/consultations',
+    },
+    {
+      key: 'my-animals',
+      label: 'Mes animaux',
+      icon: Folder01Icon,
+      subtitle: null,
+      route: '/(health)/my-animals',
+    },
+    {
+      key: 'prescriptions',
+      label: 'Ordonnances',
+      icon: MedicalFileIcon,
+      subtitle: ordonnancesSubtitle,
+      route: '/(health)/prescriptions',
+    },
+    {
+      key: 'treatments',
+      label: 'Traitements',
+      icon: Medicine02Icon,
+      subtitle: traitementsSubtitle,
+      route: '/(health)/traitements',
+    },
+  ];
+
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <ScreenBackground />

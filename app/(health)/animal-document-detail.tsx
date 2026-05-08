@@ -82,8 +82,8 @@ export default function AnimalDocumentDetailScreen() {
                 {doc.doctor && <InfoRow label="Vétérinaire" value={doc.doctor} />}
                 {doc.clinic && <InfoRow label="Clinique" value={doc.clinic} />}
                 {doc.deliveryDate && <InfoRow label="Date de délivrance" value={doc.deliveryDate} />}
-                {doc.validity && <InfoRow label="Validité" value={doc.validity} last />}
-                {!doc.validity && doc.clinic && <View />}
+                {doc.validity && <InfoRow label="Validité" value={doc.validity} />}
+                <InfoRow label="Animal concerné" value={doc.petName} last />
               </View>
             </View>
           )}

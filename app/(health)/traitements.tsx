@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView, StyleSheet, Animated } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, Animated, Dimensions, Easing } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useState, useRef } from 'react';
@@ -9,6 +9,8 @@ import { TRAITEMENTS, type TreatmentStatus } from '../../src/data/traitementsDat
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+
+const SLIDE_DISTANCE = Dimensions.get('window').width;
 
 const STATUS_STYLES: Record<TreatmentStatus, { bg: string; text: string; label: string }> = {
   active:   { bg: '#E5FAF5', text: '#1D745F', label: 'En cours' },
@@ -28,13 +30,29 @@ export default function TraitementsScreen() {
   const [tab, setTab] = useState(0);
   const [segContainerWidth, setSegContainerWidth] = useState(0);
   const segAnim = useRef(new Animated.Value(0)).current;
+  const contentTranslateX = useRef(new Animated.Value(0)).current;
   const segWidth = segContainerWidth > 0 ? (segContainerWidth - 16) / 2 : 0;
   const pillTranslateX = segAnim.interpolate({ inputRange: [0, 1], outputRange: [0, segWidth + 8] });
 
   function switchTab(index: number) {
     if (index === tab) return;
+    const direction = index > tab ? 1 : -1;
     Animated.spring(segAnim, { toValue: index, useNativeDriver: true, damping: 32, stiffness: 180 }).start();
-    setTab(index);
+    Animated.timing(contentTranslateX, {
+      toValue: direction * -SLIDE_DISTANCE,
+      duration: 210,
+      easing: Easing.inOut(Easing.quad),
+      useNativeDriver: true,
+    }).start(() => {
+      contentTranslateX.setValue(direction * SLIDE_DISTANCE);
+      setTab(index);
+      Animated.timing(contentTranslateX, {
+        toValue: 0,
+        duration: 260,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }).start();
+    });
   }
 
   const activeItems = TRAITEMENTS.filter(t => t.status === 'active' || t.status === 'upcoming' || t.status === 'paused');
@@ -84,6 +102,8 @@ export default function TraitementsScreen() {
       </View>
 
       <AnimatedEntry delay={80} style={{ flex: 1 }}>
+        <View style={styles.contentClip}>
+          <Animated.View style={[styles.contentSlide, { transform: [{ translateX: contentTranslateX }] }]}>
         {tab === 0 ? (
           activeItems.length > 0 ? (
             <ScrollView
@@ -194,6 +214,8 @@ export default function TraitementsScreen() {
             </View>
           )
         )}
+          </Animated.View>
+        </View>
       </AnimatedEntry>
     </SafeAreaView>
   );
@@ -233,6 +255,8 @@ const styles = StyleSheet.create({
   segment: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 6 },
   segmentLabel: { fontSize: 16, fontWeight: '300', color: '#717171' },
   segmentLabelActive: { color: '#181818' },
+  contentClip: { flex: 1, overflow: 'hidden' },
+  contentSlide: { flex: 1 },
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 24 },
 

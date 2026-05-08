@@ -91,6 +91,7 @@ export default function PrescriptionsScreen() {
       </AnimatedEntry>
 
       {/* Zone clippée qui slide */}
+      <AnimatedEntry delay={120} style={{ flex: 1 }}>
       <View style={styles.contentClip}>
         <Animated.View style={[styles.contentSlide, { transform: [{ translateX: contentTranslateX }] }]}>
           {tab === 0 ? (
@@ -212,6 +213,7 @@ export default function PrescriptionsScreen() {
           )}
         </Animated.View>
       </View>
+      </AnimatedEntry>
     </SafeAreaView>
   );
 }

@@ -56,28 +56,8 @@ export default function AnimalDocumentsScreen() {
         <View style={{ width: 28 }} />
       </View>
 
-      {!hasData ? (
-        <AnimatedEntry delay={80} style={{ flex: 1 }}>
-          <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.alertBanner}>
-              <HugeiconsIcon icon={HelpCircleIcon} size={16} color="#39438D" strokeWidth={1.5} />
-              <View style={{ flex: 1, gap: 8 }}>
-                <Text style={styles.alertText}>Seul votre vétérinaire peut ajouter des documents concernant votre animal.</Text>
-                <Text style={styles.alertText}>Pensez à prendre RDV pour un suivi régulier.</Text>
-              </View>
-            </View>
-            <View style={styles.emptyCard}>
-              <Text style={styles.emptyBody}>Votre vétérinaire n'a pas encore ajouté de documents concernant {pet.name}.</Text>
-            </View>
-          </ScrollView>
-        </AnimatedEntry>
-      ) : (
-        <AnimatedEntry delay={80} style={{ flex: 1 }}>
-          {/* Search */}
+      {hasData && (
+        <>
           <View style={styles.searchWrapper}>
             <View style={styles.searchBar}>
               <HugeiconsIcon icon={Search01Icon} size={18} color={colors.neutral[400]} strokeWidth={1.5} />
@@ -91,7 +71,6 @@ export default function AnimalDocumentsScreen() {
             </View>
           </View>
 
-          {/* Filter chips */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -113,7 +92,28 @@ export default function AnimalDocumentsScreen() {
               );
             })}
           </ScrollView>
+        </>
+      )}
 
+      <AnimatedEntry delay={80} style={{ flex: 1 }}>
+        {!hasData ? (
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.alertBanner}>
+              <HugeiconsIcon icon={HelpCircleIcon} size={16} color="#39438D" strokeWidth={1.5} />
+              <View style={{ flex: 1, gap: 8 }}>
+                <Text style={styles.alertText}>Seul votre vétérinaire peut ajouter des documents concernant votre animal.</Text>
+                <Text style={styles.alertText}>Pensez à prendre RDV pour un suivi régulier.</Text>
+              </View>
+            </View>
+            <View style={styles.emptyCard}>
+              <Text style={styles.emptyBody}>Votre vétérinaire n'a pas encore ajouté de documents concernant {pet.name}.</Text>
+            </View>
+          </ScrollView>
+        ) : (
           <ScrollView
             style={styles.scroll}
             contentContainerStyle={styles.scrollContent}
@@ -163,8 +163,8 @@ export default function AnimalDocumentsScreen() {
               );
             })}
           </ScrollView>
-        </AnimatedEntry>
-      )}
+        )}
+      </AnimatedEntry>
     </SafeAreaView>
   );
 }

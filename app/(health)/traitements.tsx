@@ -286,9 +286,9 @@ const styles = StyleSheet.create({
   subtitle: { fontSize: 12, fontWeight: '300', color: '#B2B2B2', lineHeight: 12 * 1.4 },
   metaDot: { fontSize: 12, fontWeight: '300', color: '#B2B2B2' },
   tagPet: {
-    height: 24,
-    paddingHorizontal: 8,
-    borderRadius: 8,
+    height: 20,
+    paddingHorizontal: 6,
+    borderRadius: 6,
     backgroundColor: '#FCEEF1',
     alignItems: 'center',
     justifyContent: 'center',

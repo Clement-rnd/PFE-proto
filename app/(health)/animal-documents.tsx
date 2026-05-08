@@ -56,6 +56,49 @@ export default function AnimalDocumentsScreen() {
         <View style={{ width: 28 }} />
       </View>
 
+      {/* Search + chips — sticky, seulement si données */}
+      {hasData && (
+        <>
+          <View style={styles.searchWrapper}>
+            <View style={styles.searchBar}>
+              <HugeiconsIcon icon={Search01Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Rechercher"
+                placeholderTextColor="#B2B2B2"
+                value={search}
+                onChangeText={setSearch}
+              />
+            </View>
+          </View>
+
+          <View style={styles.chipsWrapper}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.chipsRow}
+            >
+              {FILTERS.map(f => {
+                const isActive = activeFilter === f.type;
+                const count = f.type === null ? counts.all : counts[f.type];
+                return (
+                  <Pressable
+                    key={f.label}
+                    style={[styles.chip, isActive && styles.chipActive]}
+                    onPress={() => setActiveFilter(f.type)}
+                  >
+                    <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
+                      {f.label} ({count})
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </>
+      )}
+
+      {/* Contenu scrollable */}
       <AnimatedEntry delay={80} style={{ flex: 1 }}>
         {!hasData ? (
           <ScrollView
@@ -78,42 +121,6 @@ export default function AnimalDocumentsScreen() {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            {/* Search */}
-            <View style={styles.searchBar}>
-              <HugeiconsIcon icon={Search01Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Rechercher"
-                placeholderTextColor="#B2B2B2"
-                value={search}
-                onChangeText={setSearch}
-              />
-            </View>
-
-            {/* Filter chips */}
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chipsRow}
-            >
-              {FILTERS.map(f => {
-                const isActive = activeFilter === f.type;
-                const count = f.type === null ? counts.all : counts[f.type];
-                return (
-                  <Pressable
-                    key={f.label}
-                    style={[styles.chip, isActive && styles.chipActive]}
-                    onPress={() => setActiveFilter(f.type)}
-                  >
-                    <Text style={[styles.chipLabel, isActive && styles.chipLabelActive]}>
-                      {f.label} ({count})
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-
-            {/* Year groups */}
             {years.map(year => {
               const yearDocs = filtered.filter(d => d.year === year);
               return (
@@ -179,6 +186,7 @@ const styles = StyleSheet.create({
   scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 16 },
 
   // Search
+  searchWrapper: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -193,6 +201,7 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 16, fontWeight: '300', color: '#181818' },
 
   // Chips
+  chipsWrapper: { height: 40, paddingHorizontal: 16, marginBottom: 8 },
   chipsRow: { gap: 8, flexDirection: 'row' },
   chip: {
     height: 32,

@@ -92,37 +92,20 @@ export default function AnimalDocumentDetailScreen() {
           {doc.medications && doc.medications.length > 0 && (
             <View style={styles.section}>
               <SectionTitle label={`Médicaments (${doc.medications.length})`} />
-              <View style={styles.infoCard}>
-                {doc.medications.map((med, i) => (
-                  <View key={i}>
-                    {i > 0 && <View style={[styles.divider, { marginHorizontal: 0 }]} />}
-                    {/* Medication name row */}
-                    <View style={styles.medNameRow}>
-                      <AppIcon icon={typeStyle.icon} size={20} color={colors.neutral[700]} strokeWidth={1.5} />
-                      <Text style={styles.medName}>{med.name}</Text>
-                    </View>
-                    <View style={styles.divider} />
-                    <View style={styles.infoRow}>
-                      <Text style={styles.infoRowLabel}>Fréquence</Text>
-                      <Text style={styles.infoRowValue}>{med.frequence}</Text>
-                    </View>
-                    <View style={styles.divider} />
-                    <View style={styles.infoRow}>
-                      <Text style={styles.infoRowLabel}>Durée</Text>
-                      <Text style={styles.infoRowValue}>{med.duree}</Text>
-                    </View>
-                    {med.instructions && (
-                      <>
-                        <View style={styles.divider} />
-                        <View style={styles.infoRow}>
-                          <Text style={styles.infoRowLabel}>Information complémentaire</Text>
-                          <Text style={styles.infoRowValue}>{med.instructions}</Text>
-                        </View>
-                      </>
-                    )}
+              {doc.medications.map((med, i) => (
+                <View key={i} style={styles.infoCard}>
+                  <View style={styles.medNameRow}>
+                    <AppIcon icon={typeStyle.icon} size={20} color={colors.neutral[700]} strokeWidth={1.5} />
+                    <Text style={styles.medName}>{med.name}</Text>
                   </View>
-                ))}
-              </View>
+                  <View style={styles.divider} />
+                  <InfoRow label="Fréquence" value={med.frequence} />
+                  <InfoRow label="Durée" value={med.duree} last={!med.instructions} />
+                  {med.instructions && (
+                    <InfoRow label="Information complémentaire" value={med.instructions} last />
+                  )}
+                </View>
+              ))}
             </View>
           )}
 
@@ -211,9 +194,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    height: 56,
+    height: 48,
     backgroundColor: colors.primary.DEFAULT,
-    borderRadius: 16,
+    borderRadius: 8,
   },
-  pdfButtonText: { fontSize: 16, fontWeight: '500', color: '#FFFFFF' },
+  pdfButtonText: { fontSize: 14, fontWeight: '300', color: '#FFFFFF' },
 });

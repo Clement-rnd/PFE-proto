@@ -33,7 +33,7 @@ const MENU_ITEMS = [
     label: 'Ordonnances',
     icon: MedicalFileIcon,
     subtitle: 'Aucune ordonnance en cours',
-    route: null,
+    route: '/(health)/prescriptions',
   },
   {
     key: 'treatments',

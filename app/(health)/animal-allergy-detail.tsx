@@ -6,7 +6,6 @@ import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { usePets } from '../../src/data/petStore';
 import { ALLERGIES, RISK_STYLE } from '../../src/data/allergiesData';
 import { colors } from '../../src/theme/colors';
-import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
@@ -79,12 +78,6 @@ export default function AnimalAllergyDetailScreen() {
                 <Text style={styles.metaCategory}>{allergy.category}</Text>
               </View>
             </View>
-          </View>
-
-          {/* Animal concerné */}
-          <View style={styles.section}>
-            <SectionTitle label="Animal concerné" />
-            <PetCard pet={pet} index={petIndex} />
           </View>
 
           {/* Symptômes observés */}

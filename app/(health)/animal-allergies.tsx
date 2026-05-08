@@ -1,7 +1,11 @@
 import {
   View, Text, Pressable, ScrollView, StyleSheet, Modal,
-  Animated, Easing,
+  Animated, Easing, LayoutAnimation, Platform, UIManager,
 } from 'react-native';
+
+if (Platform.OS === 'android') {
+  UIManager.setLayoutAnimationEnabledExperimental?.(true);
+}
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useRef, useState } from 'react';
@@ -93,7 +97,6 @@ export default function AnimalAllergiesScreen() {
 
   const sheetY = useRef(new Animated.Value(300)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
-  const listOpacity = useRef(new Animated.Value(1)).current;
 
   if (!pet) return null;
 
@@ -140,24 +143,27 @@ export default function AnimalAllergiesScreen() {
     });
   }
 
-  function animateList(fn: () => void) {
-    Animated.timing(listOpacity, { toValue: 0, duration: 120, useNativeDriver: true }).start(() => {
-      fn();
-      Animated.timing(listOpacity, { toValue: 1, duration: 200, useNativeDriver: true }).start();
-    });
-  }
+  const filterAnimation = {
+    duration: 240,
+    create: { type: LayoutAnimation.Types.easeInEaseOut, property: LayoutAnimation.Properties.opacity },
+    update: { type: LayoutAnimation.Types.easeInEaseOut },
+    delete: { type: LayoutAnimation.Types.easeOut, property: LayoutAnimation.Properties.opacity, duration: 160 },
+  };
 
   function applySort(mode: SortMode) {
     closeSheet(() => {
       if (mode !== sortMode) {
-        animateList(() => { setSortMode(mode); setActiveFilter(null); });
+        LayoutAnimation.configureNext(filterAnimation);
+        setSortMode(mode);
+        setActiveFilter(null);
       }
     });
   }
 
   function selectFilter(value: string | null) {
     if (value === activeFilter) return;
-    animateList(() => setActiveFilter(value));
+    LayoutAnimation.configureNext(filterAnimation);
+    setActiveFilter(value);
   }
 
   // ── Render ──────────────────────────────────────────────────────────────────
@@ -209,7 +215,7 @@ export default function AnimalAllergiesScreen() {
 
           {/* Grouped list */}
           <AnimatedEntry delay={140}>
-            <Animated.View style={{ opacity: listOpacity, gap: 24 }}>
+            <View style={{ gap: 24 }}>
               {groups.map(group => (
                 <View key={group.key} style={styles.section}>
                   <Text style={styles.sectionTitle}>{group.title}</Text>
@@ -228,7 +234,7 @@ export default function AnimalAllergiesScreen() {
                   </View>
                 </View>
               ))}
-            </Animated.View>
+            </View>
           </AnimatedEntry>
         </ScrollView>
       ) : (

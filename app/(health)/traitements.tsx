@@ -92,13 +92,6 @@ export default function TraitementsScreen() {
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
             >
-              <View style={styles.alertBanner}>
-                <HugeiconsIcon icon={HelpCircleIcon} size={16} color="#39438D" strokeWidth={1.5} />
-                <Text style={styles.alertText}>
-                  Seul votre vétérinaire peut renseigner les traitements de vos animaux.
-                </Text>
-              </View>
-
               {activeGroups.map(group => {
                 const tag = STATUS_STYLES[group.status];
                 return (
@@ -139,9 +132,21 @@ export default function TraitementsScreen() {
               })}
             </ScrollView>
           ) : (
-            <View style={styles.emptyCenter}>
-              <Text style={styles.emptyText}>Aucun traitement en cours</Text>
-            </View>
+            <ScrollView
+              style={styles.scroll}
+              contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.alertBanner}>
+                <HugeiconsIcon icon={HelpCircleIcon} size={16} color="#39438D" strokeWidth={1.5} />
+                <Text style={styles.alertText}>
+                  Seul votre vétérinaire peut renseigner les traitements de vos animaux.
+                </Text>
+              </View>
+              <View style={styles.emptyCenter}>
+                <Text style={styles.emptyText}>Aucun traitement en cours</Text>
+              </View>
+            </ScrollView>
           )
         ) : (
           expiredItems.length > 0 ? (

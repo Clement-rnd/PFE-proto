@@ -2,12 +2,11 @@ import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
+import { ArrowLeft01Icon, LinkSquare02Icon } from '@hugeicons/core-free-icons';
 import { AppIcon } from '../../src/components/ui/AppIcon';
 import { usePets } from '../../src/data/petStore';
 import { DOCUMENTS, DOC_TYPE_STYLE, DOC_STATUS_STYLE } from '../../src/data/documentsData';
 import { colors } from '../../src/theme/colors';
-import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
@@ -75,12 +74,6 @@ export default function AnimalDocumentDetailScreen() {
             </View>
           </View>
 
-          {/* Animal concerné */}
-          <View style={styles.section}>
-            <SectionTitle label="Animal concerné" />
-            <PetCard pet={pet} index={petIndex} />
-          </View>
-
           {/* Détails */}
           {(doc.doctor || doc.clinic || doc.deliveryDate || doc.validity) && (
             <View style={styles.section}>
@@ -141,6 +134,14 @@ export default function AnimalDocumentDetailScreen() {
                 <Text style={styles.contentText}>{doc.content}</Text>
               </View>
             </View>
+          )}
+
+          {/* Bouton PDF (ordonnances uniquement) */}
+          {doc.type === 'ordonnance' && (
+            <Pressable style={styles.pdfButton}>
+              <Text style={styles.pdfButtonText}>Ouvrir l'ordonnance en PDF</Text>
+              <HugeiconsIcon icon={LinkSquare02Icon} size={20} color="#FFFFFF" strokeWidth={1.5} />
+            </Pressable>
           )}
         </ScrollView>
       </AnimatedEntry>
@@ -203,4 +204,16 @@ const styles = StyleSheet.create({
   // Content (compte-rendu / analyse)
   contentCard: { paddingHorizontal: 16, paddingVertical: 16 },
   contentText: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
+
+  // PDF button
+  pdfButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 56,
+    backgroundColor: colors.primary.DEFAULT,
+    borderRadius: 16,
+  },
+  pdfButtonText: { fontSize: 16, fontWeight: '500', color: '#FFFFFF' },
 });

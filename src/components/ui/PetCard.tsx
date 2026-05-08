@@ -70,7 +70,7 @@ export function PetCard({ pet, index = 0, onPress, borderColor = '#E8E8E8' }: Pe
       </View>
 
       {/* Chevron */}
-      <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={colors.neutral[400]} strokeWidth={1.5} />
+      {onPress && <HugeiconsIcon icon={ArrowRight01Icon} size={20} color={colors.neutral[400]} strokeWidth={1.5} />}
     </Pressable>
   );
 }

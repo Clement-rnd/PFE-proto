@@ -74,6 +74,7 @@ export default function AnimalDocumentsScreen() {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
+            style={styles.chipsScroll}
             contentContainerStyle={styles.chipsRow}
           >
             {FILTERS.map(f => {
@@ -197,6 +198,7 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 16, fontWeight: '300', color: '#181818' },
 
   // Chips
+  chipsScroll: { flexShrink: 0 },
   chipsRow: { paddingHorizontal: 16, paddingBottom: 8, gap: 8, flexDirection: 'row' },
   chip: {
     height: 32,

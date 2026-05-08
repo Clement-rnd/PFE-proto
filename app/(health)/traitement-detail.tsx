@@ -64,7 +64,6 @@ function DocumentRow({ doc, last }: { doc: TreatmentDocument; last?: boolean }) 
           <Text style={styles.documentName} numberOfLines={1}>{doc.name}</Text>
           <Text style={styles.documentMeta}>{doc.date} · {doc.size}</Text>
         </View>
-        <HugeiconsIcon icon={ArrowRight01Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
       </Pressable>
       {!last && <View style={styles.divider} />}
     </>

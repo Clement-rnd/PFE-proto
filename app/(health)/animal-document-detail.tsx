@@ -79,11 +79,10 @@ export default function AnimalDocumentDetailScreen() {
             <View style={styles.section}>
               <SectionTitle label={`Détails de l'${doc.type === 'ordonnance' ? 'ordonnance' : doc.type === 'analyse' ? 'analyse' : 'compte-rendu'}`} />
               <View style={styles.infoCard}>
-                {doc.doctor && <InfoRow label="Vétérinaire" value={doc.doctor} />}
-                {doc.clinic && <InfoRow label="Clinique" value={doc.clinic} />}
-                {doc.deliveryDate && <InfoRow label="Date de délivrance" value={doc.deliveryDate} />}
-                {doc.validity && <InfoRow label="Validité" value={doc.validity} />}
-                <InfoRow label="Animal concerné" value={doc.petName} last />
+                {doc.doctor && <InfoRow label="Vétérinaire" value={doc.doctor} last={!doc.clinic && !doc.deliveryDate && !doc.validity} />}
+                {doc.clinic && <InfoRow label="Clinique" value={doc.clinic} last={!doc.deliveryDate && !doc.validity} />}
+                {doc.deliveryDate && <InfoRow label="Date de délivrance" value={doc.deliveryDate} last={!doc.validity} />}
+                {doc.validity && <InfoRow label="Validité" value={doc.validity} last />}
               </View>
             </View>
           )}

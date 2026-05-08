@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { usePets } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 // ── Chart (full state) ────────────────────────────────────────────────────────
 
@@ -98,6 +99,7 @@ function HistoryRow({ entry, last }: { entry: HistoryEntry; last: boolean }) {
   return (
     <>
       <View style={styles.historyRow}>
+        <ScreenBackground />
         <View style={[styles.historyIconBox, { backgroundColor: entry.iconBg }]}>
           <HugeiconsIcon icon={entry.icon} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
         </View>

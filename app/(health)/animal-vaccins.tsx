@@ -7,6 +7,7 @@ import { usePets } from '../../src/data/petStore';
 import { VACCINS, type VaccineStatus } from '../../src/data/vaccinsData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const STATUS_STYLES: Record<VaccineStatus, { bg: string; text: string; label: string }> = {
   upToDate: { bg: colors.success[50],  text: colors.success.DEFAULT,  label: 'À jour' },
@@ -40,6 +41,7 @@ export default function AnimalVaccinsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

@@ -8,6 +8,7 @@ import { CHRONIC_DISEASES } from '../../src/data/chronicDiseasesData';
 import { medicationCustomIcon } from '../../src/components/icons/MedicationIcon';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -19,6 +20,7 @@ function BulletRow({ text, last }: { text: string; last: boolean }) {
   return (
     <>
       <View style={styles.bulletRow}>
+        <ScreenBackground />
         <View style={styles.bullet} />
         <Text style={styles.bulletText}>{text}</Text>
       </View>

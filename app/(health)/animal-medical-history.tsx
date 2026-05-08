@@ -7,6 +7,7 @@ import { usePets } from '../../src/data/petStore';
 import { MEDICAL_HISTORY } from '../../src/data/medicalHistoryData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 export default function AnimalMedicalHistoryScreen() {
   const { index } = useLocalSearchParams<{ index?: string }>();
@@ -26,6 +27,7 @@ export default function AnimalMedicalHistoryScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

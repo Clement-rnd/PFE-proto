@@ -9,6 +9,7 @@ import { TRAITEMENTS, type TreatmentStatus } from '../../src/data/traitementsDat
 import { colors } from '../../src/theme/colors';
 import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const STATUS_STYLES: Record<TreatmentStatus, { bg: string; text: string; label: string }> = {
   active:   { bg: '#EDFAF2', text: '#52A76A', label: 'En cours' },
@@ -24,6 +25,7 @@ function InfoRow({ label, value, last }: { label: string; value: string; last?: 
   return (
     <>
       <View style={styles.infoRow}>
+        <ScreenBackground />
         <Text style={styles.infoRowLabel}>{label}</Text>
         <Text style={styles.infoRowValue}>{value}</Text>
       </View>

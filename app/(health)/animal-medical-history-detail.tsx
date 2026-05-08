@@ -6,6 +6,7 @@ import { ArrowLeft01Icon, ArrowRight01Icon, File02Icon } from '@hugeicons/core-f
 import { MEDICAL_HISTORY } from '../../src/data/medicalHistoryData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 function SectionTitle({ label }: { label: string }) {
   return <Text style={styles.sectionTitle}>{label}</Text>;
@@ -19,6 +20,7 @@ function InfoRow({ label, value, last }: { label: string; value: string; last?: 
   return (
     <>
       <View style={styles.infoRow}>
+        <ScreenBackground />
         <Text style={styles.infoRowLabel}>{label}</Text>
         <Text style={styles.infoRowValue}>{value}</Text>
       </View>

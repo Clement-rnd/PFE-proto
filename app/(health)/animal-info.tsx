@@ -16,6 +16,7 @@ import { getSvgPath } from 'react-native-figma-squircle';
 import { usePets } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const AVATAR_SIZE = 80;
 const AVATAR_PATH = getSvgPath({ width: AVATAR_SIZE - 1, height: AVATAR_SIZE - 1, cornerRadius: 13, cornerSmoothing: 1 });
@@ -36,6 +37,7 @@ type Tab = 'general' | 'medical';
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.infoRow}>
+      <ScreenBackground />
       <Text style={styles.infoRowLabel}>{label}</Text>
       <Text style={styles.infoRowValue}>{value || '—'}</Text>
     </View>

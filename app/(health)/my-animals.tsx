@@ -9,6 +9,7 @@ import { Button } from '../../src/components/ui/Button';
 import { getPets, subscribe } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 export default function HealthMyAnimalsScreen() {
   const [pets, setPets] = useState(getPets());
@@ -25,6 +26,7 @@ export default function HealthMyAnimalsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <AnimatedEntry delay={0}>
         <View style={styles.header}>
@@ -34,16 +36,18 @@ export default function HealthMyAnimalsScreen() {
             </Pressable>
             <Text style={styles.title}>Mes animaux</Text>
           </View>
-          <Text style={styles.subtitle}>
-            Retrouvez et gérez les profils de vos animaux.
-          </Text>
+          {!isEmpty && (
+            <Text style={styles.subtitle}>
+              Retrouvez le carnet de santé de chacun de vos compagnons.
+            </Text>
+          )}
         </View>
       </AnimatedEntry>
 
       {isEmpty ? (
         <AnimatedEntry delay={100} style={styles.emptyWrapper}>
           <View style={styles.emptyContent}>
-            <Text style={styles.emptyText}>Vous n'avez pas encore ajouté d'animal.</Text>
+            <Text style={styles.emptyText}>Vous n'avez pas encore ajouté d'animaux.</Text>
             <Button
               label="Ajouter un animal"
               icon={Add01Icon}

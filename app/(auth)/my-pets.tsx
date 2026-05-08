@@ -10,6 +10,7 @@ import { Button } from '../../src/components/ui/Button';
 import { getPets, subscribe } from '../../src/data/petStore';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 export default function MyPetsScreen() {
   const [pets, setPets] = useState(getPets());
@@ -24,6 +25,7 @@ export default function MyPetsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
       <View style={styles.body}>
         <AnimatedEntry delay={0}>
           <Text style={styles.title}>Vos animaux</Text>

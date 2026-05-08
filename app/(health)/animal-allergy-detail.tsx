@@ -8,6 +8,7 @@ import { ALLERGIES, RISK_STYLE } from '../../src/data/allergiesData';
 import { colors } from '../../src/theme/colors';
 import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -18,6 +19,7 @@ function SectionTitle({ label }: { label: string }) {
 function BulletList({ items, bulletColor }: { items: string[]; bulletColor: string }) {
   return (
     <View style={styles.bulletCard}>
+      <ScreenBackground />
       {items.map((item, i) => (
         <View key={i}>
           <View style={styles.bulletRow}>

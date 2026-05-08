@@ -16,6 +16,7 @@ import { getPets, updatePet, deletePet } from '../../src/data/petStore';
 import { formatDate, isDateComplete } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const AVATAR_SIZE = 80;
 const AVATAR_INNER = AVATAR_SIZE - 1;
@@ -68,6 +69,7 @@ export default function EditPetScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
+      <ScreenBackground />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView
         style={styles.scroll}

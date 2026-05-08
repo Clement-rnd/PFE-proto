@@ -7,6 +7,7 @@ import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const CODE_LENGTH = 6;
 
@@ -35,6 +36,7 @@ export default function VerifyScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <View style={styles.body}>
         {/* Header */}

@@ -14,6 +14,7 @@ import type { Country } from '../../src/data/countries';
 import { formatDate, isDateComplete } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 type CountryWithFlag = Country & { flag: string };
 
@@ -38,6 +39,7 @@ export default function CreateProfileScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
+      <ScreenBackground />
       <AnimatedEntry delay={0}>
       {/* Header fixe */}
       <View style={styles.header}>

@@ -7,6 +7,7 @@ import { AppIcon } from '../../src/components/ui/AppIcon';
 import { CONSULTATIONS, type ConsultationStatus } from '../../src/data/consultationsData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const STATUS_STYLES: Record<ConsultationStatus, { bg: string; text: string; label: string }> = {
   upcoming: { bg: '#E5E8FA', text: '#39438D', label: 'À venir' },
@@ -21,6 +22,7 @@ function InfoRow({ label, value, last }: { label: string; value: string; last?: 
   return (
     <>
       <View style={styles.infoRow}>
+        <ScreenBackground />
         <Text style={styles.infoRowLabel}>{label}</Text>
         <Text style={styles.infoRowValue}>{value}</Text>
       </View>

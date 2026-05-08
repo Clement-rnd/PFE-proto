@@ -8,6 +8,7 @@ import { ArrowLeft01Icon, Tick01Icon } from '@hugeicons/core-free-icons';
 import { Button } from '../../src/components/ui/Button';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 function Checkbox({ checked, onPress }: { checked: boolean; onPress: () => void }) {
   return (
@@ -50,6 +51,7 @@ export default function TermsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
       <View style={styles.body}>
 
         {/* Header */}

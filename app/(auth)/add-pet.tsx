@@ -16,6 +16,7 @@ import { addPet, getPets } from '../../src/data/petStore';
 import { formatDate, isDateComplete } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const AVATAR_SIZE = 80;
 const AVATAR_INNER = AVATAR_SIZE - 1;
@@ -56,6 +57,7 @@ export default function AddPetScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
+      <ScreenBackground />
       <AnimatedEntry delay={0}>
         <View style={styles.titleRow}>
           <Pressable onPress={() => router.back()} hitSlop={12}>

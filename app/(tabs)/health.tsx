@@ -11,6 +11,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { colors } from '../../src/theme/colors';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const MENU_ITEMS = [
   {
@@ -46,6 +47,7 @@ const MENU_ITEMS = [
 export default function HealthScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
       <View style={styles.body}>
 
         <AnimatedEntry delay={0}>

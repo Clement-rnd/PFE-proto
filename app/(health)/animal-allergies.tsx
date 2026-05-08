@@ -15,6 +15,7 @@ import {
 } from '../../src/data/allergiesData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -58,6 +59,7 @@ function AllergyRow({ allergy, sortMode, onPress }: AllergyRowProps) {
   return (
     <Pressable style={styles.allergyRow} onPress={onPress}>
       <View style={styles.allergyIconBox}>
+        <ScreenBackground />
         <HugeiconsIcon icon={allergy.icon} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
       </View>
       <View style={styles.allergyContent}>

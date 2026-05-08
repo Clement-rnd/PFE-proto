@@ -7,6 +7,7 @@ import { AppIcon } from '../../src/components/ui/AppIcon';
 import { CONSULTATIONS, type ConsultationStatus } from '../../src/data/consultationsData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const STATUS_STYLES: Record<ConsultationStatus, { bg: string; text: string; label: string }> = {
   upcoming: { bg: '#E5E8FA', text: '#39438D', label: 'À venir' },
@@ -22,6 +23,7 @@ const groups = years.map(year => ({
 export default function ConsultationsScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>

@@ -2,7 +2,7 @@ import {
   View, Text, Pressable, ScrollView, StyleSheet, Image,
   Platform, Modal, KeyboardAvoidingView,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
@@ -21,9 +21,18 @@ import { getPets, updatePet, deletePet } from '../../src/data/petStore';
 import { formatDate, isDateComplete } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const AVATAR_SIZE = 80;
 const AVATAR_PATH = getSvgPath({ width: AVATAR_SIZE - 1, height: AVATAR_SIZE - 1, cornerRadius: 15.5, cornerSmoothing: 1 });
+
+const PET_IMAGES = [
+  require('../../assets/images/pet-1.png'),
+  require('../../assets/images/pet-2.png'),
+  require('../../assets/images/pet-3.png'),
+  require('../../assets/images/pet-4.png'),
+  require('../../assets/images/pet-5.png'),
+];
 
 const SPECIES = ['Chien', 'Chat', 'Lapin', "Cochon d'Inde", 'Hamster', 'Oiseau', 'Reptile', 'Poisson', 'Autre'];
 const SEX_OPTIONS = ['Femelle', 'Mâle', 'Inconnu'];
@@ -33,7 +42,6 @@ const INSURANCE_OPTIONS = ['Oui', 'Non'];
 const DROPDOWN_WEB = { backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#E8E8E8' };
 
 export default function AnimalEditScreen() {
-  const insets = useSafeAreaInsets();
   const { index } = useLocalSearchParams<{ index?: string }>();
   const petIndex = parseInt(index ?? '0', 10);
   const pet = getPets()[petIndex];
@@ -60,6 +68,9 @@ export default function AnimalEditScreen() {
     return null;
   }
 
+  const fallbackImage = PET_IMAGES[petIndex % PET_IMAGES.length];
+  const displayPhoto = photoUri ?? fallbackImage;
+
   const isValid = name.trim().length > 0 && species.length > 0 && sex.length > 0 && sterilized.length > 0
     && (birthDate.length === 0 || isDateComplete(birthDate));
 
@@ -84,6 +95,7 @@ export default function AnimalEditScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScreenBackground />
 
       <AnimatedEntry delay={0}>
         <View style={styles.header}>
@@ -112,36 +124,25 @@ export default function AnimalEditScreen() {
                   <View style={styles.avatarWeb}>
                     {photoUri
                       ? <Image source={{ uri: photoUri }} style={styles.avatarWebImg} resizeMode="cover" />
-                      : <HugeiconsIcon icon={ImageAdd02Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
+                      : <Image source={fallbackImage} style={styles.avatarWebImg} resizeMode="cover" />
                     }
                   </View>
                 ) : (
-                  <>
-                    <Svg width={AVATAR_SIZE} height={AVATAR_SIZE}>
-                      <Defs>
-                        <ClipPath id="edit-avatar-clip">
-                          <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" />
-                        </ClipPath>
-                      </Defs>
-                      <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" fill="#FFFFFF" stroke="#E8E8E8" strokeWidth={1} />
-                      {photoUri && (
-                        <SvgImage
-                          href={photoUri}
-                          width={AVATAR_SIZE}
-                          height={AVATAR_SIZE}
-                          clipPath="url(#edit-avatar-clip)"
-                          preserveAspectRatio="xMidYMid slice"
-                        />
-                      )}
-                    </Svg>
-                    {!photoUri && (
-                      <View style={StyleSheet.absoluteFill} pointerEvents="none">
-                        <View style={styles.avatarIconWrap}>
-                          <HugeiconsIcon icon={ImageAdd02Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
-                        </View>
-                      </View>
-                    )}
-                  </>
+                  <Svg width={AVATAR_SIZE} height={AVATAR_SIZE}>
+                    <Defs>
+                      <ClipPath id="edit-avatar-clip">
+                        <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" />
+                      </ClipPath>
+                    </Defs>
+                    <Path d={AVATAR_PATH} transform="translate(0.5 0.5)" fill="#FFFFFF" stroke="#E8E8E8" strokeWidth={1} />
+                    <SvgImage
+                      href={displayPhoto}
+                      width={AVATAR_SIZE}
+                      height={AVATAR_SIZE}
+                      clipPath="url(#edit-avatar-clip)"
+                      preserveAspectRatio="xMidYMid slice"
+                    />
+                  </Svg>
                 )}
               </Pressable>
               <Text style={styles.avatarLabel}>{photoUri ? 'Modifier la photo' : 'Ajouter une photo'}</Text>
@@ -182,13 +183,6 @@ export default function AnimalEditScreen() {
                   </View>
                 </View>
 
-                <View style={styles.fieldWrapper}>
-                  <Text style={styles.fieldLabel}>Animal stérilisé<Text style={styles.asterisk}>*</Text></Text>
-                  <View style={styles.chips}>
-                    {STERILIZED_OPTIONS.map(opt => <Chip key={opt} label={opt} selected={sterilized === opt} onPress={() => setSterilized(opt)} />)}
-                  </View>
-                </View>
-
                 <Textfield label="Date de naissance" placeholder="JJ/MM/AAAA" value={birthDate} onChangeText={t => setBirthDate(formatDate(t))} keyboardType="number-pad" />
               </View>
             </View>
@@ -197,6 +191,13 @@ export default function AnimalEditScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Caractéristiques</Text>
               <View style={styles.fields}>
+                <View style={styles.fieldWrapper}>
+                  <Text style={styles.fieldLabel}>Stérilisé(e) ?<Text style={styles.asterisk}>*</Text></Text>
+                  <View style={styles.chips}>
+                    {STERILIZED_OPTIONS.map(opt => <Chip key={opt} label={opt} selected={sterilized === opt} onPress={() => setSterilized(opt)} />)}
+                  </View>
+                </View>
+
                 <Textfield label="Couleur du pelage" placeholder="Ex : noir et blanc" value={coatColor} onChangeText={setCoatColor} />
               </View>
             </View>
@@ -207,27 +208,14 @@ export default function AnimalEditScreen() {
               <View style={styles.fields}>
                 <View style={styles.fieldWrapper}>
                   <Text style={styles.fieldLabel}>Type d'identification</Text>
-                  <View style={styles.smallChips}>
+                  <View style={styles.chips}>
                     {IDENT_TYPES.map(opt => (
-                      <Pressable
+                      <Chip
                         key={opt}
+                        label={opt}
+                        selected={identType === opt}
                         onPress={() => setIdentType(identType === opt ? '' : opt)}
-                        style={[styles.smallChip, Platform.OS === 'web' && {
-                          backgroundColor: identType === opt ? colors.primary.DEFAULT : '#FFFFFF',
-                          borderRadius: 100,
-                          borderWidth: 1,
-                          borderColor: identType === opt ? colors.primary.DEFAULT : '#E8E8E8',
-                        }]}
-                      >
-                        {Platform.OS !== 'web' && (
-                          <SquircleView
-                            squircleParams={{ cornerRadius: 100, cornerSmoothing: 1, fillColor: identType === opt ? colors.primary.DEFAULT : '#FFFFFF', strokeColor: identType === opt ? colors.primary.DEFAULT : '#E8E8E8', strokeWidth: 1 }}
-                            style={StyleSheet.absoluteFillObject}
-                            pointerEvents="none"
-                          />
-                        )}
-                        <Text style={[styles.smallChipLabel, identType === opt && styles.smallChipLabelSelected]}>{opt}</Text>
-                      </Pressable>
+                      />
                     ))}
                   </View>
                 </View>
@@ -263,14 +251,12 @@ export default function AnimalEditScreen() {
               </View>
             </View>
 
+            <Button label="Sauvegarder" onPress={handleSave} disabled={!isValid} />
+
             <Pressable onPress={() => setDeleteOpen(true)} style={styles.deleteLink} hitSlop={8}>
               <Text style={styles.deleteLinkText}>Supprimer mon animal</Text>
             </Pressable>
           </ScrollView>
-
-          <View style={styles.footer}>
-            <Button label="Sauvegarder" onPress={handleSave} disabled={!isValid} />
-          </View>
         </KeyboardAvoidingView>
       </AnimatedEntry>
 
@@ -332,12 +318,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   title: { flex: 1, fontSize: 20, fontWeight: '500', color: '#181818' },
-  confirmBtn: { fontSize: 16, fontWeight: '500', color: colors.primary.DEFAULT },
+  confirmBtn: { fontSize: 16, fontWeight: '400', color: colors.neutral[900] },
   confirmBtnDisabled: { color: colors.neutral[300] },
   body: { flex: 1 },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24, gap: 48 },
-  footer: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, gap: 48 },
 
   avatarSection: { alignItems: 'center', gap: 8 },
   avatarWeb: {
@@ -352,7 +337,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarWebImg: { width: AVATAR_SIZE, height: AVATAR_SIZE },
-  avatarIconWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   avatarLabel: { fontSize: 14, fontWeight: '400', color: '#717171' },
 
   section: { gap: 16 },
@@ -366,11 +350,7 @@ const styles = StyleSheet.create({
   dropdownText: { flex: 1, fontSize: 16, fontWeight: '400', color: '#181818' },
   dropdownPlaceholder: { color: '#B2B2B2', fontWeight: '300' },
 
-  chips: { flexDirection: 'row', gap: 16 },
-  smallChips: { flexDirection: 'row', gap: 8 },
-  smallChip: { height: 32, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center' },
-  smallChipLabel: { fontSize: 14, fontWeight: '400', color: '#4F4F4F' },
-  smallChipLabelSelected: { color: '#FFFFFF', fontWeight: '500' },
+  chips: { flexDirection: 'row', gap: 8 },
 
   uploadZone: { height: 64, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, gap: 12 },
   uploadZoneWeb: { backgroundColor: '#FAFAFA', borderRadius: 8, borderWidth: 1, borderColor: '#E8E8E8' },

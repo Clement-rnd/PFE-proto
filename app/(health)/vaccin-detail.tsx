@@ -9,6 +9,7 @@ import { colors } from '../../src/theme/colors';
 import { PetCard } from '../../src/components/ui/PetCard';
 import { Button } from '../../src/components/ui/Button';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
+import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 const STATUS_STYLES: Record<VaccineStatus, { bg: string; text: string; label: string }> = {
   upToDate: { bg: colors.success[50],  text: colors.success.DEFAULT,  label: 'À jour' },
@@ -24,6 +25,7 @@ function InfoRow({ label, value, last }: { label: string; value: string; last?: 
   return (
     <>
       <View style={styles.infoRow}>
+        <ScreenBackground />
         <Text style={styles.infoRowLabel}>{label}</Text>
         <Text style={styles.infoRowValue}>{value}</Text>
       </View>

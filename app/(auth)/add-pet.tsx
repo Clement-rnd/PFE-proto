@@ -12,7 +12,7 @@ import { Chip } from '../../src/components/ui/Chip';
 import { BottomSheet } from '../../src/components/ui/BottomSheet';
 import { RacePicker } from '../../src/components/ui/RacePicker';
 import { PhotoPickerSheet } from '../../src/components/ui/PhotoPickerSheet';
-import { addPet, getPets } from '../../src/data/petStore';
+import { addPet, getPets, copyPhotoToPermanent } from '../../src/data/petStore';
 import { formatDate, isDateComplete } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
@@ -46,8 +46,12 @@ export default function AddPetScreen() {
   const isValid = name.trim().length > 0 && species.length > 0 && sex.length > 0 && sterilized.length > 0
     && (birthDate.length === 0 || isDateComplete(birthDate));
 
-  function handleSubmit() {
-    addPet({ name, species, races, sex, sterilized, birthDate });
+  async function handleSubmit() {
+    let savedPhotoUri: string | undefined;
+    if (photoUri) {
+      try { savedPhotoUri = await copyPhotoToPermanent(photoUri); } catch { savedPhotoUri = photoUri; }
+    }
+    addPet({ name, species, races, sex, sterilized, birthDate, photoUri: savedPhotoUri });
     if (returnBack === '1') {
       router.back();
     } else {

@@ -2,10 +2,14 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
+import { useEffect } from 'react';
 import { ScreenBackground } from '../src/components/ui/ScreenBackground';
+import { initPetStore } from '../src/data/petStore';
 import '../global.css';
 
 export default function RootLayout() {
+  useEffect(() => { initPetStore(); }, []);
+
   return (
     <SafeAreaProvider>
       <View style={styles.root}>

@@ -28,13 +28,28 @@ function InfoRow({ label, value, last }: { label: string; value: string; last?: 
   );
 }
 
-function TreatmentRow({ value, last }: { value: string; last?: boolean }) {
+function TreatmentRow({ label, traitementId, last }: { label: string; traitementId?: string; last?: boolean }) {
+  const inner = (
+    <View style={styles.treatmentRow}>
+      <View style={styles.treatmentRowContent}>
+        <Text style={styles.infoRowLabel}>Médicament</Text>
+        <Text style={styles.infoRowValue} numberOfLines={1}>{label}</Text>
+      </View>
+      {traitementId && (
+        <HugeiconsIcon icon={ArrowRight01Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
+      )}
+    </View>
+  );
   return (
     <>
-      <View style={styles.infoRow}>
-        <Text style={styles.infoRowLabel}>Médicament</Text>
-        <Text style={styles.infoRowValue}>{value}</Text>
-      </View>
+      {traitementId ? (
+        <Pressable onPress={() => router.push({
+          pathname: '/(health)/traitement-detail',
+          params: { id: traitementId, petIndex: '0', fromMedHistory: 'true' },
+        })}>
+          {inner}
+        </Pressable>
+      ) : inner}
       {!last && <View style={styles.divider} />}
     </>
   );
@@ -125,7 +140,7 @@ export default function AnimalMedicalHistoryDetailScreen() {
               <SectionTitle label="Traitements" />
               <InfoCard>
                 {event.treatments.map((t, i) => (
-                  <TreatmentRow key={i} value={t} last={i === event.treatments.length - 1} />
+                  <TreatmentRow key={i} label={t.label} traitementId={t.traitementId} last={i === event.treatments.length - 1} />
                 ))}
               </InfoCard>
             </View>
@@ -213,6 +228,15 @@ const styles = StyleSheet.create({
   infoRowValue: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
   divider: { height: 1, backgroundColor: '#DCDCDC', marginHorizontal: 16 },
 
+  treatmentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minHeight: 56,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 8,
+  },
+  treatmentRowContent: { flex: 1, gap: 4, justifyContent: 'center' },
   reasonCard: { paddingHorizontal: 16, paddingVertical: 16 },
   reasonText: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
 

@@ -6,6 +6,11 @@ export type MedicalDocument = {
   date: string;
 };
 
+export type MedicalTreatment = {
+  label: string;
+  traitementId?: string;
+};
+
 export type MedicalEvent = {
   id: string;
   title: string;
@@ -17,7 +22,7 @@ export type MedicalEvent = {
   clinic: string;
   duration?: string;
   reason?: string;
-  treatments: string[];
+  treatments: MedicalTreatment[];
   documents: MedicalDocument[];
 };
 
@@ -32,7 +37,7 @@ export const MEDICAL_HISTORY: MedicalEvent[] = [
     status: 'Passée',
     clinic: 'Clinique Vétérinaire des Lilas',
     reason: 'Bilan annuel de santé. Contrôle poids, vaccination et état général.',
-    treatments: [],
+    treatments: [] as MedicalTreatment[],
     documents: [
       { name: 'bilan-annuel-naya-2026.pdf', size: '1.2MB', date: '21 mars 2026' },
     ],
@@ -49,8 +54,8 @@ export const MEDICAL_HISTORY: MedicalEvent[] = [
     duration: '1 jour (14 janv. 2025)',
     reason: 'Ovariectomie sous anesthésie générale. Suites opératoires normales.',
     treatments: [
-      'Meloxicam 1 mg · 1x/j · pendant 5 jours',
-      'Amoxicilline 500 mg · 2x/j · pendant 7 jours',
+      { label: 'Meloxicam 1 mg · 1x/j · pendant 5 jours', traitementId: 'meloxicam-cooper' },
+      { label: 'Amoxicilline 500 mg · 2x/j · pendant 7 jours', traitementId: 'amoxicilline-cooper' },
     ],
     documents: [
       { name: 'compte-rendu-sterilisation.pdf', size: '2.4MB', date: '14 janv. 2025' },
@@ -68,8 +73,8 @@ export const MEDICAL_HISTORY: MedicalEvent[] = [
     duration: '3 jours (2 oct. 2024 → 5 oct. 2024)',
     reason: "Ingestion d'un corps étranger. Observation et surveillance post-opératoire.",
     treatments: [
-      'Métronidazole 250 mg · 2x/j · pendant 7 jours',
-      'Oméprazole 10 mg · 1x/j · pendant 14 jours',
+      { label: 'Métronidazole 250 mg · 2x/j · pendant 7 jours', traitementId: 'metronidazole-oct2024-cooper' },
+      { label: 'Oméprazole 10 mg · 1x/j · pendant 14 jours', traitementId: 'omeprazole-cooper' },
     ],
     documents: [
       { name: 'compte-rendu-hospitalisation.pdf', size: '7MB', date: '2 oct. 2024' },
@@ -88,7 +93,7 @@ export const MEDICAL_HISTORY: MedicalEvent[] = [
     duration: '2 jours (27 juin 2024 → 29 juin 2024)',
     reason: 'Gastro-entérite aiguë. Réhydratation et surveillance digestive.',
     treatments: [
-      'Métronidazole 250 mg · 2x/j · pendant 5 jours',
+      { label: 'Métronidazole 250 mg · 2x/j · pendant 5 jours' },
     ],
     documents: [],
   },

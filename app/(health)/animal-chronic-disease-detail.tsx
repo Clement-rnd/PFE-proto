@@ -4,7 +4,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { AppIcon } from '../../src/components/ui/AppIcon';
-import { CHRONIC_DISEASES, TREATMENT_ICON } from '../../src/data/chronicDiseasesData';
+import { CHRONIC_DISEASES } from '../../src/data/chronicDiseasesData';
+import { TRAITEMENTS } from '../../src/data/traitementsData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
@@ -35,6 +36,8 @@ export default function AnimalChronicDiseaseDetailScreen() {
   const disease = CHRONIC_DISEASES.find(d => d.name === name);
 
   if (!disease) return null;
+
+  const linkedTreatments = TRAITEMENTS.filter(t => t.diseaseId === disease.name);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
@@ -68,35 +71,28 @@ export default function AnimalChronicDiseaseDetailScreen() {
           </View>
 
           {/* Traitement en cours */}
-          {disease.treatment && (
+          {linkedTreatments.length > 0 && (
             <View style={styles.section}>
               <SectionTitle label="Traitement en cours" />
               <View style={styles.treatmentCard}>
-                {/* Medication row */}
-                <Pressable style={styles.treatmentRow}>
-                  <View style={styles.treatmentIconBox}>
-                    <HugeiconsIcon icon={TREATMENT_ICON[disease.treatment.type]} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
+                {linkedTreatments.map((t, i) => (
+                  <View key={t.id}>
+                    <Pressable
+                      style={styles.treatmentRow}
+                      onPress={() => router.push({
+                        pathname: '/(health)/traitement-detail',
+                        params: { id: t.id, petIndex: String(t.petIndex), fromDisease: 'true' },
+                      })}
+                    >
+                      <View style={styles.treatmentContent}>
+                        <Text style={styles.treatmentLabel}>Médicament</Text>
+                        <Text style={styles.treatmentName} numberOfLines={1}>{t.name} · {t.posologie}</Text>
+                      </View>
+                      <HugeiconsIcon icon={ArrowRight01Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
+                    </Pressable>
+                    {i < linkedTreatments.length - 1 && <View style={styles.divider} />}
                   </View>
-                  <View style={styles.treatmentContent}>
-                    <Text style={styles.treatmentName}>{disease.treatment.name}</Text>
-                    <Text style={styles.treatmentSince}>{disease.treatment.since}</Text>
-                  </View>
-                  <HugeiconsIcon icon={ArrowRight01Icon} size={24} color={colors.neutral[400]} strokeWidth={1.5} />
-                </Pressable>
-
-                <View style={styles.treatmentDivider} />
-
-                {/* Posologie + Prise */}
-                <View style={styles.treatmentInfoBlock}>
-                  <View style={styles.treatmentInfoRow}>
-                    <Text style={styles.treatmentInfoLabel}>Posologie</Text>
-                    <Text style={styles.treatmentInfoValue}>{disease.treatment.posologie}</Text>
-                  </View>
-                  <View style={styles.treatmentInfoRow}>
-                    <Text style={styles.treatmentInfoLabel}>Prise</Text>
-                    <Text style={styles.treatmentInfoValue}>{disease.treatment.prise}</Text>
-                  </View>
-                </View>
+                ))}
               </View>
             </View>
           )}
@@ -175,35 +171,14 @@ const styles = StyleSheet.create({
   treatmentRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 56,
-    paddingLeft: 16,
-    paddingRight: 8,
-    gap: 8,
-  },
-  treatmentIconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  treatmentContent: { flex: 1, gap: 2, justifyContent: 'center' },
-  treatmentName: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
-  treatmentSince: { fontSize: 12, fontWeight: '300', color: '#B2B2B2', lineHeight: 12 * 1.4 },
-  treatmentDivider: { height: 1, backgroundColor: '#DCDCDC', marginHorizontal: 16 },
-  treatmentInfoBlock: {
+    minHeight: 56,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 8,
     gap: 8,
   },
-  treatmentInfoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 24,
-  },
-  treatmentInfoLabel: { fontSize: 16, fontWeight: '300', color: '#717171' },
-  treatmentInfoValue: { fontSize: 16, fontWeight: '300', color: '#4F4F4F' },
+  treatmentContent: { flex: 1, gap: 8, justifyContent: 'center' },
+  treatmentLabel: { fontSize: 14, fontWeight: '300', color: '#B2B2B2', lineHeight: 14 * 1.4 },
+  treatmentName: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
 
   // Bullet list
   bulletCard: {

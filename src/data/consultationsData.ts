@@ -15,6 +15,9 @@ export type Consultation = {
   year: number;
   status: ConsultationStatus;
   reason?: string;
+  weight?: number;   // kg
+  height?: number;   // cm
+  chartLabel?: string; // short label for chart x-axis, e.g. "Nov '24"
 };
 
 export const CONSULTATIONS: Consultation[] = [
@@ -45,6 +48,9 @@ export const CONSULTATIONS: Consultation[] = [
     year: 2025,
     status: 'done',
     reason: 'Suivi de la dermatite atopique, ajustement du traitement.',
+    weight: 29.5,
+    height: 57,
+    chartLabel: "Oct '25",
   },
   {
     id: 'bilan-2025-luna',
@@ -59,6 +65,9 @@ export const CONSULTATIONS: Consultation[] = [
     year: 2025,
     status: 'done',
     reason: 'Bilan de santé annuel et vaccination.',
+    weight: 4.2,
+    height: 25,
+    chartLabel: "Jun '25",
   },
   {
     id: 'analyse-2025-cooper',
@@ -73,6 +82,9 @@ export const CONSULTATIONS: Consultation[] = [
     year: 2025,
     status: 'done',
     reason: 'Contrôle thyroïde dans le cadre du suivi hypothyroïdie.',
+    weight: 28.5,
+    height: 56,
+    chartLabel: "Fév '25",
   },
   {
     id: 'ortho-2024-cooper',
@@ -87,5 +99,8 @@ export const CONSULTATIONS: Consultation[] = [
     year: 2024,
     status: 'done',
     reason: 'Diagnostic dysplasie des hanches, bilan radiographique.',
+    weight: 27.0,
+    height: 55,
+    chartLabel: "Nov '24",
   },
 ];

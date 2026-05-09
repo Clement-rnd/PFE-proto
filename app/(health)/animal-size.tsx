@@ -2,40 +2,34 @@ import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import {
-  ArrowLeft01Icon, HelpCircleIcon, ArrowUpRight01Icon,
-  TapeMeasureIcon, StethoscopeIcon, InjectionIcon, WeightScaleIcon,
-} from '@hugeicons/core-free-icons';
+import { ArrowLeft01Icon, HelpCircleIcon, ArrowUpRight01Icon } from '@hugeicons/core-free-icons';
 import Svg, { Path, Line, Text as SvgText, Circle } from 'react-native-svg';
 import { useState } from 'react';
 import { usePets } from '../../src/data/petStore';
+import { CONSULTATIONS } from '../../src/data/consultationsData';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 
 // ── Chart ─────────────────────────────────────────────────────────────────────
 
-const NAYA_DATA = [45, 47.5, 50, 53, 55.5, 57.5, 58.5, 59];
-const BREED_DATA = [47, 50, 53, 55.5, 58, 59.5, 61, 62];
-const MONTHS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû'];
-const Y_MIN = 40;
-const Y_MAX = 65;
 const CHART_H = 160;
 const PAD_L = 36;
 const PAD_R = 12;
 const PAD_T = 8;
 const PAD_B = 24;
 
-function LineChart({ width }: { width: number }) {
-  if (width <= 0) return null;
+function LineChart({ width, data, labels, yMin, yMax }: {
+  width: number; data: number[]; labels: string[]; yMin: number; yMax: number;
+}) {
+  if (width <= 0 || data.length === 0) return null;
   const plotW = width - PAD_L - PAD_R;
   const plotH = CHART_H - PAD_T - PAD_B;
-  const xFor = (i: number) => PAD_L + (i / (NAYA_DATA.length - 1)) * plotW;
-  const yFor = (v: number) => PAD_T + plotH * (1 - (v - Y_MIN) / (Y_MAX - Y_MIN));
-  const toD = (data: number[]) =>
-    data.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xFor(i).toFixed(1)} ${yFor(v).toFixed(1)}`).join(' ');
-  const yLabels = [40, 50, 60];
-  const xLabels = [0, 2, 4, 6, 7];
+  const n = data.length;
+  const xFor = (i: number) => n === 1 ? PAD_L + plotW / 2 : PAD_L + (i / (n - 1)) * plotW;
+  const yFor = (v: number) => PAD_T + plotH * (1 - (v - yMin) / (yMax - yMin));
+  const pathD = data.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xFor(i).toFixed(1)} ${yFor(v).toFixed(1)}`).join(' ');
+  const yLabels = [yMin, Math.round((yMin + yMax) / 2), yMax];
   return (
     <Svg width={width} height={CHART_H}>
       {yLabels.map(v => (
@@ -44,22 +38,15 @@ function LineChart({ width }: { width: number }) {
       {yLabels.map(v => (
         <SvgText key={v} x={PAD_L - 4} y={yFor(v) + 4} fontSize={10} fill="#B2B2B2" textAnchor="end" fontWeight="300">{v}</SvgText>
       ))}
-      {xLabels.map(i => (
-        <SvgText key={i} x={xFor(i)} y={CHART_H - 2} fontSize={10} fill="#B2B2B2" textAnchor="middle" fontWeight="300">{MONTHS[i]}</SvgText>
+      {labels.map((label, i) => (
+        <SvgText key={i} x={xFor(i)} y={CHART_H - 2} fontSize={10} fill="#B2B2B2" textAnchor="middle" fontWeight="300">{label}</SvgText>
       ))}
-      <Path d={toD(BREED_DATA)} stroke="#DCDCDC" strokeWidth={2} fill="none" strokeDasharray="5,4" />
-      <Path d={toD(NAYA_DATA)} stroke={colors.primary.DEFAULT} strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      {NAYA_DATA.map((v, i) => (
+      {n > 1 && (
+        <Path d={pathD} stroke={colors.primary.DEFAULT} strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      )}
+      {data.map((v, i) => (
         <Circle key={i} cx={xFor(i)} cy={yFor(v)} r={3.5} fill={colors.primary.DEFAULT} />
       ))}
-    </Svg>
-  );
-}
-
-function LegendDash() {
-  return (
-    <Svg width={12} height={2}>
-      <Line x1={0} y1={1} x2={12} y2={1} stroke="#DCDCDC" strokeWidth={2} strokeDasharray="3,2" />
     </Svg>
   );
 }
@@ -80,32 +67,6 @@ function EmptyChartIllustration() {
   );
 }
 
-// ── History ───────────────────────────────────────────────────────────────────
-
-type HistoryEntry = { icon: any; title: string; detail: string; value: string };
-
-const HISTORY: HistoryEntry[] = [
-  { icon: StethoscopeIcon, title: 'Bilan annuel',          detail: '8 avr. 2026 · Dr. Martin',  value: '59 cm' },
-  { icon: WeightScaleIcon, title: 'Pesée vétérinaire',     detail: '12 jan. 2026 · Dr. Martin', value: '57 cm' },
-  { icon: InjectionIcon,   title: 'Vaccin annuel + pesée', detail: '3 sep. 2025 · Dr. Dupont',  value: '55 cm' },
-  { icon: TapeMeasureIcon, title: 'Consultation',           detail: '21 mai 2025 · Dr. Dupont',  value: '52 cm' },
-];
-
-function HistoryRow({ entry }: { entry: HistoryEntry }) {
-  return (
-    <View style={styles.historyRow}>
-      <View style={styles.historyIconBox}>
-        <HugeiconsIcon icon={entry.icon} size={16} color={colors.neutral[700]} strokeWidth={1.5} />
-      </View>
-      <View style={styles.historyContent}>
-        <Text style={styles.historyTitle}>{entry.title}</Text>
-        <Text style={styles.historyDetail}>{entry.detail}</Text>
-      </View>
-      <Text style={styles.historyValue}>{entry.value}</Text>
-    </View>
-  );
-}
-
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 export default function AnimalSizeScreen() {
@@ -117,7 +78,24 @@ export default function AnimalSizeScreen() {
 
   if (!pet) return null;
 
-  const hasData = petIndex === 0;
+  // Newest-first (array order), only consultations with height recorded
+  const heightConsultations = CONSULTATIONS.filter(c => c.petIndex === petIndex && c.height != null);
+  const hasData = heightConsultations.length > 0;
+
+  // Chart needs oldest-first
+  const chartConsultations = [...heightConsultations].reverse();
+  const chartData = chartConsultations.map(c => c.height!);
+  const chartLabels = chartConsultations.map(c => c.chartLabel ?? c.dateLabel);
+
+  const dataMin = hasData ? Math.min(...chartData) : 0;
+  const dataMax = hasData ? Math.max(...chartData) : 0;
+  const spread = dataMax - dataMin || 4;
+  const yMin = Math.floor(dataMin - spread * 0.5);
+  const yMax = Math.ceil(dataMax + spread * 0.5);
+
+  const latest = hasData ? heightConsultations[0] : null;
+  const prev = heightConsultations.length >= 2 ? heightConsultations[1] : null;
+  const trend = latest && prev ? +(latest.height! - prev.height!).toFixed(1) : null;
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
@@ -138,7 +116,6 @@ export default function AnimalSizeScreen() {
         contentContainerStyle={[styles.scrollContent, !hasData && { flexGrow: 1 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Alert */}
         <AnimatedEntry delay={80}>
           <View style={styles.alertBanner}>
             <HugeiconsIcon icon={HelpCircleIcon} size={16} color="#39438D" strokeWidth={1.5} />
@@ -155,51 +132,55 @@ export default function AnimalSizeScreen() {
 
         {hasData ? (
           <>
-            {/* Valeur courante — flat, pas de card */}
             <AnimatedEntry delay={140}>
               <View style={styles.valueSection}>
-                <Text style={styles.dateLabel}>Dernière mise à jour le 8 avril 2026</Text>
+                <Text style={styles.dateLabel}>Dernière mise à jour le {latest!.dateLabel}</Text>
                 <View style={styles.valueRow}>
                   <View style={styles.valueNumberRow}>
-                    <Text style={styles.valueNumber}>59</Text>
+                    <Text style={styles.valueNumber}>{latest!.height}</Text>
                     <Text style={styles.valueUnit}>cm</Text>
                   </View>
-                  <View style={styles.trendBadge}>
-                    <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} color={colors.success.DEFAULT} strokeWidth={2} />
-                    <Text style={styles.trendText}>+2 cm</Text>
-                  </View>
+                  {trend !== null && (
+                    <View style={[styles.trendBadge, trend < 0 && { backgroundColor: '#FCEEF1' }]}>
+                      <View style={trend < 0 ? { transform: [{ rotate: '90deg' }] } : undefined}>
+                        <HugeiconsIcon icon={ArrowUpRight01Icon} size={14} color={trend >= 0 ? colors.success.DEFAULT : colors.primary.DEFAULT} strokeWidth={2} />
+                      </View>
+                      <Text style={[styles.trendText, trend < 0 && { color: colors.primary.DEFAULT }]}>
+                        {trend >= 0 ? '+' : ''}{trend} cm
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
             </AnimatedEntry>
 
-            {/* Chart — titre en dehors de la card */}
             <AnimatedEntry delay={200}>
               <View style={styles.chartSection}>
                 <Text style={styles.sectionTitle}>Évolution de la taille</Text>
                 <View style={styles.chartCard}>
-                  <View style={styles.legend}>
-                    <View style={styles.legendItem}>
-                      <View style={[styles.legendLineSolid, { backgroundColor: colors.primary.DEFAULT }]} />
-                      <Text style={styles.legendLabel}>{pet.name}</Text>
-                    </View>
-                    <View style={styles.legendItem}>
-                      <LegendDash />
-                      <Text style={styles.legendLabel}>Moyenne de la race</Text>
-                    </View>
-                  </View>
                   <View style={styles.chartArea} onLayout={(e) => setChartWidth(e.nativeEvent.layout.width)}>
-                    <LineChart width={chartWidth} />
+                    <LineChart width={chartWidth} data={chartData} labels={chartLabels} yMin={yMin} yMax={yMax} />
                   </View>
                 </View>
               </View>
             </AnimatedEntry>
 
-            {/* Historique — pas de card */}
             <AnimatedEntry delay={260}>
               <View style={styles.historySection}>
                 <Text style={styles.sectionTitle}>Historique</Text>
                 <View style={styles.historyList}>
-                  {HISTORY.map((entry, i) => <HistoryRow key={i} entry={entry} />)}
+                  {heightConsultations.map((c) => (
+                    <View key={c.id} style={styles.historyRow}>
+                      <View style={styles.historyIconBox}>
+                        <HugeiconsIcon icon={c.icon} size={16} color={colors.neutral[700]} strokeWidth={1.5} />
+                      </View>
+                      <View style={styles.historyContent}>
+                        <Text style={styles.historyTitle}>{c.title}</Text>
+                        <Text style={styles.historyDetail}>{c.dateLabel} · {c.doctor}</Text>
+                      </View>
+                      <Text style={styles.historyValue}>{c.height} cm</Text>
+                    </View>
+                  ))}
                 </View>
               </View>
             </AnimatedEntry>
@@ -253,7 +234,6 @@ const styles = StyleSheet.create({
   },
   alertText: { flex: 1, fontSize: 16, fontWeight: '300', color: '#39438D', lineHeight: 16 * 1.2 },
 
-  // Valeur courante — flat
   valueSection: { gap: 12 },
   dateLabel: { fontSize: 16, fontWeight: '300', color: '#717171', lineHeight: 16 * 1.4 },
   valueRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
@@ -271,7 +251,6 @@ const styles = StyleSheet.create({
   },
   trendText: { fontSize: 16, fontWeight: '300', color: colors.success.DEFAULT },
 
-  // Chart section
   chartSection: { gap: 12 },
   sectionTitle: { fontSize: 16, fontWeight: '500', color: '#717171', lineHeight: 16 * 1.4 },
   chartCard: {
@@ -280,15 +259,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E8E8E8',
     padding: 16,
-    gap: 24,
   },
-  legend: { flexDirection: 'row', gap: 24 },
-  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  legendLineSolid: { width: 12, height: 2, borderRadius: 1 },
-  legendLabel: { fontSize: 12, fontWeight: '300', color: '#717171' },
   chartArea: { width: '100%' },
 
-  // History — pas de card
   historySection: { gap: 12 },
   historyList: { gap: 24 },
   historyRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -307,7 +280,6 @@ const styles = StyleSheet.create({
   historyDetail: { fontSize: 14, fontWeight: '300', color: '#717171', lineHeight: 14 * 1.2 },
   historyValue: { fontSize: 16, fontWeight: '500', color: '#4F4F4F', lineHeight: 16 * 1.4 },
 
-  // Empty state
   emptyCard: {
     flex: 1,
     backgroundColor: '#FFFFFF',

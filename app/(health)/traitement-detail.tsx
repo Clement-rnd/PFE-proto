@@ -73,15 +73,16 @@ function DocumentRow({ doc, last }: { doc: TreatmentDocument; last?: boolean }) 
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 export default function TraitementDetailScreen() {
-  const { id, petIndex: petIndexParam, fromAnimal } = useLocalSearchParams<{
-    id?: string; petIndex?: string; fromAnimal?: string;
+  const { id, petIndex: petIndexParam, fromAnimal, fromDisease } = useLocalSearchParams<{
+    id?: string; petIndex?: string; fromAnimal?: string; fromDisease?: string;
   }>();
   const petIndex = parseInt(petIndexParam ?? '0', 10);
   const pets = usePets();
   const pet = pets[petIndex];
 
   const traitement = TRAITEMENTS.find(t => t.id === id);
-  const showAnimalCard = fromAnimal !== 'true';
+  const showAnimalCard = fromAnimal !== 'true' && fromDisease !== 'true';
+  const showDiseaseLink = fromDisease !== 'true';
 
   if (!traitement) return null;
 
@@ -160,7 +161,7 @@ export default function TraitementDetailScreen() {
           )}
 
           {/* Maladie associée */}
-          {traitement.diseaseId && (
+          {traitement.diseaseId && showDiseaseLink && (
             <View style={styles.section}>
               <SectionTitle label="Maladie associée" />
               <Pressable

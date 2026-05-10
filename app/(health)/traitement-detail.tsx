@@ -2,10 +2,10 @@ import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { HugeiconsIcon } from '@hugeicons/react-native';
-import { ArrowLeft01Icon, ArrowRight01Icon, File02Icon } from '@hugeicons/core-free-icons';
+import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { AppIcon } from '../../src/components/ui/AppIcon';
 import { usePets } from '../../src/data/petStore';
-import { TRAITEMENTS, type TreatmentStatus, type TreatmentDocument } from '../../src/data/traitementsData';
+import { TRAITEMENTS, type TreatmentStatus } from '../../src/data/traitementsData';
 import { colors } from '../../src/theme/colors';
 import { PetCard } from '../../src/components/ui/PetCard';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
@@ -50,23 +50,6 @@ function ProgressSection({ total, elapsed }: { total: number; elapsed: number })
         <Text style={styles.progressRight}>{remaining} jour{remaining > 1 ? 's' : ''} restant{remaining > 1 ? 's' : ''}</Text>
       </View>
     </View>
-  );
-}
-
-function DocumentRow({ doc, last }: { doc: TreatmentDocument; last?: boolean }) {
-  return (
-    <>
-      <Pressable style={styles.documentRow}>
-        <View style={styles.documentIconBox}>
-          <HugeiconsIcon icon={File02Icon} size={20} color={colors.neutral[900]} strokeWidth={1.5} />
-        </View>
-        <View style={styles.documentContent}>
-          <Text style={styles.documentName} numberOfLines={1}>{doc.name}</Text>
-          <Text style={styles.documentMeta}>{doc.date} · {doc.size}</Text>
-        </View>
-      </Pressable>
-      {!last && <View style={styles.divider} />}
-    </>
   );
 }
 
@@ -177,16 +160,18 @@ export default function TraitementDetailScreen() {
             </View>
           )}
 
-          {/* Documents liés */}
+          {/* Voir l'ordonnance */}
           {traitement.documents && traitement.documents.length > 0 && (
-            <View style={styles.section}>
-              <SectionTitle label="Documents liés" />
-              <View style={styles.infoCard}>
-                {traitement.documents.map((doc, i) => (
-                  <DocumentRow key={i} doc={doc} last={i === traitement.documents!.length - 1} />
-                ))}
-              </View>
-            </View>
+            <Pressable
+              style={styles.ordonnanceButton}
+              onPress={() => router.push({
+                pathname: '/(health)/prescriptions',
+                params: { petIndex: String(petIndex) },
+              })}
+            >
+              <Text style={styles.ordonnanceButtonText}>Voir l'ordonnance</Text>
+              <HugeiconsIcon icon={ArrowRight01Icon} size={20} color="#FFFFFF" strokeWidth={1.5} />
+            </Pressable>
           )}
         </ScrollView>
       </AnimatedEntry>
@@ -251,18 +236,12 @@ const styles = StyleSheet.create({
   progressLeft: { fontSize: 14, fontWeight: '300', color: '#8E9AF6' },
   progressRight: { fontSize: 14, fontWeight: '300', color: '#717171' },
 
-  // Documents
-  documentRow: {
-    flexDirection: 'row', alignItems: 'center',
-    height: 64, paddingLeft: 16, paddingRight: 8, gap: 8,
+  // Ordonnance button
+  ordonnanceButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    height: 48, borderRadius: 12, backgroundColor: colors.primary.DEFAULT, gap: 8,
   },
-  documentIconBox: {
-    width: 32, height: 32, borderRadius: 8,
-    backgroundColor: '#FAFAFA', alignItems: 'center', justifyContent: 'center',
-  },
-  documentContent: { flex: 1, gap: 8, justifyContent: 'center' },
-  documentName: { fontSize: 16, fontWeight: '300', color: '#181818', lineHeight: 16 * 1.4 },
-  documentMeta: { fontSize: 14, fontWeight: '300', color: '#B2B2B2', lineHeight: 14 * 1.2 },
+  ordonnanceButtonText: { fontSize: 16, fontWeight: '500', color: '#FFFFFF' },
 
   // Disease link
   diseaseRow: {

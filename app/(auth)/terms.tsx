@@ -9,6 +9,7 @@ import { Button } from '../../src/components/ui/Button';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
+import { IllustrationCGU } from '../../src/components/ui/IllustrationCGU';
 
 function Checkbox({ checked, onPress }: { checked: boolean; onPress: () => void }) {
   return (
@@ -67,7 +68,7 @@ export default function TermsScreen() {
         {/* Contenu centré */}
         <AnimatedEntry delay={100} style={styles.content}>
           <View style={styles.illustration}>
-            <View style={styles.illustrationPlaceholder} />
+            <IllustrationCGU size={140} />
           </View>
 
           <View style={styles.checks}>
@@ -144,12 +145,6 @@ const styles = StyleSheet.create({
   illustration: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 240,
-  },
-  illustrationPlaceholder: {
-    width: 180,
-    height: 180,
-    backgroundColor: '#D9D9D9',
   },
   checks: {
     gap: 12,

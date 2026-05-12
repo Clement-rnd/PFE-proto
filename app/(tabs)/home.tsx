@@ -14,6 +14,7 @@ import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
 import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 import { colors } from '../../src/theme/colors';
 import { usePets } from '../../src/data/petStore';
+import { useUserProfile } from '../../src/data/userStore';
 import { TRAITEMENTS, type Traitement, type TreatmentStatus } from '../../src/data/traitementsData';
 import { CONSULTATIONS } from '../../src/data/consultationsData';
 
@@ -86,6 +87,8 @@ function TreatmentListCard({ t }: { t: Traitement }) {
 
 export default function HomeScreen() {
   const pets = usePets();
+  const userProfile = useUserProfile();
+  const greeting = userProfile?.firstName ? `Bonjour ${userProfile.firstName} !` : 'Bonjour !';
   const activeTreatments = TRAITEMENTS.filter(
     t => t.status === 'active' || t.status === 'upcoming'
   ).slice(0, 1);
@@ -102,7 +105,7 @@ export default function HomeScreen() {
         {/* Header */}
         <AnimatedEntry delay={0}>
           <View style={styles.header}>
-            <Text style={styles.greeting}>Bienvenue Clément !</Text>
+            <Text style={styles.greeting}>{greeting}</Text>
             <Pressable style={styles.notifBtn} hitSlop={8}>
               <HugeiconsIcon icon={Notification01Icon} size={28} color={colors.neutral[900]} strokeWidth={1.5} />
             </Pressable>

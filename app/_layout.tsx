@@ -5,10 +5,11 @@ import { View, StyleSheet } from 'react-native';
 import { useEffect } from 'react';
 import { ScreenBackground } from '../src/components/ui/ScreenBackground';
 import { initPetStore } from '../src/data/petStore';
+import { initUserStore } from '../src/data/userStore';
 import '../global.css';
 
 export default function RootLayout() {
-  useEffect(() => { initPetStore(); }, []);
+  useEffect(() => { initPetStore(); initUserStore(); }, []);
 
   return (
     <SafeAreaProvider>

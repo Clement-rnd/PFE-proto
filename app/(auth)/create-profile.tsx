@@ -11,6 +11,7 @@ import { CountryPicker } from '../../src/components/ui/CountryPicker';
 import { FlagIcon } from '../../src/components/ui/FlagIcon';
 import { DEFAULT_COUNTRY } from '../../src/data/countries';
 import type { Country } from '../../src/data/countries';
+import { saveUserProfile } from '../../src/data/userStore';
 import { formatDate, isDateComplete } from '../../src/utils/date';
 import { colors } from '../../src/theme/colors';
 import { AnimatedEntry } from '../../src/components/ui/AnimatedEntry';
@@ -33,6 +34,7 @@ export default function CreateProfileScreen() {
 
   function handleContinue() {
     if (isValid) {
+      saveUserProfile({ firstName: firstName.trim(), lastName: lastName.trim() });
       router.push('/(auth)/terms');
     }
   }

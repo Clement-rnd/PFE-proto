@@ -205,7 +205,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: 'transparent' },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 16, paddingTop: 32, paddingBottom: 24, gap: 24 },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 32, paddingBottom: 100, gap: 24 },
 
   // Header
   header: {
@@ -361,10 +361,10 @@ const styles = StyleSheet.create({
   stickyBar: {
     paddingHorizontal: 16,
     paddingTop: 12,
-    paddingBottom: 16,
+    paddingBottom: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#E8E8E8',
-    backgroundColor: '#FDF7F9',
+    backgroundColor: '#FFFFFF',
   },
 
   // Pet cards

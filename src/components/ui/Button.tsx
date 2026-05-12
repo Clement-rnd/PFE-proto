@@ -9,12 +9,21 @@ interface ButtonProps {
   label: string;
   onPress: () => void;
   disabled?: boolean;
-  variant?: 'primary' | 'danger';
+  variant?: 'primary' | 'secondary' | 'danger';
   icon?: IconType;
 }
 
 export function Button({ label, onPress, disabled = false, variant = 'primary', icon }: ButtonProps) {
-  const fillColor = disabled ? '#E8E8E8' : variant === 'danger' ? colors.danger.DEFAULT : colors.primary.DEFAULT;
+  const isSecondary = variant === 'secondary';
+  const fillColor = disabled
+    ? '#E8E8E8'
+    : isSecondary
+    ? colors.neutral[100]
+    : variant === 'danger'
+    ? colors.danger.DEFAULT
+    : colors.primary.DEFAULT;
+  const contentColor = disabled ? '#B2B2B2' : isSecondary ? colors.neutral[900] : '#FCFCFC';
+
   return (
     <Pressable
       onPress={onPress}
@@ -32,8 +41,8 @@ export function Button({ label, onPress, disabled = false, variant = 'primary', 
         />
       )}
       <View style={styles.content}>
-        {icon && <HugeiconsIcon icon={icon} size={24} color={disabled ? '#B2B2B2' : '#FCFCFC'} strokeWidth={1.5} />}
-        <Text style={[styles.label, disabled && styles.labelDisabled]}>{label}</Text>
+        {icon && <HugeiconsIcon icon={icon} size={24} color={contentColor} strokeWidth={1.5} />}
+        <Text style={[styles.label, { color: contentColor }, disabled && styles.labelDisabled]}>{label}</Text>
       </View>
     </Pressable>
   );
@@ -53,7 +62,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '400',
-    color: '#FCFCFC',
   },
   labelDisabled: {
     color: '#B2B2B2',

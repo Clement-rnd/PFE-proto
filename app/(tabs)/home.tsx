@@ -88,7 +88,7 @@ export default function HomeScreen() {
   const pets = usePets();
   const activeTreatments = TRAITEMENTS.filter(
     t => t.status === 'active' || t.status === 'upcoming'
-  ).slice(0, 2);
+  ).slice(0, 1);
   const nextConsultation = CONSULTATIONS.find(c => c.status === 'upcoming');
 
   return (
@@ -147,7 +147,7 @@ export default function HomeScreen() {
                   <Text style={styles.listCardName} numberOfLines={1}>
                     {nextConsultation.title} de {nextConsultation.petName}
                   </Text>
-                  <View style={[styles.tag, { backgroundColor: colors.primary[50] }]}>
+                  <View style={[styles.tag, { backgroundColor: colors.primary[50], alignSelf: 'flex-start' }]}>
                     <Text style={[styles.tagText, { color: colors.primary.DEFAULT }]}>
                       {nextConsultation.dateTime}
                     </Text>
@@ -188,15 +188,16 @@ export default function HomeScreen() {
           </AnimatedEntry>
         )}
 
-        {/* CTA */}
-        <AnimatedEntry delay={200}>
-          <Button
-            label="Planifier un rendez-vous"
-            icon={CalendarAdd01Icon}
-            onPress={() => router.push('/(health)/consultations')}
-          />
-        </AnimatedEntry>
       </ScrollView>
+
+      {/* CTA sticky */}
+      <View style={styles.stickyBar}>
+        <Button
+          label="Planifier un rendez-vous"
+          icon={CalendarAdd01Icon}
+          onPress={() => router.push('/(health)/consultations')}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -355,6 +356,16 @@ const styles = StyleSheet.create({
   tagText: { fontSize: 12, fontWeight: '300' },
   metaDot: { fontSize: 12, fontWeight: '300', color: '#B2B2B2' },
   metaText: { fontSize: 12, fontWeight: '300', color: '#B2B2B2' },
+
+  // Sticky CTA
+  stickyBar: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 16,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#E8E8E8',
+    backgroundColor: '#FDF7F9',
+  },
 
   // Pet cards
   petsRow: { gap: 8 },

@@ -362,8 +362,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#E8E8E8',
     backgroundColor: 'transparent',
   },
 

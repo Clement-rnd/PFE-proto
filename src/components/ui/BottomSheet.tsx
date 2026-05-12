@@ -8,8 +8,11 @@ import {
   StyleSheet,
   PanResponder,
   useWindowDimensions,
+  Dimensions,
 } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
+
+const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
 interface BottomSheetProps {
   visible: boolean;
@@ -20,7 +23,7 @@ interface BottomSheetProps {
 
 export function BottomSheet({ visible, onClose, children, snapHeight }: BottomSheetProps) {
   const { height } = useWindowDimensions();
-  const translateY = useRef(new Animated.Value(height)).current;
+  const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -28,7 +31,7 @@ export function BottomSheet({ visible, onClose, children, snapHeight }: BottomSh
     if (visible) {
       Keyboard.dismiss();
       setModalVisible(true);
-      translateY.setValue(height);
+      translateY.setValue(SCREEN_HEIGHT);
       backdropOpacity.setValue(0);
       Animated.parallel([
         Animated.spring(translateY, {
@@ -48,7 +51,7 @@ export function BottomSheet({ visible, onClose, children, snapHeight }: BottomSh
     } else {
       Animated.parallel([
         Animated.timing(translateY, {
-          toValue: height,
+          toValue: SCREEN_HEIGHT,
           duration: 350,
           easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
           useNativeDriver: true,

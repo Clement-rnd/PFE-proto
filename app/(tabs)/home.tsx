@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: '#E8E8E8',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
   },
 
   // Pet cards

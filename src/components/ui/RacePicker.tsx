@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, FlatList, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { Search01Icon, Tick01Icon } from '@hugeicons/core-free-icons';
@@ -57,8 +57,9 @@ function CheckboxItem({
   );
 }
 
+const SCREEN_HEIGHT = Dimensions.get('screen').height;
+
 export function RacePicker({ visible, onClose, onConfirm, initial }: RacePickerProps) {
-  const { height } = useWindowDimensions();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<string[]>(initial);
 
@@ -83,7 +84,7 @@ export function RacePicker({ visible, onClose, onConfirm, initial }: RacePickerP
   const atMax = selected.length >= MAX_SELECTION || selected.includes(UNKNOWN);
 
   return (
-    <BottomSheet visible={visible} onClose={onClose} snapHeight={height * 0.9}>
+    <BottomSheet visible={visible} onClose={onClose} snapHeight={SCREEN_HEIGHT * 0.9}>
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>

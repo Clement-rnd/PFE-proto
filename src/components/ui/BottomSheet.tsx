@@ -7,6 +7,7 @@ import {
   Keyboard,
   StyleSheet,
   PanResponder,
+  Platform,
   useWindowDimensions,
   Dimensions,
 } from 'react-native';
@@ -24,6 +25,7 @@ interface BottomSheetProps {
 export function BottomSheet({ visible, onClose, children, snapHeight }: BottomSheetProps) {
   const { height } = useWindowDimensions();
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const keyboardY = useRef(new Animated.Value(0)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -68,6 +70,32 @@ export function BottomSheet({ visible, onClose, children, snapHeight }: BottomSh
     }
   }, [visible]);
 
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const onShow = Keyboard.addListener(showEvent, (e) => {
+      Animated.timing(keyboardY, {
+        toValue: -e.endCoordinates.height,
+        duration: Platform.OS === 'ios' ? e.duration : 200,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    const onHide = Keyboard.addListener(hideEvent, (e) => {
+      Animated.timing(keyboardY, {
+        toValue: 0,
+        duration: Platform.OS === 'ios' ? e.duration : 200,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    return () => {
+      onShow.remove();
+      onHide.remove();
+    };
+  }, []);
+
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -107,7 +135,7 @@ export function BottomSheet({ visible, onClose, children, snapHeight }: BottomSh
         style={[
           styles.sheet,
           snapHeight ? { height: snapHeight } : { maxHeight: height * 0.92 },
-          { transform: [{ translateY }] },
+          { transform: [{ translateY: Animated.add(translateY, keyboardY) }] },
         ]}
       >
         <View style={styles.handleWrapper} {...panResponder.panHandlers}>

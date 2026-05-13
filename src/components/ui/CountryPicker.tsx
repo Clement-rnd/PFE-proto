@@ -4,7 +4,7 @@ import {
   FlatList,
   Pressable,
   StyleSheet,
-  useWindowDimensions,
+  Dimensions,
 } from 'react-native';
 import { useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
@@ -25,8 +25,9 @@ interface CountryPickerProps {
   showDialCode?: boolean;
 }
 
+const SCREEN_HEIGHT = Dimensions.get('screen').height;
+
 export function CountryPicker({ visible, onClose, onSelect, selected, showDialCode = true }: CountryPickerProps) {
-  const { height } = useWindowDimensions();
   const [search, setSearch] = useState('');
 
   const france = COUNTRIES.find(c => c.code === 'FR') as Country & { flag: string };
@@ -71,7 +72,7 @@ export function CountryPicker({ visible, onClose, onSelect, selected, showDialCo
   }
 
   return (
-    <BottomSheet visible={visible} onClose={onClose} snapHeight={height * 0.9}>
+    <BottomSheet visible={visible} onClose={onClose} snapHeight={SCREEN_HEIGHT * 0.9}>
       <View style={styles.container}>
 
         {/* Header */}

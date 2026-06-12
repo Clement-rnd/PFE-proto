@@ -199,7 +199,7 @@ export default function LoginScreen() {
             />
             {isValid && (
               <Pressable onPress={handleContinue} style={styles.continueBtn}>
-                <HugeiconsIcon icon={ArrowRight01Icon} size={20} color="#FFFFFF" strokeWidth={2} />
+                <HugeiconsIcon icon={ArrowRight01Icon} size={14} color="#FFFFFF" strokeWidth={2} />
               </Pressable>
             )}
           </Pressable>
@@ -285,9 +285,9 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   continueBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: colors.primary.DEFAULT,
     alignItems: 'center',
     justifyContent: 'center',

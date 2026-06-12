@@ -147,7 +147,7 @@ export default function LoginScreen() {
 
           {/* Logo : fixe, toujours au-dessus */}
           <View style={styles.logoWrapper} pointerEvents="none">
-            <LogoNaya width={197} height={80} />
+            <LogoNaya width={197} height={69} />
           </View>
         </View>
 

@@ -24,7 +24,8 @@ export default function Root({ children }: PropsWithChildren) {
         <link rel="apple-touch-icon" href="/icon.png" />
 
         <style>{`
-          html, body { background-color: #FEF0F2; }
+          html, body, #root { background-color: #FDF7F9; }
+          html, body, #root { height: 100%; height: 100dvh; }
           input, select, textarea { font-size: 16px !important; }
         `}</style>
 

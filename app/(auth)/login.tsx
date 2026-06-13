@@ -1,11 +1,11 @@
 import {
   View, Text, Pressable, TextInput, StyleSheet, Image,
-  Keyboard, Platform, Animated, Easing,
+  Keyboard, Platform,
 } from 'react-native';
 import { SquircleView } from 'react-native-figma-squircle';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router, useFocusEffect } from 'expo-router';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+import { useState, useRef } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import { ArrowDown01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { CountryPicker } from '../../src/components/ui/CountryPicker';
@@ -20,79 +20,11 @@ import { ScreenBackground } from '../../src/components/ui/ScreenBackground';
 type CountryWithFlag = Country & { flag: string };
 
 export default function LoginScreen() {
-  const insets = useSafeAreaInsets();
-  const mosaicTranslateY = useRef(new Animated.Value(0)).current;
-  const mosaicOpacity = useRef(new Animated.Value(1)).current;
-  const bottomAnim = useRef(new Animated.Value(0)).current;
-
   const [country, setCountry] = useState<CountryWithFlag>(DEFAULT_COUNTRY as CountryWithFlag);
   const [phone, setPhone] = useState('');
   const [focused, setFocused] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const inputRef = useRef<TextInput>(null);
-
-  useFocusEffect(useCallback(() => {
-    mosaicTranslateY.setValue(0);
-    mosaicOpacity.setValue(1);
-    bottomAnim.setValue(0);
-  }, []));
-
-  useEffect(() => {
-    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
-
-    const showSub = Keyboard.addListener(showEvent, (e) => {
-      const h = e.endCoordinates.height;
-      const dur = Platform.OS === 'ios' ? e.duration : 280;
-      Animated.parallel([
-        Animated.timing(mosaicTranslateY, {
-          toValue: -h * 0.35,
-          duration: dur,
-          useNativeDriver: true,
-        }),
-        Animated.timing(mosaicOpacity, {
-          toValue: 0.45,
-          duration: dur,
-          useNativeDriver: true,
-        }),
-        Animated.timing(bottomAnim, {
-          toValue: -(h - insets.bottom) + 30,
-          duration: dur,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    });
-
-    const hideSub = Keyboard.addListener(hideEvent, (e) => {
-      const dur = Platform.OS === 'ios' ? e.duration + 100 : 380;
-      const easing = Easing.out(Easing.cubic);
-      Animated.parallel([
-        Animated.timing(mosaicTranslateY, {
-          toValue: 0,
-          duration: dur,
-          easing,
-          useNativeDriver: true,
-        }),
-        Animated.timing(mosaicOpacity, {
-          toValue: 1,
-          duration: dur,
-          easing,
-          useNativeDriver: true,
-        }),
-        Animated.timing(bottomAnim, {
-          toValue: 0,
-          duration: dur,
-          easing,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    });
-
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, [insets.bottom]);
 
   function formatPhone(raw: string): string {
     const d = raw.replace(/\D/g, '').slice(0, 9);
@@ -133,17 +65,13 @@ export default function LoginScreen() {
 
         {/* Zone illustration */}
         <View style={styles.illustrationArea}>
-          {/* Mosaïque : glisse vers le haut et fade out */}
-          <Animated.View style={[
-            styles.mosaicWrapper,
-            { transform: [{ translateY: mosaicTranslateY }], opacity: mosaicOpacity },
-          ]}>
+          <View style={styles.mosaicWrapper}>
             <Image
               source={require('../../assets/images/mosaic.png')}
               style={styles.mosaicImage}
               resizeMode="contain"
             />
-          </Animated.View>
+          </View>
 
           {/* Logo : fixe, toujours au-dessus */}
           <View style={styles.logoWrapper} pointerEvents="none">
@@ -151,8 +79,7 @@ export default function LoginScreen() {
           </View>
         </View>
 
-        {/* Champ téléphone + lien : remonte avec le clavier */}
-        <Animated.View style={[styles.bottom, { transform: [{ translateY: bottomAnim }] }]}>
+        <View style={styles.bottom}>
           <Pressable
             onPress={() => inputRef.current?.focus()}
             style={[
@@ -207,7 +134,7 @@ export default function LoginScreen() {
           <Pressable style={styles.problemLink}>
             <Text style={styles.problemText}>Un problème pour vous connecter ?</Text>
           </Pressable>
-        </Animated.View>
+        </View>
 
       </Pressable>
 

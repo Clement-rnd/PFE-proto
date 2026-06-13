@@ -21,7 +21,8 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="NAYA" />
-        <link rel="apple-touch-icon" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/icon.png?v=2" />
+        <link rel="icon" href="/favicon.png?v=2" />
 
         <style>{`
           html, body, #root { background-color: #FDF7F9; }
